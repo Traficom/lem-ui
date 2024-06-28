@@ -11,20 +11,18 @@ module.exports = {
     // Previously, buildIdentidier was either 'prod' or 'beta'. Now, it is always 'prod'.
     buildIdentifier: 'prod',
     packagerConfig: {
-        appBundleId: fromBuildIdentifier({ prod: 'fi.hsl.helmet.ui', beta: 'fi.hsl.beta.helmet.ui' }),
+        appBundleId: fromBuildIdentifier({ prod: 'fi.traficom.lem.ui', beta: 'fi.traficom.beta.lem.ui' }),
         icon: "./appicons/icons/win/favicon.ico"
     },
     makers: [
         {
             name: "@electron-forge/maker-squirrel",
             config: {
-                name: "helmet",
+                name: "lem",
                 authors: "Traficom, Helsingin Seudun Liikenne -kuntayhtyma",
                 // iconUrl: "https://raw.githubusercontent.com/HSLdevcom/helmet-ui/e3714d944c62c6ba4b8ed1ce8ac57fcbecaf0f13/helmet.ico",
                 // loadingGif: '',
                 // setupIcon: 'helmet.ico',
-                certificateFile: "helmet_cs4.pfx",
-                certificatePassword: process.env.WINDOWS_CERTIFICATE_PASSWORD,
             }
         },
         {
@@ -40,8 +38,8 @@ module.exports = {
             name: '@electron-forge/publisher-github',
             config: {
                 repository: {
-                    owner: 'HSLdevcom',
-                    name: 'helmet-ui'
+                    owner: 'Traficom',
+                    name: 'lem-ui'
                 },
                 draft: true,
                 prerelease: false,
