@@ -1,0 +1,155 @@
+.Settings {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Settings__overlay {
+    z-index: 950;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.Settings__dialog {
+    z-index: 1050;  /* Higher than overlay */
+    width: 600px;
+    padding: 30px 40px;
+    background-color: #ffffff;
+    border: 1px solid #CCCCCC;
+    box-sizing: border-box;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.Settings__dialog-heading {
+    font-style: normal;
+    font-weight: 350;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: -0.6px;
+    color: #333333;
+    order: 0;
+    margin-bottom: 10px;
+}
+
+.Settings__dialog-input-group {
+}
+
+.Settings__pseudo-label {
+    text-transform: uppercase;
+    display: block;
+    font-style: normal;
+    font-size: 15px;
+    line-height: 24px;
+    letter-spacing: -0.3px;
+    margin-top: 15px;
+}
+
+.Settings__pseudo-file-select {
+    display: block;
+    width: 100%;
+    height: 35px; 
+    padding: 6px 8px;
+    margin-top: 4px;
+    background: #ffffff;
+    border: 1px solid #888888;
+    box-sizing: border-box;
+    border-radius: 2px;
+    font-size: 15px;
+    color: #333333;
+    cursor: pointer;
+    /* Overflowing file/dir names show as "First part..." */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.Settings__name_input {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 35px;
+    padding: 6px 8px;
+    margin-top: 4px;
+    background: #ffffff;
+    border: 1px solid #888888;
+    box-sizing: border-box;
+    border-radius: 2px;
+    font-size: 15px;
+    z-index: 1500;
+    color: #333333;
+}
+
+
+
+.bg_plus{
+    background-image: url('../plus.png');
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
+.Settings__hidden-input {
+    display: none;
+}
+
+.Settings__dialog-controls {
+    display: block;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 17px;
+    right: 22px;
+    background-color: #ffffff;
+    background-image: url('../close-large.png');
+    background-repeat: no-repeat;
+}
+
+.Settings__input-btn {
+    background-color: var(--white-basic);
+    color: var(--turqoise-medium);
+    border-color: var(--turqoise-medium);
+    margin: 15px 0 0 0;
+    height: 35px;
+    font-size: 15px;
+}
+
+.Settings__scenarios-footer {
+    margin-top: 10px;
+    text-align: right;
+}
+
+.Settings_btn {
+    display: inline-block;
+    margin-right: 10px;
+
+}
+
+.Settings_btn:disabled {
+    background-color: var(--light-grey);
+    border-color: var(--medium-grey);
+}
+
+.Settings_select select{
+    width: 240px;
+    height: 30px;
+    border: 1px solid var(--turqoise-medium);
+    font-size: 16px;
+    font-family: open_sans_medium, sans-serif;
+    color: var(--turqoise-dark);
+    border-radius: 2px;
+    padding-left: 4px;
+}

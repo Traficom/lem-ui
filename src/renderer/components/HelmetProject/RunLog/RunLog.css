@@ -1,0 +1,82 @@
+.Log {
+    background-color: #ffffff;
+    border: 1px solid #CCCCCC;
+    box-sizing: border-box;
+    border-radius: 2;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 40px;
+    height: 850px;
+}
+
+.Log__heading {
+    font-style: normal;
+    font-weight: 350;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: -0.6px;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.Log__header {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.Log__close {
+    display: block;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 17px;
+    right: 22px;
+    background-color: #ffffff;
+    background-image: url('../../close-large.png');
+    background-repeat: no-repeat;
+}
+
+.Log__header-controls {
+    display: flex;
+    justify-content: space-between;
+}
+
+.Log__header-control {
+    background-color: var(--turqoise-dark);
+    border-color: var(--turqoise-dark);
+    margin-right: 10px;
+    width: 100%;
+    font-family: open_sans_semi_bold;
+}
+.Log__header-control--on {
+    background-color: var(--light-grey);
+    color: var(--turqoise-dark) ;
+    border-color: var(--turqoise-dark);
+}
+
+.Log__overflow {
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.Log__entries {
+    white-space: pre-wrap;
+    font-style: normal;
+    font-weight: 325;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.5px;
+}
+
+.Log__entry {
+    color: #333333;
+}
+
+.Log__entry--ui {
+}
+
+.Log__entry--error {
+    color: #DC0451;
+}

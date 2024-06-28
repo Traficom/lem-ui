@@ -1,0 +1,215 @@
+.Scenario {
+    padding: 40px 60px;
+    margin: 0 23px;
+    justify-content: center;
+    background-color: #ffffff;
+    border: 1px solid #CCCCCC;
+    box-sizing: border-box;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.Scenario__section {
+}
+
+.Scenario_radio_select_section {
+    margin-bottom: 20px;
+}
+
+.Scenario_radio_label {
+    margin-bottom: 10px;
+}
+
+.Scenario__heading {
+    font-style: normal;
+    font-weight: 350;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: -0.6px;
+    color: #333333;
+    order: 0;
+    margin-bottom: 10px;
+}
+
+.Scenario__title {
+    font-style: normal;
+    font-weight: 350;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: -0.5px;
+    color: #333333;
+    order: 0;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.Scenario__section--indentation {
+    padding-left: 44px;
+    padding-top: 4px;
+}
+
+.Scenario__close {
+    display: block;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 17px;
+    right: 22px;
+    background-color: #ffffff;
+    background-image: url('../../close-large.png');
+    background-repeat: no-repeat;
+}
+
+/* Labels */
+.Scenario__pseudo-label {
+    display: block;
+    font-style: normal;
+    font-weight: 350;
+    font-size: 15px;
+    line-height: 24px;
+    letter-spacing: -0.3px;
+    margin-top: 10px;
+}
+.Scenario__pseudo-label--inline {
+    display: inline-block;
+    font-style: normal;
+    font-weight: 325;
+    font-size: 15px;
+    line-height: 30px;
+    letter-spacing: -0.3px;
+    color: #333333;
+}
+.Scenario__pseudo-label--inline input {
+    display: block;
+    float: left;
+}
+.Scenario__pseudo-label--inline span {
+    padding-left: 14px;
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
+}
+span.Scenario__inline {
+    font-style: normal;
+    font-weight: 325;
+    font-size: 15px;
+    line-height: 24px;
+    letter-spacing: -0.3px;
+}
+.Scenario__pseudo-label--right {
+    display: block;
+}
+.Scenario__inline {
+    display: inline-block !important;
+}
+
+/* Inputs */
+.Scenario__pseudo-file-select, .Scenario__name, .Scenario__number {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 4px;
+    margin-right: 20px;
+    height: 44px;
+    background: #ffffff;
+    border: 1px solid var(--medium-grey);
+    box-sizing: border-box;
+    border-radius: 2px;
+    font-size: 15px;
+    font-weight: 325;
+    cursor: pointer;
+    /* Overflowing file/dir names show as "First part..." */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.Scenario__pseudo-file-select:disabled{
+    background-color: var(--pale-grey);
+}
+
+.Scenario__number {
+    width: 156px;
+}
+
+.Scenario__name-error {
+    display: table;
+    margin: 0 auto;
+    color: #801a00;
+    font-size: 0.95em;
+    font-style: italic;
+    line-height: 1.5em;
+}
+
+.Scenario__hidden-input {
+    display: none;
+}
+
+.Scenario__radio-input {
+    margin-right: 2em;
+}
+
+.override-input {
+    visibility: hidden;
+}
+
+.override-setting {
+    padding-left: 0px !important;
+}
+
+.override-file-select-input {
+    width: 500px;
+}
+
+.override-is-default {
+    font-style: italic;
+    color: gray;
+}
+
+.inline-element {
+    display: inline !important;
+}
+
+.inline-block-element {
+    display: inline-block;
+}
+
+.override-reset-button {
+    width: fit-content;
+    height: fit-content;
+    border: none;
+    margin-left: 30px;
+}
+
+.override-reset-icon {
+    margin-bottom: -15px;
+}
+
+.override-setting-toggle {
+    margin-bottom: 20px;
+}
+
+.override-setting-divider {
+    margin-top: 20px;
+}
+
+.override-dropdown-icon {
+    margin-left: 1rem;
+    margin-bottom: -1rem;
+    width: 2rem;
+    height: 2rem;
+}
+
+
+.Submodel_select select{
+    width: 240px;
+    height: 30px;
+    border: 1px solid var(--medium-grey);
+    font-size: 16px;
+    font-family: open_sans_medium, sans-serif;
+    color: var(--dark-grey);
+    border-radius: 2px;
+    padding-left: 4px;
+}

@@ -1,0 +1,72 @@
+.LemError {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.LemError__dialog {
+    z-index: 4000; /** Highest in the App */
+    width: 400px;
+    padding: 30px 40px;
+    background-color: var(--light-yellow);
+    border: 1px solid #727272;
+    box-sizing: border-box;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.LemError__dialog-heading {
+    font-style: normal;
+    font-weight: 350;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: -0.6px;
+    color: #333333;
+    order: 0;
+    margin-bottom: 10px;
+}
+
+.LemError__dialog-info {
+    font-style: normal;
+    font-weight: 350;
+    font-size: 15px;
+    line-height: 18px;
+    letter-spacing: -0.6px;
+    color: var(--turqoise-dark);
+    order: 0;
+    margin-bottom: 10px;
+}
+
+.LemError__dialog-controls {
+    display: block;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 17px;
+    right: 22px;
+    background-color: var(--light-yellow);
+    background-image: url('./close-large.png');
+    background-repeat: no-repeat;
+}
+.LemError_ok_btn_div {
+    display: block;
+}
+
+.LemError_ok_btn {
+    max-width: 40px;
+    max-height: 35px;
+    background-color: var(--pale-yellow);
+    color: var(--turqoise-dark);
+    float: right;
+    border-color: var(--turqoise-medium);
+}
+
+.LemError_ok_btn:hover{
+    background-color: white;
+    color: var(--turqoise-medium);
+}

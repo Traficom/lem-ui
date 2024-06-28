@@ -1,0 +1,163 @@
+.Runtime { 
+}
+
+/* Helmet project */
+
+.Runtime__helmet-project-controls {
+    padding: 20px;
+}
+
+.Runtime__heading {
+    font-style: normal;
+    font-weight: 350;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -0.02em;
+}
+
+.Runtime__project-path {
+}
+
+.Runtime__button {
+    display: inline;
+    margin-right: 10px;
+}
+
+/* Scenarios */
+
+.Runtime__scenarios-controls {
+    background: var(--white-basic);
+    border-top: 1px solid var(--turqoise-dark);
+    border-bottom: 1px solid var(--turqoise-dark);
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.Runtime__scenarios-heading {
+    font-style: normal;
+    font-weight: 350;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+}
+
+.Runtime__scenarios {
+    max-height: 210px;
+    overflow-y: auto;
+}
+
+.Runtime__scenario {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-direction: row;
+}
+
+.Runtime__scenario-name {
+    display: inline-block;
+    width: 380px;
+    overflow: hidden;
+}
+
+.Runtime__scenario-activate-checkbox {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 31px !important;
+    border-radius: 2px !important;
+    width: 24px !important;
+    height: 24px !important;
+}
+.Runtime__scenario-activate-checkbox--active {
+}
+
+.Runtime__scenario-open-config {
+    display: inline-block;
+    margin-right: 20px;
+    vertical-align: top;
+    width: 20px;
+    height: 19px;
+    background-image: url('../../Edit.png');
+    background-repeat: no-repeat;
+}
+
+.Runtime__scenario-delete {
+    display: inline-block;
+    vertical-align: top;
+    width: 16px;
+    height: 19px;
+    background-image: url('../../trash.png');
+    background-repeat: no-repeat;
+}
+
+.Runtime__scenarios-footer {
+    padding-top: 22px;
+}
+
+.Runtime__add-new-scenario-btn {
+    background: var(--turqoise-dark);
+    border-color: var(--turqoise-dark);
+    color: #ffffff;
+}
+.Runtime__add-new-scenario-btn:hover {
+    color: #ffffff;
+}
+
+.Runtime__add-icon {
+    display: inline-flex;
+    align-items: center;
+    height: 35px;
+    padding-left: 45px;
+    background-color: var(--turqoise-dark);
+    background-image: url(../../add.png);
+    background-repeat: no-repeat;
+}
+
+/* Start-stop */
+
+.Runtime__start-stop-controls {
+    padding: 20px;
+}
+
+.Runtime__start-stop-description {
+}
+
+.Runtime__start-stop-scenarios {
+    color: #00985F;
+    font-weight: bold;
+}
+
+.Runtime__start-stop-btn {
+}
+
+.Runtime__scenario-clone {
+  margin-right: 20px;
+  margin-bottom: -5px;
+  display: inline-block;
+  vertical-align: top;
+  width: 24px;
+  height: 24px;
+  color: #026273;
+}
+
+.Runtime__scenario-open-folder {
+    color: var(--turqoise-dark);
+    font-weight: bold;
+}
+
+.Runtime__scenario-open-folder:hover {
+    color: #000000;
+    font-weight: bold;
+}
+
+.Runtime__scenario_table th {
+    text-align: left;
+}
+
+.Table_space_after {
+    padding-right: 20px;
+}
+
+.Runtime__buttons {
+    display: inline;
+}
