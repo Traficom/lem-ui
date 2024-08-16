@@ -84,6 +84,14 @@ const ScenarioTableRow = ({
           NÄYTÄ
         </div>}
       </td>
+      <td className="Table_space_after">
+        <div
+          className={"Runtime__scenario-sub_scenario"}
+          onClick={e => duplicateScenario(scenarioData)}
+        >
+          <span><Plus />Luo aliscenaario</span>
+        </div>
+      </td>
       <td>
         <div
           className={"Runtime__scenario-clone"}

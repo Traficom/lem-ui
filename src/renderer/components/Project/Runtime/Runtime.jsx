@@ -166,6 +166,7 @@ const Runtime = ({
                 <th scope="col">LASKETTU</th>
                 <th scope="col" colSpan="2">TULOS</th>
                 <th scope="col"></th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody key="scenario_table_body">
