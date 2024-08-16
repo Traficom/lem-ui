@@ -9,18 +9,18 @@ const {ipcRenderer} = require('electron');
 
 // vex-js imported globally in index.html, since we cannot access webpack config in electron-forge
 
-const HelmetProject = ({
+const VlemProject = ({
   projectName, emmeProjectPath, emmePythonPath, helmetScriptsPath, projectPath, basedataPath, resultsPath,
   signalProjectRunning, settingsId, openCreateEmmeProject, addNewSetting
 }) => {
-  // HELMET Project -specific settings
-  const [scenarios, setScenarios] = useState([]); // HELMET Scenarios under currently selected HELMET Project
-  const [openScenarioID, setOpenScenarioID] = useState(null); // currently open HELMET Scenario configuration
+  // VLEM Project -specific settings
+  const [scenarios, setScenarios] = useState([]); // Scenarios under currently selected Project
+  const [openScenarioID, setOpenScenarioID] = useState(null); // currently open Scenario configuration
 
   // Runtime controls & -logging
   const [scenarioIDsToRun, setScenarioIDsToRun] = useState([]); // selected active scenarios ready to run sequentially
-  const [runningScenarioID, setRunningScenarioID] = useState(null); // currently running HELMET Scenario, indicates if running
-  const [runningScenarioIDsQueued, setRunningScenarioIDsQueued] = useState([]); // queued ("remaining") HELMET Scenarios
+  const [runningScenarioID, setRunningScenarioID] = useState(null); // currently running Scenario, indicates if running
+  const [runningScenarioIDsQueued, setRunningScenarioIDsQueued] = useState([]); // queued ("remaining") Scenarios
   const [logContents, setLogContents] = useState([]); // project runtime log-contents
   const [isLogOpened, setLogOpened] = useState(false); // whether runtime log is open
   const [logArgs, setLogArgs] = useState({});
@@ -29,7 +29,7 @@ const HelmetProject = ({
   // Cost-Benefit Analysis (CBA) controls
   const [cbaOptions, setCbaOptions] = useState({});
 
-  // Scenario-specific settings under currently selected HELMET Project
+  // Scenario-specific settings under currently selected Project
   const configStores = useRef({});
 
   const _handleClickScenarioToActive = (scenario) => {
@@ -239,7 +239,7 @@ const HelmetProject = ({
       return;
     }
     if (!helmetScriptsPath) {
-      alert("Helmet Scripts -kansiota ei ole asetettu, tarkista Asetukset.");
+      alert("VLEM Scripts -kansiota ei ole asetettu, tarkista Asetukset.");
       return;
     }
     if (!projectPath) {
@@ -288,7 +288,7 @@ const HelmetProject = ({
       scenariosToRun.map((s) => {
         const combinedEmmeProjectPath = determinePath(s.overriddenProjectSettings, s.overriddenProjectSettings.emmeProjectPath, emmeProjectPath);
         const emmeEntryPointFilePath = combinedEmmeProjectPath + `\\${projectName}\\${projectName}.emp`
-        // Run parameters per each run (enrich with global settings' paths to EMME python & HELMET model system
+        // Run parameters per each run (enrich with global settings' paths to EMME python & VLEM model system
         return {
           ...s,
           emme_project_path: emmeEntryPointFilePath,
@@ -325,7 +325,7 @@ const HelmetProject = ({
       return;
     }
     if (!helmetScriptsPath) {
-      alert("Helmet Scripts -kansiota ei ole asetettu, tarkista Asetukset.");
+      alert("VLEM Scripts -kansiota ei ole asetettu, tarkista Asetukset.");
       return;
     }
 
@@ -456,7 +456,7 @@ const HelmetProject = ({
             :
             /* while no scenarios running, and log hidden (log has precedence), allow showing open scenario config */
             openScenarioID !== null ?
-              <HelmetScenario
+              <Scenario
                 projectPath={projectPath}  
                 scenario={scenarios.find((s) => s.id === openScenarioID)}
                 updateScenario={_updateScenario}

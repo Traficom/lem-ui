@@ -1,4 +1,4 @@
-# Helmet UI - Dokumentaatio
+# VLEM UI - Dokumentaatio
  
-Lem projekti löytyy sivustolta:
+VLEM projekti löytyy sivustolta:
 [https://github.com/Traficom/lem-model-system](https://github.com/Traficom/lem-model-system)

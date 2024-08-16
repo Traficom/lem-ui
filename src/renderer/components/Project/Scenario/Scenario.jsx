@@ -4,7 +4,7 @@ import _ from 'lodash';
 const { dialog } = require('@electron/remote');
 const classNames = require('classnames');
 
-const HelmetScenario = ({ projectPath, scenario, updateScenario, closeScenario, existingOtherNames, inheritedGlobalProjectSettings }) => {
+const Scenario = ({ projectPath, scenario, updateScenario, closeScenario, existingOtherNames, inheritedGlobalProjectSettings }) => {
 
   const longDistDemandForecastCalc = "calc";
   const [goodsTransportFreightMatrixSource, setGoodsTransportFreightMatrixSource] = useState("base");
@@ -322,7 +322,7 @@ const HelmetScenario = ({ projectPath, scenario, updateScenario, closeScenario, 
           <h4 className="inline-element">Skenaariokohtaiset yliajot</h4> <div onClick={() => setShowOverrides(!showOverrides)} className="override-dropdown-icon inline-block-element"> {showOverrides ? <ArrowUp /> : <ArrowDown />} </div>
           {showOverrides &&
             <div>
-              {/* File path to EMME project reference-file (generally same in all scenarios of a given HELMET project) */}
+              {/* File path to EMME project reference-file (generally same in all scenarios of a given VLEM project) */}
               <div className="Scenario__section">
                 <label className="Scenario__pseudo-label Scenario__pseudo-label--inline project-override-setting">
                   <span className="inline-element override-setting">Emme-projekti</span>

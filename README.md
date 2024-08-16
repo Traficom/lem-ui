@@ -1,8 +1,8 @@
-# Lem UI
+# VLEM UI
 
 ![master](https://github.com/Traficom/lem-ui)
 
-Lem UI is a desktop user interface for [Model System](https://github.com/Traficom/lem-model-system). 
+VLEM UI is a desktop user interface for [Model System](https://github.com/Traficom/lem-model-system). 
  If you wish to develop the UI, continue below.
 
 ## Development requirements
