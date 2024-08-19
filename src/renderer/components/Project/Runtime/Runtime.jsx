@@ -6,7 +6,7 @@ const Runtime = ({
   setOpenScenarioID,
   reloadScenarios,
   handleClickScenarioToActive, handleClickNewScenario,
-  handleClickStartStop, logArgs, duplicateScenario, openCreateEmmeProject, addNewSetting
+  handleClickStartStop, logArgs, duplicateScenario, handleClickCreateSubScenario, openCreateEmmeProject, addNewSetting
 }) => {
 
   const visibleTooltipProperties = [
@@ -225,6 +225,7 @@ const Runtime = ({
                     scenarioIDsToRun={scenarioIDsToRun}
                     handleClickScenarioToActive={handleClickScenarioToActive}
                     duplicateScenario={duplicateScenario}
+                    handleClickCreateSubScenario={handleClickCreateSubScenario}
                     setOpenScenarioID={setOpenScenarioID}
                     deleteScenario={deleteScenario}
                     tooltipContent={tooltipContent}

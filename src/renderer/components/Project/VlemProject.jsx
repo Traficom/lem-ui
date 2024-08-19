@@ -16,6 +16,7 @@ const VlemProject = ({
   // VLEM Project -specific settings
   const [scenarios, setScenarios] = useState([]); // Scenarios under currently selected Project
   const [openScenarioID, setOpenScenarioID] = useState(null); // currently open Scenario configuration
+  const [subScenarioEdit, setSubScenarioEdit] = useState(null); // currently open SubScenario configuration
 
   // Runtime controls & -logging
   const [scenarioIDsToRun, setScenarioIDsToRun] = useState([]); // selected active scenarios ready to run sequentially
@@ -113,6 +114,7 @@ const VlemProject = ({
     setScenarios(decoratedFoundScenarios);
     // Reset state of project related properties
     setOpenScenarioID(null);
+    setSubScenarioEdit(null);
     setScenarioIDsToRun([]);
     setRunningScenarioID(null);
     setRunningScenarioIDsQueued([]);
@@ -154,6 +156,7 @@ const VlemProject = ({
       end_assignment_only: false,
       iterations: 15,
       last_run: null,
+      subScenarios: [],
       overriddenProjectSettings: {
         emmeProjectPath: null,
         emmePythonPath: null,
@@ -220,6 +223,71 @@ const VlemProject = ({
     setScenarios(scenarios.concat(duplicatedScenario));
     configStores.current[duplicatedScenario.id] = new Store({cwd: projectPath, name: duplicatedScenario.name});
     configStores.current[duplicatedScenario.id].set(duplicatedScenario);
+  }
+
+  const handleClickCreateSubScenario = (parentScenarioId) => {
+    var parentScenario = scenarios.find((s) => s.id === parentScenarioId);
+    const newSubScenarioEdit = {
+      id: null,
+      parentScenarioId: parentScenarioId,
+      name: "",
+      emmeScenarioNumber: 1,
+      parentScenarioName: parentScenario.name
+    }
+    setSubScenarioEdit(newSubScenarioEdit);
+  }
+
+  const saveSubScenario = () => {
+    if(!subScenarioEdit){
+      alert('Virhe aliskenaarion lisäämisessä.');
+      return;
+    }
+
+    var parentScenario = scenarios.find((s) => s.id === subScenarioEdit.parentScenarioId);
+    if(!parentScenario){
+      alert('Virhe, aliskenaariota yritetään lisätä skenaariolle, jota ei löydy.');
+      return;
+    }
+    if(!parentScenario.subScenarios){
+      parentScenario.subScenarios = [];
+    }
+    if(subScenarioEdit.id
+      && parentScenario.subScenarios.length > 0
+      && parentScenario.subScenarios.find((s) => s.id === subScenarioEdit.id)){
+        updateSubScenario(parentScenario);
+      }else{
+        saveNewSubScenario(parentScenario);
+      }
+  }
+
+  const cancelEditingSubScenario = () => {
+    setSubScenarioEdit(null);
+  }
+
+  const handleChangeSubScenario = (subScenarioEdit) => {
+    setSubScenarioEdit({...subScenarioEdit});
+  }
+
+  const updateSubScenario = (parentScenario) => {
+    const index = parentScenario.subScenarios.map(s => s.id).indexOf(setting.id);
+    const newSubScenarios = [...parentScenario.subScenarios];
+    newSubScenarios[index].name = `${subScenarioEdit.name}`;
+    newSubScenarios[index].emmeScenarioNumber = `${subScenarioEdit.emmeScenarioNumber}`;
+    parentScenario.subScenarios = [...newSubScenarios];
+    _updateScenario(parentScenario);
+  }
+
+
+  const saveNewSubScenario = (parentScenario) => {
+    const newId = uuidv4();
+    const newSubScenario = {
+      id: newId,
+      parentScenarioId: `${subScenarioEdit.parentScenarioId}`,
+      name: `${subScenarioEdit.name}`,
+      emmeScenarioNumber: `${subScenarioEdit.emmeScenarioNumber}`,
+    }
+    parentScenario.subScenarios = [...parentScenario.subScenarios, newSubScenario]
+    _updateScenario(parentScenario);
   }
 
   const _runAllActiveScenarios = (activeScenarioIDs) => {
@@ -416,8 +484,16 @@ const VlemProject = ({
   return (
     <div className="Project">
 
-      {/* Panel for primary view and controls */}
+      {/* Panel for views and controls */}
       <div className="Project__runtime">
+      {(!runningScenarioID && !isLogOpened && !openScenarioID && subScenarioEdit != null) &&
+          <SubScenario
+            subScenarioEdit={subScenarioEdit}
+            handleChange={handleChangeSubScenario}
+            handleSave={saveSubScenario}
+            handleCancel={cancelEditingSubScenario}
+          />
+        }
         <Runtime
           projectPath={projectPath}
           resultsPath={resultsPath}
@@ -427,12 +503,13 @@ const VlemProject = ({
           runningScenarioID={runningScenarioID}
           openScenarioID={openScenarioID}
           setOpenScenarioID={setOpenScenarioID}
-          deleteScenario={(scenario) => {_deleteScenario(scenario)}}
+          deleteScenario={(scenario) => { _deleteScenario(scenario) }}
           handleClickScenarioToActive={_handleClickScenarioToActive}
           handleClickNewScenario={_handleClickNewScenario}
           handleClickStartStop={_handleClickStartStop}
           logArgs={logArgs}
           duplicateScenario={duplicateScenario}
+          handleClickCreateSubScenario={handleClickCreateSubScenario}
           openCreateEmmeProject={openCreateEmmeProject}
           addNewSetting={addNewSetting}
         />
@@ -444,12 +521,12 @@ const VlemProject = ({
         />
       </div>
 
-      {/* Panel for secondary view(s) and controls */}
+      {/* Panel for view(s) and controls in right side layout*/}
       <div className="Project__selected-details">
         {/* show log if, either scenario is running, or log is manually opened (outside running) */
           (runningScenarioID || isLogOpened) ?
             <RunLog
-              entries={logContents.map((entry, i) => {return {...entry, id: i};})}
+              entries={logContents.map((entry, i) => { return { ...entry, id: i }; })}
               isScenarioRunning={runningScenarioID}
               closeRunLog={() => setLogOpened(false)}
             />
@@ -457,7 +534,7 @@ const VlemProject = ({
             /* while no scenarios running, and log hidden (log has precedence), allow showing open scenario config */
             openScenarioID !== null ?
               <Scenario
-                projectPath={projectPath}  
+                projectPath={projectPath}
                 scenario={scenarios.find((s) => s.id === openScenarioID)}
                 updateScenario={_updateScenario}
                 closeScenario={() => setOpenScenarioID(null)}
