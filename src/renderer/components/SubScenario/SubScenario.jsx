@@ -54,7 +54,7 @@ const SubScenario = ({
                         className="SubScenario_btn"
                         onClick={(e) => handleSave()}
                     >
-                        <span>Luo aliskenaario</span>
+                        <span>Tallenna</span>
                     </button>
                     <button
                         className="SubScenario_btn"

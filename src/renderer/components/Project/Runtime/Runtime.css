@@ -1,5 +1,3 @@
-.Runtime { 
-}
 
 .Runtime__helmet-project-controls {
     padding: 20px;
@@ -11,9 +9,6 @@
     font-size: 24px;
     line-height: 28px;
     letter-spacing: -0.02em;
-}
-
-.Runtime__project-path {
 }
 
 .Runtime__button {
@@ -55,6 +50,14 @@
 .Runtime__scenario-name {
     display: inline-block;
     min-width: 150px;
+    padding-right: 15px !important;
+    overflow: hidden;
+}
+
+.Runtime__sub_scenario-name {
+    display: inline-block;
+    min-width: 150px;
+    padding-left: 45px !important;
     padding-right: 15px !important;
     overflow: hidden;
 }
@@ -132,16 +135,11 @@
     padding: 20px;
 }
 
-.Runtime__start-stop-description {
-}
-
 .Runtime__start-stop-scenarios {
     color: #00985F;
     font-weight: bold;
 }
 
-.Runtime__start-stop-btn {
-}
 
 .Runtime__scenario-clone {
   margin-right: 20px;

@@ -20,6 +20,7 @@ const VlemProject = ({
 
   // Runtime controls & -logging
   const [scenarioIDsToRun, setScenarioIDsToRun] = useState([]); // selected active scenarios ready to run sequentially
+  const [subScenarioIDsToRun, setSubScenarioIDsToRun] = useState([]); // selected active sub scenarios ready to run sequentially
   const [runningScenarioID, setRunningScenarioID] = useState(null); // currently running Scenario, indicates if running
   const [runningScenarioIDsQueued, setRunningScenarioIDsQueued] = useState([]); // queued ("remaining") Scenarios
   const [logContents, setLogContents] = useState([]); // project runtime log-contents
@@ -34,6 +35,10 @@ const VlemProject = ({
   const configStores = useRef({});
 
   const _handleClickScenarioToActive = (scenario) => {
+    scenario.parentScenarioId ? toggleSubScenarioRun(scenario): toggleScenarioRun(scenario);
+  };
+
+  const toggleScenarioRun = (scenario) => {
     if(scenarioIDsToRun.includes(scenario.id)) {
       // If scenario exists in scenarios to run, remove it
       setScenarioIDsToRun(scenarioIDsToRun.filter((id) => id !== scenario.id))
@@ -41,7 +46,17 @@ const VlemProject = ({
       // Else add it
       setScenarioIDsToRun(scenarioIDsToRun.concat(scenario.id));
     }
-  };
+  }
+
+  const toggleSubScenarioRun = (subScenario) => {
+    if(subScenarioIDsToRun.includes(subScenario.id)) {
+      // If scenario exists in scenarios to run, remove it
+      setSubScenarioIDsToRun(subScenarioIDsToRun.filter((id) => id !== subScenario.id))
+    } else {
+      // Else add it
+      setSubScenarioIDsToRun(subScenarioIDsToRun.concat(subScenario.id));
+    }
+  }
 
   const _handleClickNewScenario = () => {
     const promptCreation = (previousError) => {
@@ -237,6 +252,60 @@ const VlemProject = ({
     setSubScenarioEdit(newSubScenarioEdit);
   }
 
+  const handleClickModifySubScenario = (subScenario) => {
+    var parentScenario = scenarios.find((s) => s.id === subScenario.parentScenarioId);
+    if(!parentScenario){
+      // Should not occur
+      alert('Virhe, aliskenaarion pääskenaariota ei löydy.');
+      return;
+    }
+
+    const newSubScenarioEdit = {
+      id: subScenario.id,
+      parentScenarioId: subScenario.parentScenarioId,
+      name: subScenario.name,
+      emmeScenarioNumber: subScenario.emmeScenarioNumber,
+      parentScenarioName: parentScenario.name
+    }
+    setSubScenarioEdit(newSubScenarioEdit);
+  }
+
+  const deleteSubScenario = (subScenario) => {
+    if (confirm(`Oletko varma aliskenaarion ${subScenario.name} poistosta?`)) {
+      var parentScenario = scenarios.find((s) => s.id === subScenario.parentScenarioId);
+      if(!parentScenario || !parentScenario.subScenarios){
+        // Should not occur
+        alert('Virhe, aliskenaarion pääskenaariota ei löydy, tai sille ei ole asetettu aliskenaarioita.');
+        return;
+      }
+      const filteredSubScenarios = parentScenario.subScenarios.filter(s => s.id != subScenario.id);
+      parentScenario.subScenarios = [...filteredSubScenarios];
+      _updateScenario(parentScenario);
+      window.location.reload();  // Vex-js dialog input gets stuck otherwise
+    }
+  };
+
+  const duplicateSubScenario = (subScenario) => {
+      var parentScenario = scenarios.find((s) => s.id === subScenario.parentScenarioId);
+      if(!parentScenario){
+        // Should not occur
+        alert('Virhe, aliskenaarion pääskenaariota ei löydy.');
+        return;
+      }
+
+      const newId = uuidv4();
+      const newSubScenario = {
+        id: newId,
+        parentScenarioId: `${subScenario.parentScenarioId}`,
+        name: `${subScenario.name}`,
+        emmeScenarioNumber: `${subScenario.emmeScenarioNumber}`,
+        lastRun: "",
+      }
+      parentScenario.subScenarios = [...parentScenario.subScenarios, newSubScenario]
+      _updateScenario(parentScenario);
+  };
+
+
   const saveSubScenario = () => {
     if(!subScenarioEdit){
       alert('Virhe aliskenaarion lisäämisessä.');
@@ -258,6 +327,8 @@ const VlemProject = ({
       }else{
         saveNewSubScenario(parentScenario);
       }
+
+      setSubScenarioEdit(null);
   }
 
   const cancelEditingSubScenario = () => {
@@ -269,7 +340,7 @@ const VlemProject = ({
   }
 
   const updateSubScenario = (parentScenario) => {
-    const index = parentScenario.subScenarios.map(s => s.id).indexOf(setting.id);
+    const index = parentScenario.subScenarios.map(s => s.id).indexOf(subScenarioEdit.id);
     const newSubScenarios = [...parentScenario.subScenarios];
     newSubScenarios[index].name = `${subScenarioEdit.name}`;
     newSubScenarios[index].emmeScenarioNumber = `${subScenarioEdit.emmeScenarioNumber}`;
@@ -285,6 +356,7 @@ const VlemProject = ({
       parentScenarioId: `${subScenarioEdit.parentScenarioId}`,
       name: `${subScenarioEdit.name}`,
       emmeScenarioNumber: `${subScenarioEdit.emmeScenarioNumber}`,
+      lastRun: "",
     }
     parentScenario.subScenarios = [...parentScenario.subScenarios, newSubScenario]
     _updateScenario(parentScenario);
@@ -499,7 +571,7 @@ const VlemProject = ({
           resultsPath={resultsPath}
           reloadScenarios={() => _loadProjectScenarios(projectPath)}
           scenarios={scenarios}
-          scenarioIDsToRun={scenarioIDsToRun}
+          scenarioIDsToRun={[...scenarioIDsToRun, ...subScenarioIDsToRun]}
           runningScenarioID={runningScenarioID}
           openScenarioID={openScenarioID}
           setOpenScenarioID={setOpenScenarioID}
@@ -512,6 +584,9 @@ const VlemProject = ({
           handleClickCreateSubScenario={handleClickCreateSubScenario}
           openCreateEmmeProject={openCreateEmmeProject}
           addNewSetting={addNewSetting}
+          duplicateSubScenario={duplicateSubScenario}
+          deleteSubScenario={deleteSubScenario}
+          modifySubScenario={handleClickModifySubScenario}
         />
         <CostBenefitAnalysis
           resultsPath={resultsPath}

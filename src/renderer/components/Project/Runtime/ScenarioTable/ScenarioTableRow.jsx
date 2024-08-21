@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react"
 import { Tooltip } from 'react-tooltip'
 import { renderToStaticMarkup } from 'react-dom/server';
 const { shell  } = require('electron');
@@ -16,6 +16,9 @@ const ScenarioTableRow = ({
   deleteScenario,
   tooltipContent,
   resultsPath,
+  duplicateSubScenario,
+  modifySubScenario,
+  deleteSubScenario,
 }) => {
   const scenarioResultsPath = isOverriddenProjectPathSet(scenarioData) ?
     scenarioData.overriddenProjectSettings.resultsPath : resultsPath + "\\" + scenarioData.name;
@@ -41,8 +44,8 @@ const ScenarioTableRow = ({
       scenarioData.overriddenProjectSettings.resultsPath !== null;
   }
 
-
   return (
+    <Fragment>
     <tr id="my-tooltip-anchor" key={"tooltip_wrapper_" + scenarioData.id}
       data-tooltip-id="scenario-tooltip"
       data-tooltip-html={renderToStaticMarkup(tooltipContent(scenarioData))}
@@ -120,5 +123,23 @@ const ScenarioTableRow = ({
         ></div>
       </td>
     </tr>
+      {scenarioData.subScenarios && scenarioData.subScenarios.map((subScenario) => (
+        <SubScenarioRow
+          key={"SubRow_" + subScenario.id}
+          scenarioData={scenarioData}
+          subScenario={subScenario}
+          runningScenarioID={runningScenarioID}
+          openScenarioID={openScenarioID}
+          scenarioIDsToRun={scenarioIDsToRun}
+          handleClickScenarioToActive={handleClickScenarioToActive}
+          duplicateScenario={duplicateScenario}
+          deleteScenario={deleteScenario}
+          tooltipContent={tooltipContent}
+          resultsPath={resultsPath}
+          duplicateSubScenario={duplicateSubScenario}
+          deleteSubScenario={deleteSubScenario}
+          modifySubScenario={modifySubScenario} />
+      ))}
+    </Fragment>
   );
 }

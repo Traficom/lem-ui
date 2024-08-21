@@ -6,25 +6,9 @@ const Runtime = ({
   setOpenScenarioID,
   reloadScenarios,
   handleClickScenarioToActive, handleClickNewScenario,
-  handleClickStartStop, logArgs, duplicateScenario, handleClickCreateSubScenario, openCreateEmmeProject, addNewSetting
+  handleClickStartStop, logArgs, duplicateScenario, handleClickCreateSubScenario, openCreateEmmeProject, addNewSetting,
+  duplicateSubScenario, modifySubScenario, deleteSubScenario,
 }) => {
-
-  const visibleTooltipProperties = [
-    'first_scenario_id',
-    'first_matrix_id',
-    'forecast_data_folder_path',
-    'save_matrices_in_emme',
-    'end_assignment_only',
-    'delete_strategy_files',
-    'id',
-    'name',
-    'submodel',
-    'iterations',
-    'separate_emme_scenarios',
-    'long_dist_demand_forecast',
-    'stored_speed_assignment',
-    'overriddenProjectSettings'
-];
 
   const areGlobalSettingsOverridden = (settings) => {
     return _.filter(settings, settingValue => settingValue != null).length > 0;
@@ -172,48 +156,9 @@ const Runtime = ({
             <tbody key="scenario_table_body">
               {scenarios.map(s => {
                 // Component for the tooltip showing scenario settings
-                const tooltipContent = scenario => {
-                  const filteredScenarioSettings = _.pickBy(
-                    scenario,
-                    (settingValue, settingKey) => {
-                      return visibleTooltipProperties.includes(settingKey);
-                    }
-                  );
+                const tooltipContent = (scenario, subScenario) => {
                   return (
-                    <div key={"tooltip_body_" + scenario.id}>
-                      {Object.entries(filteredScenarioSettings).map(property => {
-                        if (property[0] === "overriddenProjectSettings") {
-                          return areGlobalSettingsOverridden(property[1]) ? (
-                            <div key={"overriden_settings_" + scenario.id}>
-                              <h3>Overridden settings:</h3>
-                              {Object.entries(property[1]).map(overrideSetting => {
-                                return overrideSetting[1] != null ? (
-                                  <p key={property}
-                                    style={{
-                                      marginLeft: "1rem",
-                                      overflow: "hidden",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {getPropertyForDisplayString(overrideSetting)}
-                                  </p>
-                                ) : (
-                                  ""
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            ""
-                          ); // Return empty if global settings are all default
-                        }
-
-                        return (
-                          <p key={property}>
-                            {getPropertyForDisplayString(property)}
-                          </p>
-                        );
-                      })}
-                    </div>
+                    <ScenarioTooltip scenario={scenario} subScenario={subScenario}/>
                   );
                 };
                 return (
@@ -229,7 +174,10 @@ const Runtime = ({
                     setOpenScenarioID={setOpenScenarioID}
                     deleteScenario={deleteScenario}
                     tooltipContent={tooltipContent}
-                    resultsPath={resultsPath? resultsPath: projectPath}
+                    resultsPath={resultsPath ? resultsPath : projectPath}
+                    duplicateSubScenario={duplicateSubScenario}
+                    deleteSubScenario={deleteSubScenario}
+                    modifySubScenario={modifySubScenario}
                   />
                 );
 
