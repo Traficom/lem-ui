@@ -10,27 +10,34 @@ const Runtime = ({
   duplicateSubScenario, modifySubScenario, deleteSubScenario,
 }) => {
 
-  const areGlobalSettingsOverridden = (settings) => {
-    return _.filter(settings, settingValue => settingValue != null).length > 0;
-  }
+  function resolveRunnableScenarios(scenarioIDsToRun, scenarios) {
 
-  const getPropertyForDisplayString = (settingProperty) => {
-    const [key, value] = settingProperty
-
-    if(typeof value === 'string') {
-      const trimmedStringValue = value.length > 30 ? "..." + value.substring(value.length-30) : value;
-      return `${key} : ${trimmedStringValue}`
+    if (!scenarioIDsToRun || scenarioIDsToRun.length == 0) {
+      return [];
     }
 
-    return `${key} : ${value}`
-  };
+    let runnableScenarios = [];
+    scenarios.forEach(scenario => {
+      if (scenarioIDsToRun.includes(scenario.id) && !runnableScenarios.find(s => s.id == scenario.id)) {
+        runnableScenarios.push(scenario);
+      }
+      if (scenario.subScenarios && scenario.subScenarios.length > 0) {
+        scenario.subScenarios.forEach(subSenario => {
+          if (scenarioIDsToRun.includes(subSenario.id) && !runnableScenarios.find(s => s.id == subSenario.id)) {
+            runnableScenarios.push(subSenario);
+          }
+        })
+      }
+    });
+    return runnableScenarios;
+  }
 
   const parseDemandConvergenceLogMessage = (message) => {
     const stringMsgArray = message.split(' ');
     return { iteration: stringMsgArray[stringMsgArray.length - 3], value: stringMsgArray[stringMsgArray.length - 1]};
   };
 
-  const activeScenarios = scenarios.filter((scenario) => scenarioIDsToRun.includes(scenario.id))
+  const activeScenarios = resolveRunnableScenarios(scenarioIDsToRun, scenarios);
   const runningScenario = activeScenarios.filter((scenario) => scenario.id === runningScenarioID);
 
   const getResultsPathFromLogfilePath = (logfilePath) => {
@@ -198,23 +205,7 @@ const Runtime = ({
 
       <div className="Runtime__start-stop-controls">
         <div className="Runtime__heading">Ajettavana</div>
-        <p className="Runtime__start-stop-description">
-          {scenarioIDsToRun.length ? (
-            <span className="Runtime__start-stop-scenarios">
-              {scenarios
-                .filter(s => scenarioIDsToRun.includes(s.id))
-                .sort(
-                  (a, b) =>
-                    scenarioIDsToRun.indexOf(a.id) -
-                    scenarioIDsToRun.indexOf(b.id)
-                )
-                .map(s => s.name)
-                .join(", ")}
-            </span>
-          ) : (
-            <span>Ei ajettavaksi valittuja skenaarioita</span>
-          )}
-        </p>
+        <ScenariosToRun scenariosToRun={activeScenarios} />
         <button
           className="Runtime__start-stop-btn"
           disabled={scenarioIDsToRun.length === 0}

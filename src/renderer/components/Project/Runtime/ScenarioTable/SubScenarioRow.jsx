@@ -1,4 +1,4 @@
-import React, { Fragment } from "react"
+import React from "react"
 import { Tooltip } from 'react-tooltip'
 import { renderToStaticMarkup } from 'react-dom/server';
 const { shell } = require('electron');
@@ -16,12 +16,23 @@ const SubScenarioRow = ({
     deleteSubScenario,
     tooltipContent,
     parentScenarioResultsPath,
+    parentScenarioIsRunOrSelectedForRunning
 }) => {
 
-    const scenarioLogFilePath = parentScenarioResultsPath + "\\" + subScenario.name + ".log";
+    const scenarioLogFilePath = parentScenarioResultsPath + "\\" + subScenario.name + "\\" + subScenario.name + ".log";
 
     const resultsExist = fs.existsSync(parentScenarioResultsPath);
     const scenarioLogExists = fs.existsSync(scenarioLogFilePath);
+
+    const openResultsFolder = () => {
+      shell.openPath(parentScenarioResultsPath);
+    }
+  
+    const openLogFile = () => {
+      if(scenarioLogExists){
+        shell.openPath(scenarioLogFilePath);
+      }
+    }
     return (
         <tr id="my-tooltip-anchor" key={"tooltip_wrapper_" + subScenario.id}
             data-tooltip-id="scenario-tooltip"
@@ -40,7 +51,7 @@ const SubScenarioRow = ({
                     }
                     type="checkbox"
                     checked={scenarioIDsToRun.includes(subScenario.id)}
-                    disabled={runningScenarioID == subScenario.id}
+                    disabled={!parentScenarioIsRunOrSelectedForRunning || runningScenarioID == subScenario.id}
                     onChange={e => handleClickScenarioToActive(subScenario)}
                 />
             </td>
@@ -53,10 +64,12 @@ const SubScenarioRow = ({
               </span>
             </div>
           </td>
-          <td className="Table_space_after">{resultsExist && subScenario.last_run && <span className="Runtime__scenario-name">
-            {subScenario.last_run}
+          <td className="Table_space_after">{resultsExist && subScenario.lastRun && <span className="Runtime__scenario-name">
+            {subScenario.lastRun}
           </span>} </td>
-          <td>{resultsExist && scenarioLogExists && <div onClick={e => openLogFile()}>{scenarioData.run_success? <Check /> : <ErrorCircle /> }</div>}</td>
+          <td>{resultsExist && scenarioLogExists && (
+                <div onClick={e => openLogFile()}>{subScenario.runSuccess? <Check /> : <ErrorCircle /> }</div>
+            )}</td>
           <td className="Table_space_after">
             {resultsExist && <div
               className={"Runtime__scenario-open-folder"}
