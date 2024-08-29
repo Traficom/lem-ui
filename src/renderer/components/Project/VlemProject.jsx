@@ -26,6 +26,7 @@ const VlemProject = ({
   const [isLogOpened, setLogOpened] = useState(false); // whether runtime log is open
   const [logArgs, setLogArgs] = useState({});
   const [finishedScenarioInfo, setFinishedScenarioInfo] = useState(undefined);
+  const [scenarioNames, setScenarioNames] = useState([]); // all scenario and subScenario names
 
   // Cost-Benefit Analysis (CBA) controls
   const [cbaOptions, setCbaOptions] = useState({});
@@ -120,6 +121,7 @@ const VlemProject = ({
     setRunningScenarioIDsQueued([]);
     setLogContents([]);
     setLogOpened(false);
+    resolveScenarioNames(decoratedFoundScenarios);
   };
 
   const addRunStatusProperties = (scenario) => {
@@ -179,11 +181,13 @@ const VlemProject = ({
       }
     };
     // Create the new scenario in "scenarios" array first
-    setScenarios(scenarios.concat(newScenario));
+    const tempScenarios = scenarios.concat(newScenario);
+    setScenarios(tempScenarios);
     configStores.current[newId] = new Store({cwd: projectPath, name: newScenarioName});
     configStores.current[newId].set(newScenario);
     // Then set scenario as open by id (Why id? Having open_scenario as reference causes sub-elements to be bugged because of different object reference)
     setOpenScenarioID(newId);
+    resolveScenarioNames(tempScenarios);
   };
 
   const _updateScenario = (newValues) => {
@@ -204,6 +208,7 @@ const VlemProject = ({
     }
     // And persist all changes in file
     configStores.current[newValues.id].set(newValues);
+    resolveScenarioNames(scenarios);
   };
 
   const _deleteScenario = (scenario) => {
@@ -217,6 +222,7 @@ const VlemProject = ({
           setScenarios(scenarios.filter((s) => s.id !== scenario.id));
           fs.unlinkSync(path.join(projectPath, `${scenario.name}.json`));
           window.location.reload();  // Vex-js dialog input gets stuck otherwise
+          resolveScenarioNames(scenarios);
         }
       }
     })
@@ -227,7 +233,9 @@ const VlemProject = ({
     //Change ID and rename the scenario to avoid conflicts.
     duplicatedScenario.id = uuidv4();
     duplicatedScenario.name += `(${duplicatedScenario.id.split('-')[0]})`;
-    setScenarios(scenarios.concat(duplicatedScenario));
+    const tempScenarios = scenarios.concat(duplicatedScenario);
+    setScenarios(tempScenarios);
+    resolveScenarioNames(tempScenarios);
     configStores.current[duplicatedScenario.id] = new Store({cwd: projectPath, name: duplicatedScenario.name});
     configStores.current[duplicatedScenario.id].set(duplicatedScenario);
   }
@@ -296,7 +304,7 @@ const VlemProject = ({
       const newSubScenario = {
         id: newId,
         parentScenarioId: `${subScenario.parentScenarioId}`,
-        name: `${subScenario.name}`,
+        name: `${subScenario.name + "_2"}`,
         emmeScenarioNumber: `${subScenario.emmeScenarioNumber}`,
         lastRun: "",
         runSuccess: false,
@@ -350,6 +358,20 @@ const VlemProject = ({
   const handleChangeSubScenario = (subScenarioEdit) => {
     setSubScenarioEdit({...subScenarioEdit});
   }
+  
+  const resolveScenarioNames = (scenarios) => {
+    const tempScenarioNames = [];
+    scenarios.forEach(scenario => {
+      tempScenarioNames.push({name: scenario.name, id: scenario.id});
+
+      if (scenario.subScenarios && scenario.subScenarios.length > 0) {
+        scenario.subScenarios.forEach(subSenario => {
+          tempScenarioNames.push({name: subSenario.name, id: subSenario.id});
+        })
+      }
+    });
+    setScenarioNames(tempScenarioNames);
+  }
 
   const updateSubScenario = (parentScenario) => {
     const index = parentScenario.subScenarios.map(s => s.id).indexOf(subScenarioEdit.id);
@@ -379,7 +401,7 @@ const VlemProject = ({
   
   function resolveRunnableScenarios(scenarioIDsToRun, scenarios) {
 
-    if (!scenarioIDsToRun || scenarioIDsToRun.length == 0) {
+    if (!scenarioIDsToRun || scenarioIDsToRun.length == 0 || !scenarios || scenarios.length == 0) {
       return [];
     }
 
@@ -622,7 +644,12 @@ const VlemProject = ({
         }
       }
       configStores.current[mainScenarioId].set(updatedScenario);
-      setScenarios(scenarios.map((s) => (s.id === finishedScenarioInfo.id ? { ...updatedScenario } : s)));
+      const mainScenarioIndexInScenarios = scenarios.map(s => s.id).indexOf(mainScenarioId);
+      setScenarios(oldState => {
+        const newScenarios = [...oldState];
+        newScenarios[mainScenarioIndexInScenarios] = { ...updatedScenario };
+        return newScenarios;
+      })
       setFinishedScenarioInfo(undefined);
     }
   }, [finishedScenarioInfo]);
@@ -638,6 +665,7 @@ const VlemProject = ({
             handleChange={handleChangeSubScenario}
             handleSave={saveSubScenario}
             handleCancel={cancelEditingSubScenario}
+            scenarioNames={scenarioNames}
           />
         }
         <Runtime

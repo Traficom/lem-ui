@@ -20,9 +20,12 @@ const ScenarioTableRow = ({
   modifySubScenario,
   deleteSubScenario,
 }) => {
+
+  const scenarioResultsPath = isOverriddenProjectPathSet(scenarioData) ?
+    scenarioData.overriddenProjectSettings.resultsPath : resultsPath + "\\" + scenarioData.name;
+
   const scenarioResultsBasePath = isOverriddenProjectPathSet(scenarioData) ?
     scenarioData.overriddenProjectSettings.resultsPath : resultsPath;
-  const scenarioResultsPath = scenarioResultsBasePath + "\\" + scenarioData.name;
 
   const scenarioLogFilePath = scenarioResultsPath + "\\" + scenarioData.name + ".log";
 

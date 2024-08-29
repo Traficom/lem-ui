@@ -10,9 +10,10 @@ const Runtime = ({
   duplicateSubScenario, modifySubScenario, deleteSubScenario,
 }) => {
 
+  // TODO: tämä sama tehdään jo VlemProject-tiedostossa - voisi välittää sieltä
   function resolveRunnableScenarios(scenarioIDsToRun, scenarios) {
 
-    if (!scenarioIDsToRun || scenarioIDsToRun.length == 0) {
+    if (!scenarioIDsToRun || scenarioIDsToRun.length == 0 || !scenarios || scenarios.length == 0) {
       return [];
     }
 

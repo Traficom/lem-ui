@@ -96,6 +96,12 @@
     display: inline;
 }
 
+.SubScenario_buttons :disabled{
+    background-color: var(--medium-grey);
+    border-color: var(--dark-grey);
+}
+
+
 .SubScenario_dialog-controls {
     display: block;
     position: absolute;

@@ -5,8 +5,21 @@ const SubScenario = ({
     handleChange,
     handleSave,
     handleCancel,
+    scenarioNames,
 }) => {
+
+    function checkName(newName){
+      return !newName || newName == 0 || 
+      scenarioNames.find((existingName) => existingName.name == newName && existingName.id != subScenarioEdit.id)
+    }
+    const [nameIsInValid, setNameIsInValid] = useState(checkName(subScenarioEdit.name)); // all scenario and subScenario names 
     const namePlaceHolder = subScenarioEdit.parentScenarioName + "_SUB";
+
+    function handleNameChange(val){
+        const newName = cutUnvantedCharacters(val);
+        setNameIsInValid(checkName(newName));
+        handleChange({ ...subScenarioEdit, name: newName });
+    }
 
     return (
         <div className="SubScenario">
@@ -28,11 +41,10 @@ const SubScenario = ({
                     placeholder={namePlaceHolder}
                     value={subScenarioEdit.name}
                     onChange={(e) => {
-                        const newName = cutUnvantedCharacters(e.target.value);
-                        handleChange({ ...subScenarioEdit, name: newName });
+                        handleNameChange(e.target.value);
                     }}
                 />
-                
+                {nameIsInValid ? <span className="Scenario__name-error">Tarkista aliskenaarion nimi. Nimi ei voi olla tyhjä tai sama kuin jo olemassa oleva skenaarionimi.</span> : ""}
                 {/* Emme scenario number */}
                 <label className="SubScenario_label"
                     htmlFor="submodel">EMME-skenaarion numero</label>
@@ -52,7 +64,9 @@ const SubScenario = ({
                 <div className="SubScenario_buttons">
                     <button
                         className="SubScenario_btn"
-                        onClick={(e) => handleSave()}
+                        disabled={nameIsInValid}
+                        readOnly={nameIsInValid}
+                        onClick={(e) => {!nameIsInValid && handleSave()}}
                     >
                         <span>Tallenna</span>
                     </button>
