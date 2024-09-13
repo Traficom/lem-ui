@@ -7,38 +7,14 @@ const Runtime = ({
   reloadScenarios,
   handleClickScenarioToActive, handleClickNewScenario,
   handleClickStartStop, logArgs, duplicateScenario, handleClickCreateSubScenario, openCreateEmmeProject, addNewSetting,
-  duplicateSubScenario, modifySubScenario, deleteSubScenario,
+  duplicateSubScenario, modifySubScenario, deleteSubScenario, activeScenarios
 }) => {
-
-  // TODO: tämä sama tehdään jo VlemProject-tiedostossa - voisi välittää sieltä
-  function resolveRunnableScenarios(scenarioIDsToRun, scenarios) {
-
-    if (!scenarioIDsToRun || scenarioIDsToRun.length == 0 || !scenarios || scenarios.length == 0) {
-      return [];
-    }
-
-    let runnableScenarios = [];
-    scenarios.forEach(scenario => {
-      if (scenarioIDsToRun.includes(scenario.id) && !runnableScenarios.find(s => s.id == scenario.id)) {
-        runnableScenarios.push(scenario);
-      }
-      if (scenario.subScenarios && scenario.subScenarios.length > 0) {
-        scenario.subScenarios.forEach(subSenario => {
-          if (scenarioIDsToRun.includes(subSenario.id) && !runnableScenarios.find(s => s.id == subSenario.id)) {
-            runnableScenarios.push(subSenario);
-          }
-        })
-      }
-    });
-    return runnableScenarios;
-  }
 
   const parseDemandConvergenceLogMessage = (message) => {
     const stringMsgArray = message.split(' ');
     return { iteration: stringMsgArray[stringMsgArray.length - 3], value: stringMsgArray[stringMsgArray.length - 1]};
   };
 
-  const activeScenarios = resolveRunnableScenarios(scenarioIDsToRun, scenarios);
   const runningScenario = activeScenarios.filter((scenario) => scenario.id === runningScenarioID);
 
   const getResultsPathFromLogfilePath = (logfilePath) => {

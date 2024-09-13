@@ -37,7 +37,11 @@ const VlemProject = ({
   const _handleClickScenarioToActive = (scenario) => {
     if(scenarioIDsToRun.includes(scenario.id)) {
       // If scenario exists in scenarios to run, remove it
-      setScenarioIDsToRun(scenarioIDsToRun.filter((id) => id !== scenario.id))
+      let newScenarioIds = scenarioIDsToRun.filter((id) => id !== scenario.id);
+      if(scenario.subScenarios && ( !scenario.run_success || scenario.run_success == false ) && !scenario.last_run){
+        scenario.subScenarios.forEach(subScenario => newScenarioIds = newScenarioIds.filter((id) => id !== subScenario.id));
+      }
+      setScenarioIDsToRun(newScenarioIds);
     } else {
       // Else add it
       setScenarioIDsToRun(scenarioIDsToRun.concat(scenario.id));
@@ -483,6 +487,10 @@ const VlemProject = ({
     setRunningScenarioIDsQueued(activeScenarioIDs.slice(1));
     signalProjectRunning(true); // Let App-component know too
 
+    /**
+     *  projectName, emmeProjectPath, emmePythonPath, helmetScriptsPath, projectPath, basedataPath, resultsPath,
+        signalProjectRunning, settingsId, openCreateEmmeProject, addNewSetting
+     */
     ipcRenderer.send(
       'message-from-ui-to-run-scenarios',
       scenariosToRun.map((s) => {
@@ -492,21 +500,26 @@ const VlemProject = ({
         const name = subScenario? subScenario.name : scenario.name;
         const id = subScenario? subScenario.id : scenario.id;
         const first_scenario_id = subScenario? subScenario.emmeScenarioNumber : scenario.first_scenario_id;
+        const end_assignment_only = subScenario? true : scenario.end_assignment_only
 
-        const combinedEmmeProjectPath = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.emmeProjectPath, emmeProjectPath);
-        const emmeEntryPointFilePath = combinedEmmeProjectPath + `\\${projectName}\\${projectName}.emp`
+        const emme_project_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.emmeProjectPath, emmeProjectPath);
+        const emme_entry_point_file_path = emme_project_path + `\\${projectName}\\${projectName}.emp`
+        const scenario_results_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.resultsPath, resultsPath);
+        // when running subScenario, base data path is parents result path
+        const scenario_base_data_path = subScenario? scenario_results_path + `\\${scenario.name}\\`: determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.basedataPath, basedataPath);
         // Run parameters per each run (enrich with global settings' paths to EMME python & VLEM model system
         return {
           ...scenario,
           id: id,
           name: name,
           first_scenario_id: first_scenario_id,
-          emme_project_path: emmeEntryPointFilePath,
+          emme_project_path: emme_entry_point_file_path,
           emme_python_path:  determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.emmePythonPath, emmePythonPath),
           helmet_scripts_path: determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.helmetScriptsPath, helmetScriptsPath),
-          base_data_folder_path: determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.basedataPath, basedataPath),
-          results_data_folder_path: determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.resultsPath, resultsPath),
+          base_data_folder_path: scenario_base_data_path,
+          results_data_folder_path: scenario_results_path,
           log_level: 'DEBUG',
+          end_assignment_only: end_assignment_only,
         }
       })
     );
@@ -689,6 +702,7 @@ const VlemProject = ({
           duplicateSubScenario={duplicateSubScenario}
           deleteSubScenario={deleteSubScenario}
           modifySubScenario={handleClickModifySubScenario}
+          activeScenarios={scenariosToRun}
         />
         <CostBenefitAnalysis
           resultsPath={resultsPath}
