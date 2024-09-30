@@ -74,7 +74,7 @@ const Settings = ({
             </select>
           </div>
         </div>
-        {/* File path to EMME project reference-file (generally same in all scenarios of a given HELMET project) */}
+        {/* File path to EMME project reference-file (generally same in all scenarios of a given VLEM project) */}
         <div className="Settings__dialog-input-group">
           <span className="Settings__pseudo-label semi_bold">Emme-projekti</span>
           <label className="Settings__pseudo-file-select bg_plus" htmlFor="hidden-input-emme-project-path" title={settings.emme_project_path}>

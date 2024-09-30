@@ -486,7 +486,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
       }
     }
 
-    // If HELMET Scripts is the initial (un-set), download latest version and use that. Remember: state updates async so refer to existing.
+    // If Scripts is the initial (un-set), download latest version and use that. Remember: state updates async so refer to existing.
     if (!existingSelectedSettingId) {
       vex.dialog.confirm({
         message: 'Ladataanko model-system automaattisesti? (Vaatii internet-yhteyden)',
@@ -559,9 +559,9 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
         &nbsp;
         <a className="header-documentation-link" target="_blank" onClick={() => shell.openExternal("https://hsldevcom.github.io/helmet-docs/")}></a>
       </div>
-      {/* HELMET Project -specific content, including runtime- & per-scenario-settings */}
+      {/* VLEM Project -specific content, including runtime- & per-scenario-settings */}
       <div className="App__body">
-        <HelmetProject
+        <VlemProject
           projectName={settingInHandling.project_name}
           emmeProjectPath={settingInHandling.emme_project_path}
           emmePythonPath={settingInHandling.emme_python_path}

@@ -19,22 +19,27 @@
     <link rel="stylesheet" type="text/css" href="components/Loading.css">
     <script type="text/babel" src="components/LemError.jsx"></script>
     <link rel="stylesheet" type="text/css" href="components/LemError.css">
-    <script type="text/babel" src="components/HelmetProject/HelmetProject.jsx"></script>
-    <link rel="stylesheet" type="text/css" href="components/HelmetProject/HelmetProject.css">
-    <script type="text/babel" src="components/HelmetProject/HelmetScenario/HelmetScenario.jsx"></script>
-    <link rel="stylesheet" type="text/css" href="components/HelmetProject/HelmetScenario/HelmetScenario.css">
-    <script type="text/babel" src="components/HelmetProject/HelmetScenario/Submodels.js"></script>
-    <script type="text/babel" src="components/HelmetProject/Runtime/Runtime.jsx"></script>
-    <link rel="stylesheet" type="text/css" href="components/HelmetProject/Runtime/Runtime.css">
-    <script type="text/babel" src="components/HelmetProject/Runtime/ScenarioTable/ScenarioTableRow.jsx"></script>
-    <script type="text/babel" src="components/HelmetProject/Runtime/RunStatus/RunStatus.jsx"></script>
-    <link rel="stylesheet" type="text/css" href="components/HelmetProject/Runtime/RunStatus/RunStatus.css">
+    <script type="text/babel" src="components/Project/VlemProject.jsx"></script>
+    <link rel="stylesheet" type="text/css" href="components/Project/VlemProject.css">
+    <script type="text/babel" src="components/Project/Scenario/Scenario.jsx"></script>
+    <link rel="stylesheet" type="text/css" href="components/Project/Scenario/Scenario.css">
+    <script type="text/babel" src="components/Project/Scenario/Submodels.js"></script>
+    <script type="text/babel" src="components/Project/Runtime/Runtime.jsx"></script>
+    <link rel="stylesheet" type="text/css" href="components/Project/Runtime/Runtime.css">
+    <script type="text/babel" src="components/Project/Runtime/ScenariosToRun.jsx"></script>
+    <script type="text/babel" src="components/Project/Runtime/ScenarioTable/ScenarioTableRow.jsx"></script>
+    <script type="text/babel" src="components/Project/Runtime/ScenarioTable/SubScenarioRow.jsx"></script>
+    <script type="text/babel" src="components/Project/Runtime/ScenarioTable/ScenarioTooltip.jsx"></script>
+    <script type="text/babel" src="components/Project/Runtime/RunStatus/RunStatus.jsx"></script>
+    <link rel="stylesheet" type="text/css" href="components/Project/Runtime/RunStatus/RunStatus.css">
     <script type="text/babel" src="components/CreateEmmeProject/CreateEmmeProject.jsx"></script>
     <link rel="stylesheet" type="text/css" href="components/CreateEmmeProject/CreateEmmeProject.css">
-    <script type="text/babel" src="components/HelmetProject/RunLog/RunLog.jsx"></script>
-    <link rel="stylesheet" type="text/css" href="components/HelmetProject/RunLog/RunLog.css">
-    <script type="text/babel" src="components/HelmetProject/CostBenefitAnalysis/CostBenefitAnalysis.jsx"></script>
-    <link rel="stylesheet" type="text/css" href="components/HelmetProject/CostBenefitAnalysis/CostBenefitAnalysis.css">
+    <script type="text/babel" src="components/SubScenario/SubScenario.jsx"></script>
+    <link rel="stylesheet" type="text/css" href="components/SubScenario/SubScenario.css">
+    <script type="text/babel" src="components/Project/RunLog/RunLog.jsx"></script>
+    <link rel="stylesheet" type="text/css" href="components/Project/RunLog/RunLog.css">
+    <script type="text/babel" src="components/Project/CostBenefitAnalysis/CostBenefitAnalysis.jsx"></script>
+    <link rel="stylesheet" type="text/css" href="components/Project/CostBenefitAnalysis/CostBenefitAnalysis.css">
     <script type="text/javascript">
         // ipcRenderer is aliased, so that other <script> tag(s) won't crash on startup in "constant-already-set"
         const {webFrame, ipcRenderer: aliasIpcRenderer} = require('electron');
@@ -48,6 +53,7 @@
     <script type="text/babel" src="./icons/ArrowUp.jsx"></script>
     <script type="text/babel" src="./icons/Check.jsx"></script>
     <script type="text/babel" src="./icons/ErrorCircle.jsx"></script>
+    <script type="text/babel" src="./icons/Plus.jsx"></script>
     <script type="text/babel" src="components/cutUnvantedCharacters.jsx"></script>
 </head>
 <body>

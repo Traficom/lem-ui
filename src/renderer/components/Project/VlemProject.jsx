@@ -9,38 +9,44 @@ const {ipcRenderer} = require('electron');
 
 // vex-js imported globally in index.html, since we cannot access webpack config in electron-forge
 
-const HelmetProject = ({
+const VlemProject = ({
   projectName, emmeProjectPath, emmePythonPath, helmetScriptsPath, projectPath, basedataPath, resultsPath,
   signalProjectRunning, settingsId, openCreateEmmeProject, addNewSetting
 }) => {
-  // HELMET Project -specific settings
-  const [scenarios, setScenarios] = useState([]); // HELMET Scenarios under currently selected HELMET Project
-  const [openScenarioID, setOpenScenarioID] = useState(null); // currently open HELMET Scenario configuration
+  // VLEM Project -specific settings
+  const [scenarios, setScenarios] = useState([]); // Scenarios under currently selected Project
+  const [openScenarioID, setOpenScenarioID] = useState(null); // currently open Scenario configuration
+  const [subScenarioEdit, setSubScenarioEdit] = useState(null); // currently open SubScenario configuration
 
   // Runtime controls & -logging
   const [scenarioIDsToRun, setScenarioIDsToRun] = useState([]); // selected active scenarios ready to run sequentially
-  const [runningScenarioID, setRunningScenarioID] = useState(null); // currently running HELMET Scenario, indicates if running
-  const [runningScenarioIDsQueued, setRunningScenarioIDsQueued] = useState([]); // queued ("remaining") HELMET Scenarios
+  const [runningScenarioID, setRunningScenarioID] = useState(null); // currently running Scenario, indicates if running
+  const [runningScenarioIDsQueued, setRunningScenarioIDsQueued] = useState([]); // queued ("remaining") Scenarios
   const [logContents, setLogContents] = useState([]); // project runtime log-contents
   const [isLogOpened, setLogOpened] = useState(false); // whether runtime log is open
   const [logArgs, setLogArgs] = useState({});
   const [finishedScenarioInfo, setFinishedScenarioInfo] = useState(undefined);
+  const [scenarioNames, setScenarioNames] = useState([]); // all scenario and subScenario names
 
   // Cost-Benefit Analysis (CBA) controls
   const [cbaOptions, setCbaOptions] = useState({});
 
-  // Scenario-specific settings under currently selected HELMET Project
+  // Scenario-specific settings under currently selected Project
   const configStores = useRef({});
 
   const _handleClickScenarioToActive = (scenario) => {
     if(scenarioIDsToRun.includes(scenario.id)) {
       // If scenario exists in scenarios to run, remove it
-      setScenarioIDsToRun(scenarioIDsToRun.filter((id) => id !== scenario.id))
+      let newScenarioIds = scenarioIDsToRun.filter((id) => id !== scenario.id);
+      if(scenario.subScenarios && ( !scenario.run_success || scenario.run_success == false ) && !scenario.last_run){
+        scenario.subScenarios.forEach(subScenario => newScenarioIds = newScenarioIds.filter((id) => id !== subScenario.id));
+      }
+      setScenarioIDsToRun(newScenarioIds);
     } else {
       // Else add it
       setScenarioIDsToRun(scenarioIDsToRun.concat(scenario.id));
     }
-  };
+  }
 
   const _handleClickNewScenario = () => {
     const promptCreation = (previousError) => {
@@ -113,11 +119,13 @@ const HelmetProject = ({
     setScenarios(decoratedFoundScenarios);
     // Reset state of project related properties
     setOpenScenarioID(null);
+    setSubScenarioEdit(null);
     setScenarioIDsToRun([]);
     setRunningScenarioID(null);
     setRunningScenarioIDsQueued([]);
     setLogContents([]);
     setLogOpened(false);
+    resolveScenarioNames(decoratedFoundScenarios);
   };
 
   const addRunStatusProperties = (scenario) => {
@@ -154,6 +162,7 @@ const HelmetProject = ({
       end_assignment_only: false,
       iterations: 15,
       last_run: null,
+      subScenarios: [],
       overriddenProjectSettings: {
         emmeProjectPath: null,
         emmePythonPath: null,
@@ -176,11 +185,13 @@ const HelmetProject = ({
       }
     };
     // Create the new scenario in "scenarios" array first
-    setScenarios(scenarios.concat(newScenario));
+    const tempScenarios = scenarios.concat(newScenario);
+    setScenarios(tempScenarios);
     configStores.current[newId] = new Store({cwd: projectPath, name: newScenarioName});
     configStores.current[newId].set(newScenario);
     // Then set scenario as open by id (Why id? Having open_scenario as reference causes sub-elements to be bugged because of different object reference)
     setOpenScenarioID(newId);
+    resolveScenarioNames(tempScenarios);
   };
 
   const _updateScenario = (newValues) => {
@@ -201,15 +212,24 @@ const HelmetProject = ({
     }
     // And persist all changes in file
     configStores.current[newValues.id].set(newValues);
+    resolveScenarioNames(scenarios);
   };
 
   const _deleteScenario = (scenario) => {
-    if (confirm(`Oletko varma skenaarion ${scenario.name} poistosta?`)) {
-      setOpenScenarioID(null);
-      setScenarios(scenarios.filter((s) => s.id !== scenario.id));
-      fs.unlinkSync(path.join(projectPath, `${scenario.name}.json`));
-      window.location.reload();  // Vex-js dialog input gets stuck otherwise
-    }
+    const subScenarioMessage = scenario.subScenarios && scenario.subScenarios.length > 0 ? ` HUOM! Skenaarion poisto poistaa myös ${scenario.subScenarios.length} kpl. aliskenaarioita.`: "";
+
+    vex.dialog.confirm({
+      message: `Oletko varma skenaarion ${scenario.name} poistosta?` + subScenarioMessage,
+      callback: function (value) {
+        if (value) {
+          setOpenScenarioID(null);
+          setScenarios(scenarios.filter((s) => s.id !== scenario.id));
+          fs.unlinkSync(path.join(projectPath, `${scenario.name}.json`));
+          window.location.reload();  // Vex-js dialog input gets stuck otherwise
+          resolveScenarioNames(scenarios);
+        }
+      }
+    })
   };
 
   const duplicateScenario = (scenario) => {
@@ -217,13 +237,197 @@ const HelmetProject = ({
     //Change ID and rename the scenario to avoid conflicts.
     duplicatedScenario.id = uuidv4();
     duplicatedScenario.name += `(${duplicatedScenario.id.split('-')[0]})`;
-    setScenarios(scenarios.concat(duplicatedScenario));
+    const tempScenarios = scenarios.concat(duplicatedScenario);
+    setScenarios(tempScenarios);
+    resolveScenarioNames(tempScenarios);
     configStores.current[duplicatedScenario.id] = new Store({cwd: projectPath, name: duplicatedScenario.name});
     configStores.current[duplicatedScenario.id].set(duplicatedScenario);
   }
 
+  const handleClickCreateSubScenario = (parentScenarioId) => {
+    var parentScenario = scenarios.find((s) => s.id === parentScenarioId);
+    const newSubScenarioEdit = {
+      id: null,
+      parentScenarioId: parentScenarioId,
+      name: "",
+      emmeScenarioNumber: 1,
+      parentScenarioName: parentScenario.name,
+      runStatus: {
+        statusIterationsTotal: null,
+        statusIterationsCurrent: 0,
+        statusIterationsCompleted: 0,
+        statusIterationsFailed: 0,
+        statusState: null,
+        statusLogfilePath: null,
+        statusReadyScenariosLogfiles: null,
+        statusRunStartTime: null,
+        statusRunFinishTime: null,
+        demandConvergenceArray: []
+      }
+    }
+    setSubScenarioEdit(newSubScenarioEdit);
+  }
+
+  const handleClickModifySubScenario = (subScenario) => {
+    var parentScenario = scenarios.find((s) => s.id === subScenario.parentScenarioId);
+    if(!parentScenario){
+      // Should not occur
+      alert('Virhe, aliskenaarion pääskenaariota ei löydy.');
+      return;
+    }
+
+    const newSubScenarioEdit = { ...subScenario,
+      parentScenarioName: parentScenario.name
+    }
+    setSubScenarioEdit(newSubScenarioEdit);
+  }
+
+  const deleteSubScenario = (subScenario) => {
+    if (confirm(`Oletko varma aliskenaarion ${subScenario.name} poistosta?`)) {
+      var parentScenario = scenarios.find((s) => s.id === subScenario.parentScenarioId);
+      if(!parentScenario || !parentScenario.subScenarios){
+        // Should not occur
+        alert('Virhe, aliskenaarion pääskenaariota ei löydy, tai sille ei ole asetettu aliskenaarioita.');
+        return;
+      }
+      const filteredSubScenarios = parentScenario.subScenarios.filter(s => s.id != subScenario.id);
+      parentScenario.subScenarios = [...filteredSubScenarios];
+      _updateScenario(parentScenario);
+    }
+  };
+
+  const duplicateSubScenario = (subScenario) => {
+      var parentScenario = scenarios.find((s) => s.id === subScenario.parentScenarioId);
+      if(!parentScenario){
+        // Should not occur
+        alert('Virhe, aliskenaarion pääskenaariota ei löydy.');
+        return;
+      }
+
+      const newId = uuidv4();
+      const newSubScenario = {
+        id: newId,
+        parentScenarioId: `${subScenario.parentScenarioId}`,
+        name: `${subScenario.name + "_2"}`,
+        emmeScenarioNumber: `${subScenario.emmeScenarioNumber}`,
+        lastRun: "",
+        runSuccess: false,
+        runStatus: {
+          statusIterationsTotal: null,
+          statusIterationsCurrent: 0,
+          statusIterationsCompleted: 0,
+          statusIterationsFailed: 0,
+          statusState: null,
+          statusLogfilePath: null,
+          statusReadyScenariosLogfiles: null,
+          statusRunStartTime: null,
+          statusRunFinishTime: null,
+          demandConvergenceArray: []
+        }
+      }
+      parentScenario.subScenarios = [...parentScenario.subScenarios, newSubScenario]
+      _updateScenario(parentScenario);
+  };
+
+
+  const saveSubScenario = () => {
+    if(!subScenarioEdit){
+      alert('Virhe aliskenaarion lisäämisessä.');
+      return;
+    }
+
+    var parentScenario = scenarios.find((s) => s.id === subScenarioEdit.parentScenarioId);
+    if(!parentScenario){
+      alert('Virhe, aliskenaariota yritetään lisätä skenaariolle, jota ei löydy.');
+      return;
+    }
+    if(!parentScenario.subScenarios){
+      parentScenario.subScenarios = [];
+    }
+    if(subScenarioEdit.id
+      && parentScenario.subScenarios.length > 0
+      && parentScenario.subScenarios.find((s) => s.id === subScenarioEdit.id)){
+        updateSubScenario(parentScenario);
+      }else{
+        saveNewSubScenario(parentScenario);
+      }
+
+      setSubScenarioEdit(null);
+  }
+
+  const cancelEditingSubScenario = () => {
+    setSubScenarioEdit(null);
+  }
+
+  const handleChangeSubScenario = (subScenarioEdit) => {
+    setSubScenarioEdit({...subScenarioEdit});
+  }
+  
+  const resolveScenarioNames = (scenarios) => {
+    const tempScenarioNames = [];
+    scenarios.forEach(scenario => {
+      tempScenarioNames.push({name: scenario.name, id: scenario.id});
+
+      if (scenario.subScenarios && scenario.subScenarios.length > 0) {
+        scenario.subScenarios.forEach(subSenario => {
+          tempScenarioNames.push({name: subSenario.name, id: subSenario.id});
+        })
+      }
+    });
+    setScenarioNames(tempScenarioNames);
+  }
+
+  const updateSubScenario = (parentScenario) => {
+    const index = parentScenario.subScenarios.map(s => s.id).indexOf(subScenarioEdit.id);
+    const newSubScenarios = [...parentScenario.subScenarios];
+    newSubScenarios[index].name = `${subScenarioEdit.name}`;
+    newSubScenarios[index].emmeScenarioNumber = `${subScenarioEdit.emmeScenarioNumber}`;
+    parentScenario.subScenarios = [...newSubScenarios];
+    _updateScenario(parentScenario);
+  }
+
+
+  const saveNewSubScenario = (parentScenario) => {
+    const newId = uuidv4();
+    const newSubScenario = {
+      id: newId,
+      parentScenarioId: `${subScenarioEdit.parentScenarioId}`,
+      name: `${subScenarioEdit.name}`,
+      emmeScenarioNumber: `${subScenarioEdit.emmeScenarioNumber}`,
+      lastRun: "",
+      runSuccess: false,
+      runStatus: subScenarioEdit.runStatus
+    }
+    parentScenario.subScenarios = [...parentScenario.subScenarios, newSubScenario]
+    _updateScenario(parentScenario);
+  }
+
+  
+  function resolveRunnableScenarios(scenarioIDsToRun, scenarios) {
+
+    if (!scenarioIDsToRun || scenarioIDsToRun.length == 0 || !scenarios || scenarios.length == 0) {
+      return [];
+    }
+
+    let runnableScenarios = [];
+    scenarios.forEach(scenario => {
+      if (scenarioIDsToRun.includes(scenario.id) && !runnableScenarios.find(s => s.id == scenario.id)) {
+        runnableScenarios.push(scenario);
+      }
+      if (scenario.subScenarios && scenario.subScenarios.length > 0) {
+        scenario.subScenarios.forEach(subSenario => {
+          if (scenarioIDsToRun.includes(subSenario.id) && !runnableScenarios.find(s => s.id == subSenario.id)) {
+            runnableScenarios.push(subSenario);
+          }
+        })
+      }
+    });
+    return runnableScenarios;
+  }
+
+  const scenariosToRun = resolveRunnableScenarios(scenarioIDsToRun, scenarios);
+
   const _runAllActiveScenarios = (activeScenarioIDs) => {
-    const scenariosToRun = scenarios.filter((s) => activeScenarioIDs.includes(s.id)).sort((a, b) => scenarioIDsToRun.indexOf(a.id) - scenarioIDsToRun.indexOf(b.id));
 
     // Check required global parameters are set
     if (!projectName) {
@@ -239,7 +443,7 @@ const HelmetProject = ({
       return;
     }
     if (!helmetScriptsPath) {
-      alert("Helmet Scripts -kansiota ei ole asetettu, tarkista Asetukset.");
+      alert("VLEM Scripts -kansiota ei ole asetettu, tarkista Asetukset.");
       return;
     }
     if (!projectPath) {
@@ -257,9 +461,9 @@ const HelmetProject = ({
 
     // For each active scenario, check required scenario-specific parameters are set
     for (let scenario of scenariosToRun) {
-      const store = configStores.current[scenario.id];
+      const scenarioId = scenario.parentScenarioId? scenario.parentScenarioId : scenario.id;
+      const store = configStores.current[scenarioId];
       const iterations = store.get('iterations');
-
       if (!store.get('forecast_data_folder_path')) {
         alert(`Ennustedata-kansiota ei ole valittu skenaariossa "${scenario.name}"`);
         return;
@@ -283,20 +487,39 @@ const HelmetProject = ({
     setRunningScenarioIDsQueued(activeScenarioIDs.slice(1));
     signalProjectRunning(true); // Let App-component know too
 
+    /**
+     *  projectName, emmeProjectPath, emmePythonPath, helmetScriptsPath, projectPath, basedataPath, resultsPath,
+        signalProjectRunning, settingsId, openCreateEmmeProject, addNewSetting
+     */
     ipcRenderer.send(
       'message-from-ui-to-run-scenarios',
       scenariosToRun.map((s) => {
-        const combinedEmmeProjectPath = determinePath(s.overriddenProjectSettings, s.overriddenProjectSettings.emmeProjectPath, emmeProjectPath);
-        const emmeEntryPointFilePath = combinedEmmeProjectPath + `\\${projectName}\\${projectName}.emp`
-        // Run parameters per each run (enrich with global settings' paths to EMME python & HELMET model system
+        const scenario = s.parentScenarioId ? scenarios.find(scen => scen.id == s.parentScenarioId): s;
+        // when running subScenario --scenario-name ja --first-scenario-id and scenario-id will be used from it
+        const subScenario = s.parentScenarioId ? s : undefined;
+        const name = subScenario? subScenario.name : scenario.name;
+        const id = subScenario? subScenario.id : scenario.id;
+        const first_scenario_id = subScenario? subScenario.emmeScenarioNumber : scenario.first_scenario_id;
+        const end_assignment_only = subScenario? true : scenario.end_assignment_only
+
+        const emme_project_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.emmeProjectPath, emmeProjectPath);
+        const emme_entry_point_file_path = emme_project_path + `\\${projectName}\\${projectName}.emp`
+        const scenario_results_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.resultsPath, resultsPath);
+        // when running subScenario, base data path is parents result path
+        const scenario_base_data_path = subScenario? scenario_results_path + `\\${scenario.name}\\`: determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.basedataPath, basedataPath);
+        // Run parameters per each run (enrich with global settings' paths to EMME python & VLEM model system
         return {
-          ...s,
-          emme_project_path: emmeEntryPointFilePath,
-          emme_python_path:  determinePath(s.overriddenProjectSettings, s.overriddenProjectSettings.emmePythonPath, emmePythonPath),
-          helmet_scripts_path: determinePath(s.overriddenProjectSettings, s.overriddenProjectSettings.helmetScriptsPath, helmetScriptsPath),
-          base_data_folder_path: determinePath(s.overriddenProjectSettings, s.overriddenProjectSettings.basedataPath, basedataPath),
-          results_data_folder_path: determinePath(s.overriddenProjectSettings, s.overriddenProjectSettings.resultsPath, resultsPath),
+          ...scenario,
+          id: id,
+          name: name,
+          first_scenario_id: first_scenario_id,
+          emme_project_path: emme_entry_point_file_path,
+          emme_python_path:  determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.emmePythonPath, emmePythonPath),
+          helmet_scripts_path: determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.helmetScriptsPath, helmetScriptsPath),
+          base_data_folder_path: scenario_base_data_path,
+          results_data_folder_path: scenario_results_path,
           log_level: 'DEBUG',
+          end_assignment_only: end_assignment_only,
         }
       })
     );
@@ -325,7 +548,7 @@ const HelmetProject = ({
       return;
     }
     if (!helmetScriptsPath) {
-      alert("Helmet Scripts -kansiota ei ole asetettu, tarkista Asetukset.");
+      alert("VLEM Scripts -kansiota ei ole asetettu, tarkista Asetukset.");
       return;
     }
 
@@ -401,14 +624,45 @@ const HelmetProject = ({
 
   useEffect(() => {
     if (finishedScenarioInfo && finishedScenarioInfo.id.length > 0) {
-      const lastRunScenarioFromStore = configStores.current[finishedScenarioInfo.id].get();
-      const updatedScenario = {
-        ...lastRunScenarioFromStore,
-        last_run: dayjs().format('HH:mm:ss ⁯DD.MM.YYYY'),
-        run_success: finishedScenarioInfo.error == true ? false : true
+      let mainScenarioId = "";
+      
+      scenarios.forEach(scen => {
+        if(scen.id == finishedScenarioInfo.id){
+          mainScenarioId = scen.id;
+        }else if (scen.subScenarios){
+          scen.subScenarios.forEach(sub => {
+            if(sub.id == finishedScenarioInfo.id){
+              mainScenarioId = scen.id;
+            }
+          })
+        }
+      })
+
+      const lastRunScenarioFromStore = configStores.current[mainScenarioId].get();
+      let updatedScenario = undefined;
+      if(mainScenarioId == finishedScenarioInfo.id){
+        updatedScenario = {
+          ...lastRunScenarioFromStore,
+          last_run: dayjs().format('HH:mm:ss ⁯DD.MM.YYYY'),
+          run_success: finishedScenarioInfo.error == true ? false : true
+        }
+      }else{
+        const index = lastRunScenarioFromStore.subScenarios.map(s => s.id).indexOf(finishedScenarioInfo.id);
+        const newSubScenarios = [...lastRunScenarioFromStore.subScenarios];
+        newSubScenarios[index].lastRun = dayjs().format('HH:mm:ss ⁯DD.MM.YYYY');
+        newSubScenarios[index].runSuccess = finishedScenarioInfo.error == true ? false : true;
+        updatedScenario = {
+          ...lastRunScenarioFromStore,
+          subScenarios: [...newSubScenarios]
+        }
       }
-      configStores.current[finishedScenarioInfo.id].set(updatedScenario);
-      setScenarios(scenarios.map((s) => (s.id === finishedScenarioInfo.id ? { ...updatedScenario } : s)));
+      configStores.current[mainScenarioId].set(updatedScenario);
+      const mainScenarioIndexInScenarios = scenarios.map(s => s.id).indexOf(mainScenarioId);
+      setScenarios(oldState => {
+        const newScenarios = [...oldState];
+        newScenarios[mainScenarioIndexInScenarios] = { ...updatedScenario };
+        return newScenarios;
+      })
       setFinishedScenarioInfo(undefined);
     }
   }, [finishedScenarioInfo]);
@@ -416,25 +670,39 @@ const HelmetProject = ({
   return (
     <div className="Project">
 
-      {/* Panel for primary view and controls */}
+      {/* Panel for views and controls */}
       <div className="Project__runtime">
+      {(!runningScenarioID && !isLogOpened && !openScenarioID && subScenarioEdit != null) &&
+          <SubScenario
+            subScenarioEdit={subScenarioEdit}
+            handleChange={handleChangeSubScenario}
+            handleSave={saveSubScenario}
+            handleCancel={cancelEditingSubScenario}
+            scenarioNames={scenarioNames}
+          />
+        }
         <Runtime
           projectPath={projectPath}
           resultsPath={resultsPath}
           reloadScenarios={() => _loadProjectScenarios(projectPath)}
           scenarios={scenarios}
-          scenarioIDsToRun={scenarioIDsToRun}
+          scenarioIDsToRun={[...scenarioIDsToRun]}
           runningScenarioID={runningScenarioID}
           openScenarioID={openScenarioID}
           setOpenScenarioID={setOpenScenarioID}
-          deleteScenario={(scenario) => {_deleteScenario(scenario)}}
+          deleteScenario={(scenario) => { _deleteScenario(scenario) }}
           handleClickScenarioToActive={_handleClickScenarioToActive}
           handleClickNewScenario={_handleClickNewScenario}
           handleClickStartStop={_handleClickStartStop}
           logArgs={logArgs}
           duplicateScenario={duplicateScenario}
+          handleClickCreateSubScenario={handleClickCreateSubScenario}
           openCreateEmmeProject={openCreateEmmeProject}
           addNewSetting={addNewSetting}
+          duplicateSubScenario={duplicateSubScenario}
+          deleteSubScenario={deleteSubScenario}
+          modifySubScenario={handleClickModifySubScenario}
+          activeScenarios={scenariosToRun}
         />
         <CostBenefitAnalysis
           resultsPath={resultsPath}
@@ -444,20 +712,20 @@ const HelmetProject = ({
         />
       </div>
 
-      {/* Panel for secondary view(s) and controls */}
+      {/* Panel for view(s) and controls in right side layout*/}
       <div className="Project__selected-details">
         {/* show log if, either scenario is running, or log is manually opened (outside running) */
           (runningScenarioID || isLogOpened) ?
             <RunLog
-              entries={logContents.map((entry, i) => {return {...entry, id: i};})}
+              entries={logContents.map((entry, i) => { return { ...entry, id: i }; })}
               isScenarioRunning={runningScenarioID}
               closeRunLog={() => setLogOpened(false)}
             />
             :
             /* while no scenarios running, and log hidden (log has precedence), allow showing open scenario config */
             openScenarioID !== null ?
-              <HelmetScenario
-                projectPath={projectPath}  
+              <Scenario
+                projectPath={projectPath}
                 scenario={scenarios.find((s) => s.id === openScenarioID)}
                 updateScenario={_updateScenario}
                 closeScenario={() => setOpenScenarioID(null)}
