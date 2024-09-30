@@ -3,7 +3,6 @@ const {ipcRenderer} = require('electron');
 const path = require('path');
 
 module.exports = {
-
   runCBAScriptPythonShell: function (worker, runParameters, onEndCallback) {
 
     // Make sure worker isn't overridden (and if so, abort the run)

@@ -10,7 +10,7 @@ const {ipcRenderer} = require('electron');
 // vex-js imported globally in index.html, since we cannot access webpack config in electron-forge
 
 const VlemProject = ({
-  projectName, emmeProjectPath, emmePythonPath, helmetScriptsPath, projectPath, basedataPath, resultsPath,
+  projectName, projectFolder, emmePythonPath, helmetScriptsPath, basedataPath,
   signalProjectRunning, settingsId, openCreateEmmeProject, addNewSetting
 }) => {
   // VLEM Project -specific settings
@@ -164,12 +164,10 @@ const VlemProject = ({
       last_run: null,
       subScenarios: [],
       overriddenProjectSettings: {
-        emmeProjectPath: null,
+        projectFolder: null,
         emmePythonPath: null,
         helmetScriptsPath: null,
-        projectPath: null,
         basedataPath: null,
-        resultsPath: null,
       },
       runStatus: {
         statusIterationsTotal: null,
@@ -187,7 +185,7 @@ const VlemProject = ({
     // Create the new scenario in "scenarios" array first
     const tempScenarios = scenarios.concat(newScenario);
     setScenarios(tempScenarios);
-    configStores.current[newId] = new Store({cwd: projectPath, name: newScenarioName});
+    configStores.current[newId] = new Store({cwd: projectFolder, name: newScenarioName});
     configStores.current[newId].set(newScenario);
     // Then set scenario as open by id (Why id? Having open_scenario as reference causes sub-elements to be bugged because of different object reference)
     setOpenScenarioID(newId);
@@ -203,10 +201,10 @@ const VlemProject = ({
       const newName = newValues.name ? newValues.name : newValues.id;
       fs.renameSync(
         configStores.current[newValues.id].path,
-        path.join(projectPath, `${newName}.json`)
+        path.join(projectFolder, `${newName}.json`)
       );
       configStores.current[newValues.id] = new Store({
-        cwd: projectPath,
+        cwd: projectFolder,
         name: newName
       });
     }
@@ -224,7 +222,7 @@ const VlemProject = ({
         if (value) {
           setOpenScenarioID(null);
           setScenarios(scenarios.filter((s) => s.id !== scenario.id));
-          fs.unlinkSync(path.join(projectPath, `${scenario.name}.json`));
+          fs.unlinkSync(path.join(projectFolder, `${scenario.name}.json`));
           window.location.reload();  // Vex-js dialog input gets stuck otherwise
           resolveScenarioNames(scenarios);
         }
@@ -240,7 +238,7 @@ const VlemProject = ({
     const tempScenarios = scenarios.concat(duplicatedScenario);
     setScenarios(tempScenarios);
     resolveScenarioNames(tempScenarios);
-    configStores.current[duplicatedScenario.id] = new Store({cwd: projectPath, name: duplicatedScenario.name});
+    configStores.current[duplicatedScenario.id] = new Store({cwd: projectFolder, name: duplicatedScenario.name});
     configStores.current[duplicatedScenario.id].set(duplicatedScenario);
   }
 
@@ -434,8 +432,8 @@ const VlemProject = ({
       alert("Projektia ei ole valittu.");
       return;
     }
-    if (!emmeProjectPath) {
-      alert("Emme-projektia ei ole asetettu!");
+    if (!projectFolder) {
+      alert("Projektikansiota ei ole asetettu!");
       return;
     }
     if (!emmePythonPath) {
@@ -446,16 +444,8 @@ const VlemProject = ({
       alert("VLEM Scripts -kansiota ei ole asetettu, tarkista Asetukset.");
       return;
     }
-    if (!projectPath) {
-      alert("Projektin kotikansiota ei ole asetettu, tarkista Asetukset.");
-      return;
-    }
     if (!basedataPath) {
       alert("L\u00E4ht\u00F6datan kansiota ei ole asetettu, tarkista Asetukset.");
-      return;
-    }
-    if (!resultsPath) {
-      alert("Tulosdatan kansiota ei ole asetettu, tarkista Asetukset.");
       return;
     }
 
@@ -488,7 +478,7 @@ const VlemProject = ({
     signalProjectRunning(true); // Let App-component know too
 
     /**
-     *  projectName, emmeProjectPath, emmePythonPath, helmetScriptsPath, projectPath, basedataPath, resultsPath,
+     *  projectName, projectFolder, emmePythonPath, helmetScriptsPath, basedataPath, resultsPath,
         signalProjectRunning, settingsId, openCreateEmmeProject, addNewSetting
      */
     ipcRenderer.send(
@@ -502,9 +492,9 @@ const VlemProject = ({
         const first_scenario_id = subScenario? subScenario.emmeScenarioNumber : scenario.first_scenario_id;
         const end_assignment_only = subScenario? true : scenario.end_assignment_only
 
-        const emme_project_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.emmeProjectPath, emmeProjectPath);
+        const emme_project_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.projectFolder, projectFolder);
         const emme_entry_point_file_path = emme_project_path + `\\${projectName}\\${projectName}.emp`
-        const scenario_results_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.resultsPath, resultsPath);
+        const scenario_results_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.projectFolder, projectFolder);
         // when running subScenario, base data path is parents result path
         const scenario_base_data_path = subScenario? scenario_results_path + `\\${scenario.name}\\`: determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.basedataPath, basedataPath);
         // Run parameters per each run (enrich with global settings' paths to EMME python & VLEM model system
@@ -538,8 +528,8 @@ const VlemProject = ({
       return;
     }
 
-    if (!emmeProjectPath) {
-      alert("Emme-projektia ei ole asetettu!");
+    if (!projectFolder) {
+      alert("Projektikansiota ei ole asetettu!");
       return;
     }
 
@@ -576,10 +566,10 @@ const VlemProject = ({
       'message-from-ui-to-run-cba-script',
       {
           ...cbaOptions,
-          emme_project_path: emmeProjectPath,
+          emme_project_path: projectFolder,
           emme_python_path: emmePythonPath,
           helmet_scripts_path: helmetScriptsPath,
-          results_path: resultsPath,
+          results_path: projectFolder,
       });
   };
 
@@ -612,7 +602,7 @@ const VlemProject = ({
     ipcRenderer.on('loggable-event', onLoggableEvent);
     ipcRenderer.on('scenario-complete', onScenarioComplete);
     ipcRenderer.on('all-scenarios-complete', onAllScenariosComplete);
-    _loadProjectScenarios(projectPath);
+    _loadProjectScenarios(projectFolder);
 
     return () => {
       // Detach Electron IPC event listeners
@@ -682,9 +672,8 @@ const VlemProject = ({
           />
         }
         <Runtime
-          projectPath={projectPath}
-          resultsPath={resultsPath}
-          reloadScenarios={() => _loadProjectScenarios(projectPath)}
+          projectFolder={projectFolder}
+          reloadScenarios={() => _loadProjectScenarios(projectFolder)}
           scenarios={scenarios}
           scenarioIDsToRun={[...scenarioIDsToRun]}
           runningScenarioID={runningScenarioID}
@@ -705,7 +694,7 @@ const VlemProject = ({
           activeScenarios={scenariosToRun}
         />
         <CostBenefitAnalysis
-          resultsPath={resultsPath}
+          projectFolder={projectFolder}
           cbaOptions={cbaOptions}
           setCbaOptions={setCbaOptions}
           runCbaScript={_runCbaScript}
@@ -725,18 +714,15 @@ const VlemProject = ({
             /* while no scenarios running, and log hidden (log has precedence), allow showing open scenario config */
             openScenarioID !== null ?
               <Scenario
-                projectPath={projectPath}
                 scenario={scenarios.find((s) => s.id === openScenarioID)}
                 updateScenario={_updateScenario}
                 closeScenario={() => setOpenScenarioID(null)}
                 existingOtherNames={scenarios.filter(s => s.id !== openScenarioID).map(s => s.name)}
                 inheritedGlobalProjectSettings={{
-                  emmeProjectPath,
+                  projectFolder,
                   emmePythonPath,
                   helmetScriptsPath,
-                  projectPath,
-                  basedataPath,
-                  resultsPath
+                  basedataPath
                 }}
               />
               :

@@ -3,7 +3,7 @@ import path from "path";
 const {dialog} = require('@electron/remote');
 
 const CostBenefitAnalysis = ({
-  resultsPath, cbaOptions, setCbaOptions, runCbaScript
+  projectFolder, cbaOptions, setCbaOptions, runCbaScript
 }) => {
   return (
     <div className="CBA">
@@ -22,7 +22,7 @@ const CostBenefitAnalysis = ({
                      type="text"
                      onClick={()=>{
                        dialog.showOpenDialog({
-                         defaultPath: resultsPath,
+                         defaultPath: projectFolder,
                          properties: ['openDirectory']
                        }).then((e)=>{
                          if (!e.canceled) {
@@ -46,7 +46,7 @@ const CostBenefitAnalysis = ({
                      type="text"
                      onClick={()=>{
                        dialog.showOpenDialog({
-                        defaultPath: resultsPath,
+                        defaultPath: projectFolder,
                          properties: ['openDirectory']
                        }).then((e)=>{
                          if (!e.canceled) {
@@ -72,7 +72,7 @@ const CostBenefitAnalysis = ({
                      type="text"
                      onClick={()=>{
                        dialog.showOpenDialog({
-                        defaultPath: resultsPath,
+                        defaultPath: projectFolder,
                          properties: ['openDirectory']
                        }).then((e)=>{
                          if (!e.canceled) {
@@ -96,7 +96,7 @@ const CostBenefitAnalysis = ({
                      type="text"
                      onClick={()=>{
                        dialog.showOpenDialog({
-                        defaultPath: resultsPath,
+                        defaultPath: projectFolder,
                          properties: ['openDirectory']
                        }).then((e)=>{
                          if (!e.canceled) {
