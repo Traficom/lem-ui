@@ -153,7 +153,8 @@ const VlemProject = ({
       id: newId,
       name: newScenarioName,
       first_scenario_id: 1,
-      forecast_data_folder_path: null,
+      forecast_data_path: null,
+      costDataPath: null,
       delete_strategy_files: true,
       separate_emme_scenarios: false,
       save_matrices_in_emme: false,
@@ -250,6 +251,8 @@ const VlemProject = ({
       name: "",
       emmeScenarioNumber: 1,
       parentScenarioName: parentScenario.name,
+      costDataPath: "",
+      parentCostDataPath: parentScenario.costDataPath,
       runStatus: {
         statusIterationsTotal: null,
         statusIterationsCurrent: 0,
@@ -308,6 +311,7 @@ const VlemProject = ({
         parentScenarioId: `${subScenario.parentScenarioId}`,
         name: `${subScenario.name + "_2"}`,
         emmeScenarioNumber: `${subScenario.emmeScenarioNumber}`,
+        costDataPath: `${subScenario.costDataPath}`,
         lastRun: "",
         runSuccess: false,
         runStatus: {
@@ -380,6 +384,7 @@ const VlemProject = ({
     const newSubScenarios = [...parentScenario.subScenarios];
     newSubScenarios[index].name = `${subScenarioEdit.name}`;
     newSubScenarios[index].emmeScenarioNumber = `${subScenarioEdit.emmeScenarioNumber}`;
+    newSubScenarios[index].costDataPath = `${subScenarioEdit.costDataPath}`;
     parentScenario.subScenarios = [...newSubScenarios];
     _updateScenario(parentScenario);
   }
@@ -392,6 +397,7 @@ const VlemProject = ({
       parentScenarioId: `${subScenarioEdit.parentScenarioId}`,
       name: `${subScenarioEdit.name}`,
       emmeScenarioNumber: `${subScenarioEdit.emmeScenarioNumber}`,
+      costDataPath: `${subScenarioEdit.costDataPath}`,
       lastRun: "",
       runSuccess: false,
       runStatus: subScenarioEdit.runStatus
@@ -400,7 +406,6 @@ const VlemProject = ({
     _updateScenario(parentScenario);
   }
 
-  
   function resolveRunnableScenarios(scenarioIDsToRun, scenarios) {
 
     if (!scenarioIDsToRun || scenarioIDsToRun.length == 0 || !scenarios || scenarios.length == 0) {
@@ -454,12 +459,16 @@ const VlemProject = ({
       const scenarioId = scenario.parentScenarioId? scenario.parentScenarioId : scenario.id;
       const store = configStores.current[scenarioId];
       const iterations = store.get('iterations');
-      if (!store.get('forecast_data_folder_path')) {
-        alert(`Ennustedata-kansiota ei ole valittu skenaariossa "${scenario.name}"`);
+      if (!store.get('forecast_data_path')) {
+        alert(`Syöttötietoja ei ole valittu skenaariossa "${scenario.name}"`);
         return;
       }
       if (iterations < 1 || iterations > 99) {
         alert(`Aseta iteraatiot väliltä 1 - 99 skenaariossa "${scenario.name}"`);
+        return;
+      }
+      if (!store.get('costDataPath') && !scenario.costDataPath) {
+        alert(`Liikenteen hintadata-tiedostoa ei ole valittu skenaariossa "${scenario.name}"`);
         return;
       }
     }
@@ -491,6 +500,7 @@ const VlemProject = ({
         const id = subScenario? subScenario.id : scenario.id;
         const first_scenario_id = subScenario? subScenario.emmeScenarioNumber : scenario.first_scenario_id;
         const end_assignment_only = subScenario? true : scenario.end_assignment_only
+        const costDataPath = subScenario && subScenario.costDataPath? subScenario.costDataPath : scenario.costDataPath;
 
         const emme_project_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.projectFolder, projectFolder);
         const emme_entry_point_file_path = emme_project_path + `\\${projectName}\\${projectName}.emp`
@@ -510,6 +520,7 @@ const VlemProject = ({
           results_data_folder_path: scenario_results_path,
           log_level: 'DEBUG',
           end_assignment_only: end_assignment_only,
+          costDataPath: costDataPath,
         }
       })
     );
@@ -717,7 +728,7 @@ const VlemProject = ({
                 scenario={scenarios.find((s) => s.id === openScenarioID)}
                 updateScenario={_updateScenario}
                 closeScenario={() => setOpenScenarioID(null)}
-                existingOtherNames={scenarios.filter(s => s.id !== openScenarioID).map(s => s.name)}
+                existingOtherNames={scenarioNames.filter(sn => sn.id !== openScenarioID).map(s => s.name)}
                 inheritedGlobalProjectSettings={{
                   projectFolder,
                   emmePythonPath,
