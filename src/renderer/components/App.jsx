@@ -14,12 +14,10 @@ const path = require('path');
 const emptySetting = {
   id: "",
   project_name: "",
-  project_path: "",
+  project_folder: "",
   helmet_scripts_path: "",
-  emme_project_path: "",
   emme_python_path: "",
   basedata_path: "",
-  resultdata_path: "",
 }
 
 // vex-js imported globally in index.html, since we cannot access webpack config in electron-forge
@@ -83,12 +81,10 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
   function constructAndSaveNewSettingsState(setting, prevState) {
     const index = prevState.map(s => s.id).indexOf(setting.id);
     const newSettings = [...prevState];
-    newSettings[index].project_path = setting.project_path;
+    newSettings[index].project_folder = setting.project_folder;
     newSettings[index].helmet_scripts_path = setting.helmet_scripts_path;
-    newSettings[index].emme_project_path = setting.emme_project_path;
     newSettings[index].emme_python_path = setting.emme_python_path;
     newSettings[index].basedata_path = setting.basedata_path;
-    newSettings[index].resultdata_path = setting.resultdata_path;
     newSettings[index].project_name = setting.project_name;
     globalSettingsStore.current.set('settings', JSON.stringify(newSettings));
     globalSettingsStore.current.set('selected_settings_id', setting.id);
@@ -133,12 +129,10 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     const selectedBaseSetting = findSetting(projectSettings, settingsId);
     setSettingInHandling({
       ...settingInHandling,
-      project_path: selectedBaseSetting.project_path,
+      project_folder: selectedBaseSetting.project_folder,
       helmet_scripts_path: selectedBaseSetting.helmet_scripts_path,
-      emme_project_path: selectedBaseSetting.emme_project_path,
       emme_python_path: selectedBaseSetting.emme_python_path,
       basedata_path: selectedBaseSetting.basedata_path,
-      resultdata_path: selectedBaseSetting.resultdata_path,
     });
   }
 
@@ -195,8 +189,8 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     setSettingInHandling({ ...settingInHandling, emme_python_path: cutUnvantedCharacters(newPath) });
   };
 
-  const _setEMMEProjectPath = (newPath) => {
-    setSettingInHandling({ ...settingInHandling, emme_project_path: cutUnvantedCharacters(newPath) });
+  const _setProjectFolder= (newPath) => {
+    setSettingInHandling({ ...settingInHandling, project_folder: cutUnvantedCharacters(newPath) });
   };
 
   function resolvePipFilePath(pythonPath) {
@@ -274,16 +268,8 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     runPipInstall(pipFilePath, pipRequirementsPath);
   };
 
-  const _setProjectPath = (newPath) => {
-    setSettingInHandling({ ...settingInHandling, project_path: cutUnvantedCharacters(newPath) });
-  };
-
   const _setBasedataPath = (newPath) => {
     setSettingInHandling({ ...settingInHandling, basedata_path: cutUnvantedCharacters(newPath) });
-  };
-
-  const _setResultsPath = (newPath) => {
-    setSettingInHandling({ ...settingInHandling, resultdata_path: cutUnvantedCharacters(newPath) });
   };
 
   const _closeLoadingInfo = () => {
@@ -319,7 +305,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     ipcRenderer.send(
       'message-from-ui-to-create_emme_project',
       {
-        emme_project_path: settingInHandling.emme_project_path,
+        emme_project_path: settingInHandling.project_folder,
         emme_python_path: settingInHandling.emme_python_path,
         helmet_scripts_path: settingInHandling.helmet_scripts_path,
         submodel: submodel,
@@ -474,10 +460,10 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
       let settingInHandlingFromStore = findSetting(settingsArray, existingSelectedSettingId);
 
       // If project path does not exist on set path, set it to homedir. Remember: state updates async so refer to existing.
-      if (!fs.existsSync(settingInHandlingFromStore.project_path)) {
-        showError(`Projektikansiota ei löydy polusta '${settingInHandlingFromStore.project_path}'.\nProjektikansioksi asetetaan kotikansio '${homedir}'.`);
+      if (!fs.existsSync(settingInHandlingFromStore.project_folder)) {
+        showError(`Projektikansiota ei löydy polusta '${settingInHandlingFromStore.project_folder}'.\nProjektikansioksi asetetaan kotikansio '${homedir}'.`);
         // Recovering from not finding valid project path
-        settingInHandlingFromStore.project_path = homedir;
+        settingInHandlingFromStore.project_folder = homedir;
         saveAutomaticallyFixedSetting(settingInHandlingFromStore, settingsArray);
       } else {
         setProjectSettings(settingsArray);
@@ -519,12 +505,10 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
           isDownloadingHelmetScripts={isDownloadingHelmetScripts}
           cancel={cancel}
           setProjectName={_setProjectName}
-          setEMMEProjectPath={_setEMMEProjectPath}
+          setProjectFolder={_setProjectFolder}
           setEMMEPythonPath={_setEMMEPythonPath}
           setHelmetScriptsPath={_setHelmetScriptsPath}
-          setProjectPath={_setProjectPath}
           setBasedataPath={_setBasedataPath}
-          setResultsPath={_setResultsPath}
           promptModelSystemDownload={_promptModelSystemDownload}
           saveSetting={saveSetting}
           selectBaseSettings={selectBaseSettings}
@@ -563,12 +547,10 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
       <div className="App__body">
         <VlemProject
           projectName={settingInHandling.project_name}
-          emmeProjectPath={settingInHandling.emme_project_path}
+          projectFolder={settingInHandling.project_folder ? settingInHandling.project_folder : homedir}
           emmePythonPath={settingInHandling.emme_python_path}
           helmetScriptsPath={settingInHandling.helmet_scripts_path}
-          projectPath={settingInHandling.project_path ? settingInHandling.project_path : homedir}
           basedataPath={settingInHandling.basedata_path}
-          resultsPath={settingInHandling.resultdata_path}
           signalProjectRunning={setProjectRunning}
           settingsId={settingInHandling.id}
           openCreateEmmeProject={_openCreateEmmeProject}

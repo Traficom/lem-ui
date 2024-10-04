@@ -6,14 +6,12 @@ import versions from '../versions';
 const Settings = ({
   settings,
   settingsList,
-  setEMMEProjectPath,
+  setProjectFolder,
   setEMMEPythonPath,
   setHelmetScriptsPath,
   dlHelmetScriptsVersion,
   isDownloadingHelmetScripts,
-  setProjectPath,
   setBasedataPath,
-  setResultsPath,
   setProjectName,
   cancel,
   promptModelSystemDownload,
@@ -76,20 +74,20 @@ const Settings = ({
         </div>
         {/* File path to EMME project reference-file (generally same in all scenarios of a given VLEM project) */}
         <div className="Settings__dialog-input-group">
-          <span className="Settings__pseudo-label semi_bold">Emme-projekti</span>
-          <label className="Settings__pseudo-file-select bg_plus" htmlFor="hidden-input-emme-project-path" title={settings.emme_project_path}>
-            {settings.emme_project_path ? path.basename(settings.emme_project_path) : "Valitse.."}
+          <span className="Settings__pseudo-label semi_bold">Projektikansio</span>
+          <label className="Settings__pseudo-file-select bg_plus" htmlFor="hidden-input-project-folder" title={settings.project_folder}>
+            {settings.project_folder ? path.basename(settings.project_folder) : "Valitse.."}
           </label>
           <input className="Settings__hidden-input"
-            id="hidden-input-emme-project-path"
+            id="hidden-input-project-folder"
             type="text"
             onClick={() => {
               dialog.showOpenDialog({
-                defaultPath: settings.emme_project_path ? settings.emme_project_path : settings.project_path,
+                defaultPath: settings.project_folder ? settings.project_folder : "",
                 properties: ['openDirectory']
               }).then((e) => {
                 if (!e.canceled) {
-                  setEMMEProjectPath(e.filePaths[0]);
+                  setProjectFolder(e.filePaths[0]);
                 }
               })
             }}
@@ -149,7 +147,7 @@ const Settings = ({
             type="text"
             onClick={() => {
               dialog.showOpenDialog({
-                defaultPath: settings.helmet_scripts_path ? settings.helmet_scripts_path : settings.project_path,
+                defaultPath: settings.helmet_scripts_path ? settings.helmet_scripts_path : settings.project_folder,
                 properties: ['openDirectory']
               }).then((e) => {
                 if (!e.canceled) {
@@ -165,26 +163,6 @@ const Settings = ({
           </button>
         </div>
         <div className="Settings__dialog-input-group">
-          <span className="Settings__pseudo-label semi_bold">Projektin kantapolku (oletuksena kotihakemisto)</span>
-          <label className="Settings__pseudo-file-select bg_plus" htmlFor="hidden-input-project-path" title={settings.projectPath}>
-            {settings.project_path ? path.basename(settings.project_path) : "Valitse.."}
-          </label>
-          <input className="Settings__hidden-input"
-            id="hidden-input-project-path"
-            type="text"
-            onClick={() => {
-              dialog.showOpenDialog({
-                defaultPath: settings.project_path ? settings.project_path : homedir,
-                properties: ['openDirectory']
-              }).then((e) => {
-                if (!e.canceled) {
-                  setProjectPath(e.filePaths[0]);
-                }
-              })
-            }}
-          />
-        </div>
-        <div className="Settings__dialog-input-group">
           <span className="Settings__pseudo-label semi_bold">L&auml;ht&ouml;datan sis&auml;lt&auml;v&auml; kansio</span>
           <label className="Settings__pseudo-file-select bg_plus" htmlFor="hidden-input-basedata-path" title={settings.basedata_path}>
             {settings.basedata_path ? path.basename(settings.basedata_path) : "Valitse.."}
@@ -194,31 +172,11 @@ const Settings = ({
             type="text"
             onClick={() => {
               dialog.showOpenDialog({
-                defaultPath: settings.basedata_path ? settings.basedata_path : settings.project_path,
+                defaultPath: settings.basedata_path ? settings.basedata_path : settings.project_folder,
                 properties: ['openDirectory']
               }).then((e) => {
                 if (!e.canceled) {
                   setBasedataPath(e.filePaths[0]);
-                }
-              })
-            }}
-          />
-        </div>
-        <div className="Settings__dialog-input-group">
-          <span className="Settings__pseudo-label semi_bold">Tulosten tallennuspolku</span>
-          <label className="Settings__pseudo-file-select bg_plus" htmlFor="hidden-input-results-path" title={settings.resultdata_path}>
-            {settings.resultdata_path ? path.basename(settings.resultdata_path) : "Valitse.."}
-          </label>
-          <input className="Settings__hidden-input"
-            id="hidden-input-results-path"
-            type="text"
-            onClick={() => {
-              dialog.showOpenDialog({
-                defaultPath: settings.resultdata_path ? settings.resultdata_path : settings.project_path,
-                properties: ['openDirectory']
-              }).then((e) => {
-                if (!e.canceled) {
-                  setResultsPath(e.filePaths[0]);
                 }
               })
             }}

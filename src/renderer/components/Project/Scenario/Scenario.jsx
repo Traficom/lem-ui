@@ -4,9 +4,10 @@ import _ from 'lodash';
 const { dialog } = require('@electron/remote');
 const classNames = require('classnames');
 
-const Scenario = ({ projectPath, scenario, updateScenario, closeScenario, existingOtherNames, inheritedGlobalProjectSettings }) => {
+const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames, inheritedGlobalProjectSettings }) => {
 
   const longDistDemandForecastCalc = "calc";
+  const projectFolder = inheritedGlobalProjectSettings.projectFolder;
   const [goodsTransportFreightMatrixSource, setGoodsTransportFreightMatrixSource] = useState("base");
   const [nameError, setNameError] = useState("");
 
@@ -99,7 +100,7 @@ const Scenario = ({ projectPath, scenario, updateScenario, closeScenario, existi
           type="text"
           onClick={() => {
             dialog.showOpenDialog({
-              defaultPath: scenario.forecast_data_folder_path ? scenario.forecast_data_folder_path : projectPath,
+              defaultPath: scenario.forecast_data_folder_path ? scenario.forecast_data_folder_path : projectFolder,
               properties: ['openDirectory']
             }).then((e) => {
               if (!e.canceled) {
@@ -325,30 +326,30 @@ const Scenario = ({ projectPath, scenario, updateScenario, closeScenario, existi
               {/* File path to EMME project reference-file (generally same in all scenarios of a given VLEM project) */}
               <div className="Scenario__section">
                 <label className="Scenario__pseudo-label Scenario__pseudo-label--inline project-override-setting">
-                  <span className="inline-element override-setting">Emme-projekti</span>
-                  {scenario.overriddenProjectSettings.emmeProjectPath &&
+                  <span className="inline-element override-setting">Projektikansio</span>
+                  {scenario.overriddenProjectSettings.projectFolder &&
                     <label className="inline-element override-reset-button" onClick={(event) => {
                       event.preventDefault();
-                      updateScenario({ ...scenario, overriddenProjectSettings: { ...scenario.overriddenProjectSettings, emmeProjectPath: null } });
+                      updateScenario({ ...scenario, overriddenProjectSettings: { ...scenario.overriddenProjectSettings, projectFolder: null } });
                     }}>
                       <ResetIcon className="override-reset-icon" />
                     </label>
                   }
-                  <label className={classNames('Settings__pseudo-file-select', 'override-file-select-input', { 'override-is-default': scenario.overriddenProjectSettings.emmeProjectPath ? false : true })} htmlFor="override-emme-project-path" title={'Emme project path'}>
-                    {scenario.overriddenProjectSettings.emmeProjectPath ? scenario.overriddenProjectSettings.emmeProjectPath : inheritedGlobalProjectSettings.emmeProjectPath}
+                  <label className={classNames('Settings__pseudo-file-select', 'override-file-select-input', { 'override-is-default': scenario.overriddenProjectSettings.projectFolder ? false : true })} htmlFor="override-emme-project-path" title={'Emme project path'}>
+                    {scenario.overriddenProjectSettings.projectFolder ? scenario.overriddenProjectSettings.projectFolder : inheritedGlobalProjectSettings.projectFolder}
                   </label>
-                  <input id="override-emme-project-path"
+                  <input id="override-project-folder"
                     className="override-input"
                     type="text"
                     hidden={true}
-                    placeholder={inheritedGlobalProjectSettings.emmeProjectPath}
+                    placeholder={inheritedGlobalProjectSettings.projectFolder}
                     onClick={() => {
                       dialog.showOpenDialog({
-                        defaultPath: scenario.overriddenProjectSettings.emmeProjectPath ? scenario.overriddenProjectSettings.emmeProjectPath : inheritedGlobalProjectSettings.emmeProjectPath,
+                        defaultPath: scenario.overriddenProjectSettings.projectFolder ? scenario.overriddenProjectSettings.projectFolder : inheritedGlobalProjectSettings.projectFolder,
                         properties: ['openDirectory']
                       }).then((e) => {
                         if (!e.canceled) {
-                          updateScenario({ ...scenario, overriddenProjectSettings: { ...scenario.overriddenProjectSettings, emmeProjectPath: e.filePaths[0] } });
+                          updateScenario({ ...scenario, overriddenProjectSettings: { ...scenario.overriddenProjectSettings, projectFolder: e.filePaths[0] } });
                         }
                       })
                     }}
@@ -425,38 +426,6 @@ const Scenario = ({ projectPath, scenario, updateScenario, closeScenario, existi
               </div>
               <div className="Scenario__section">
                 <label className="Scenario__pseudo-label Scenario__pseudo-label--inline project-override-setting">
-                  <span className="inline-element override-setting">Projektikansion polku</span>
-                  {scenario.overriddenProjectSettings.projectPath &&
-                    <label className="inline-element override-reset-button" onClick={(event) => {
-                      event.preventDefault();
-                      updateScenario({ ...scenario, overriddenProjectSettings: { ...scenario.overriddenProjectSettings, projectPath: null } });
-                    }}>
-                      <ResetIcon className="override-reset-icon" />
-                    </label>
-                  }
-                  <label className={classNames('Settings__pseudo-file-select', 'override-file-select-input', { 'override-is-default': scenario.overriddenProjectSettings.projectPath ? false : true })} htmlFor="override-project-folder-path" title={'Project path'}>
-                    {scenario.overriddenProjectSettings.projectPath ? scenario.overriddenProjectSettings.projectPath : inheritedGlobalProjectSettings.projectPath}
-                  </label>
-                  <input id="override-project-folder-path"
-                    className="override-input"
-                    type="text"
-                    hidden={true}
-                    placeholder={inheritedGlobalProjectSettings.projectPath}
-                    onClick={() => {
-                      dialog.showOpenDialog({
-                        defaultPath: scenario.overriddenProjectSettings.projectPath ? scenario.overriddenProjectSettings.projectPath : inheritedGlobalProjectSettings.projectPath,
-                        properties: ['openDirectory']
-                      }).then((e) => {
-                        if (!e.canceled) {
-                          updateScenario({ ...scenario, overriddenProjectSettings: { ...scenario.overriddenProjectSettings, projectPath: e.filePaths[0] } });
-                        }
-                      })
-                    }}
-                  />
-                </label>
-              </div>
-              <div className="Scenario__section">
-                <label className="Scenario__pseudo-label Scenario__pseudo-label--inline project-override-setting">
                   <span className="inline-element override-setting">Lähtödatakansion polku</span>
                   {scenario.overriddenProjectSettings.basedataPath &&
                     <label className="inline-element override-reset-button" onClick={(event) => {
@@ -481,38 +450,6 @@ const Scenario = ({ projectPath, scenario, updateScenario, closeScenario, existi
                       }).then((e) => {
                         if (!e.canceled) {
                           updateScenario({ ...scenario, overriddenProjectSettings: { ...scenario.overriddenProjectSettings, basedataPath: e.filePaths[0] } });
-                        }
-                      })
-                    }}
-                  />
-                </label>
-              </div>
-              <div className="Scenario__section">
-                <label className="Scenario__pseudo-label Scenario__pseudo-label--inline project-override-setting">
-                  <span className="inline-element override-setting">Tulosten tallennuspolku</span>
-                  {scenario.overriddenProjectSettings.resultsPath &&
-                    <label className="inline-element override-reset-button" onClick={(event) => {
-                      event.preventDefault();
-                      updateScenario({ ...scenario, overriddenProjectSettings: { ...scenario.overriddenProjectSettings, resultsPath: null } });
-                    }}>
-                      <ResetIcon className="override-reset-icon" />
-                    </label>
-                  }
-                  <label className={classNames('Settings__pseudo-file-select', 'override-file-select-input', { 'override-is-default': scenario.overriddenProjectSettings.resultsPath ? false : true })} htmlFor="override-results-folder-path" title={'Results path'}>
-                    {scenario.overriddenProjectSettings.resultsPath ? scenario.overriddenProjectSettings.resultsPath : inheritedGlobalProjectSettings.resultsPath}
-                  </label>
-                  <input id="override-results-folder-path"
-                    className="override-input"
-                    type="text"
-                    hidden={true}
-                    placeholder={scenario.overriddenProjectSettings.resultsPath ? scenario.overriddenProjectSettings.resultsPath : inheritedGlobalProjectSettings.resultsPath}
-                    onClick={() => {
-                      dialog.showOpenDialog({
-                        defaultPath: scenario.overriddenProjectSettings.resultsPath ? scenario.overriddenProjectSettings.resultsPath : inheritedGlobalProjectSettings.resultsPath,
-                        properties: ['openDirectory']
-                      }).then((e) => {
-                        if (!e.canceled) {
-                          updateScenario({ ...scenario, overriddenProjectSettings: { ...scenario.overriddenProjectSettings, resultsPath: e.filePaths[0] } });
                         }
                       })
                     }}

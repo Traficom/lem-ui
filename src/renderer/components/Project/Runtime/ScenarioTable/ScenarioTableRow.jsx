@@ -15,25 +15,22 @@ const ScenarioTableRow = ({
   setOpenScenarioID,
   deleteScenario,
   tooltipContent,
-  resultsPath,
+  projectFolder,
   duplicateSubScenario,
   modifySubScenario,
   deleteSubScenario,
 }) => {
 
-  const scenarioResultsPath = isOverriddenProjectPathSet(scenarioData) ?
-    scenarioData.overriddenProjectSettings.resultsPath : resultsPath + "\\" + scenarioData.name;
+  const scenarioProjectFolder = isOverriddenProjectFolderSet(scenarioData) ?
+    scenarioData.overriddenProjectSettings.projectFolder : projectFolder + "\\" + scenarioData.name;
 
-  const scenarioResultsBasePath = isOverriddenProjectPathSet(scenarioData) ?
-    scenarioData.overriddenProjectSettings.resultsPath : resultsPath;
+  const scenarioLogFilePath = scenarioProjectFolder + "\\" + scenarioData.name + ".log";
 
-  const scenarioLogFilePath = scenarioResultsPath + "\\" + scenarioData.name + ".log";
-
-  const resultsExist = fs.existsSync(scenarioResultsPath);
+  const resultsExist = fs.existsSync(scenarioProjectFolder);
   const scenarioLogExists = fs.existsSync(scenarioLogFilePath);
 
   const openResultsFolder = () => {
-    shell.openPath(scenarioResultsPath);
+    shell.openPath(scenarioProjectFolder);
   }
 
   const openLogFile = () => {
@@ -42,10 +39,10 @@ const ScenarioTableRow = ({
     }
   }
 
-  function isOverriddenProjectPathSet(scenarioData) {
+  function isOverriddenProjectFolderSet(scenarioData) {
     return scenarioData.overriddenProjectSettings &&
-      scenarioData.overriddenProjectSettings.resultsPath &&
-      scenarioData.overriddenProjectSettings.resultsPath !== null;
+      scenarioData.overriddenProjectSettings.projectFolder &&
+      scenarioData.overriddenProjectSettings.projectFolder !== null;
   }
 
   return (
@@ -139,12 +136,12 @@ const ScenarioTableRow = ({
           duplicateScenario={duplicateScenario}
           deleteScenario={deleteScenario}
           tooltipContent={tooltipContent}
-          resultsPath={resultsPath}
+          projectFolder={projectFolder}
           duplicateSubScenario={duplicateSubScenario}
           deleteSubScenario={deleteSubScenario}
           modifySubScenario={modifySubScenario}
           parentScenarioIsRunOrSelectedForRunning={(resultsExist && scenarioLogExists && scenarioData.run_success) || scenarioIDsToRun.includes(scenarioData.id)}
-          parentScenarioResultsPath={scenarioResultsBasePath} />
+          parentScenarioResultsPath={scenarioProjectFolder}/>
       ))}
     </Fragment>
   );

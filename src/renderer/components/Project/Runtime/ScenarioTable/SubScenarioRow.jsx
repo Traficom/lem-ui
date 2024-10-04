@@ -15,11 +15,12 @@ const SubScenarioRow = ({
     modifySubScenario,
     deleteSubScenario,
     tooltipContent,
-    parentScenarioResultsPath,
-    parentScenarioIsRunOrSelectedForRunning
+    projectFolder,
+    parentScenarioIsRunOrSelectedForRunning,
+    parentScenarioResultsPath
 }) => {
 
-    const scenarioLogFilePath = parentScenarioResultsPath + "\\" + subScenario.name + "\\" + subScenario.name + ".log";
+    const scenarioLogFilePath = projectFolder + "\\" + subScenario.name + "\\" + subScenario.name + ".log";
 
     const resultsExist = fs.existsSync(parentScenarioResultsPath);
     const scenarioLogExists = fs.existsSync(scenarioLogFilePath);

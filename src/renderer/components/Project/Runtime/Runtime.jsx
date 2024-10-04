@@ -2,7 +2,7 @@ import React from 'react';
 const _ = require('lodash');
 
 const Runtime = ({
-  projectPath, resultsPath, scenarios, scenarioIDsToRun, runningScenarioID, openScenarioID, deleteScenario,
+  projectFolder, scenarios, scenarioIDsToRun, runningScenarioID, openScenarioID, deleteScenario,
   setOpenScenarioID,
   reloadScenarios,
   handleClickScenarioToActive, handleClickNewScenario,
@@ -97,7 +97,7 @@ const Runtime = ({
       <div className="Runtime__helmet-project-controls">
         <div className="Runtime__heading">Projektin alustaminen</div>
         <p className="Runtime__project-path">
-          Helmet-skenaarioiden tallennuspolku: {projectPath}
+          Helmet-skenaarioiden tallennuspolku: {projectFolder}
         </p>
         <button
             className="Runtime__button Table_space_after"
@@ -158,7 +158,7 @@ const Runtime = ({
                     setOpenScenarioID={setOpenScenarioID}
                     deleteScenario={deleteScenario}
                     tooltipContent={tooltipContent}
-                    resultsPath={resultsPath ? resultsPath : projectPath}
+                    projectFolder={projectFolder}
                     duplicateSubScenario={duplicateSubScenario}
                     deleteSubScenario={deleteSubScenario}
                     modifySubScenario={modifySubScenario}
