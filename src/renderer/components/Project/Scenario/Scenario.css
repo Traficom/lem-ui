@@ -134,7 +134,7 @@ span.Scenario__inline {
     width: 156px;
 }
 
-.Scenario__name-error {
+.Scenario-error {
     display: table;
     margin: 0 auto;
     color: #801a00;

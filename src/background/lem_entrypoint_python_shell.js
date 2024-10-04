@@ -27,6 +27,7 @@ module.exports = {
           "--baseline-data-path", allRunParameters[0].base_data_folder_path,
           "--results-path", allRunParameters[0].results_data_folder_path,
           "--scenario-name", allRunParameters[0].name,
+          "--cost-data-paths", allRunParameters[0].cost_data_path,
           "--long-dist-demand-forecast", longDistDemandForecast,
         ]
           .concat(["--emme-paths"]).concat(allRunParameters.map(p => p.emme_project_path))
@@ -77,6 +78,7 @@ module.exports = {
           "--emme-path", runParameters.emme_project_path,
           "--first-scenario-id", runParameters.first_scenario_id,
           "--baseline-data-path", runParameters.base_data_folder_path,
+          "--cost-data-path", runParameters.cost_data_path,
           "--forecast-data-path", runParameters.forecast_data_folder_path,
           "--first-matrix-id", (runParameters.first_matrix_id == null ? "100" : runParameters.first_matrix_id),
           "--iterations", runParameters.iterations,

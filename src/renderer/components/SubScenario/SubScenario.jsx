@@ -8,14 +8,14 @@ const SubScenario = ({
     scenarioNames,
 }) => {
 
-    function checkName(newName){
-      return !newName || newName == 0 || 
-      scenarioNames.find((existingName) => existingName.name == newName && existingName.id != subScenarioEdit.id)
+    function checkName(newName) {
+        return !newName || newName == 0 ||
+            scenarioNames.find((existingName) => existingName.name == newName && existingName.id != subScenarioEdit.id)
     }
     const [nameIsInValid, setNameIsInValid] = useState(checkName(subScenarioEdit.name)); // all scenario and subScenario names 
     const namePlaceHolder = subScenarioEdit.parentScenarioName + "_SUB";
 
-    function handleNameChange(val){
+    function handleNameChange(val) {
         const newName = cutUnvantedCharacters(val);
         setNameIsInValid(checkName(newName));
         handleChange({ ...subScenarioEdit, name: newName });
@@ -36,7 +36,7 @@ const SubScenario = ({
                 <label className="SubScenario_label"
                     htmlFor="sub_cenario__name">Aliskenaarion nimi</label>
                 <input id="sub_scenario-name"
-                    className="sub_cenario__name"
+                    className="SubScenario_input"
                     type="text"
                     placeholder={namePlaceHolder}
                     value={subScenarioEdit.name}
@@ -44,7 +44,7 @@ const SubScenario = ({
                         handleNameChange(e.target.value);
                     }}
                 />
-                {nameIsInValid ? <span className="Scenario__name-error">Tarkista aliskenaarion nimi. Nimi ei voi olla tyhjä tai sama kuin jo olemassa oleva skenaarionimi.</span> : ""}
+                {nameIsInValid ? <span className="SubScenario_error">Tarkista aliskenaarion nimi. Nimi ei voi olla tyhjä tai sama kuin jo olemassa oleva skenaarionimi.</span> : ""}
                 {/* Emme scenario number */}
                 <label className="SubScenario_label"
                     htmlFor="submodel">EMME-skenaarion numero</label>
@@ -57,6 +57,43 @@ const SubScenario = ({
                         handleChange({ ...subScenarioEdit, emmeScenarioNumber: e.target.value });
                     }}
                 />
+
+                {/* File path to cost data */}
+                <div>
+                    <span className="SubScenario_label">Liikenteen hintadata</span>
+                    <div className="SubScenario_input_with_reset">
+                    <label className="SubScenario_input" htmlFor="sub-cost-data-file-select" title="cost data path file">
+                        {subScenarioEdit.costDataPath ? path.basename(subScenarioEdit.costDataPath) : "Valitse.."}
+                    </label>
+                    {subScenarioEdit.costDataPath &&
+                            <span onClick={(event) => {
+                                event.preventDefault();
+                                handleChange({ ...subScenarioEdit, costDataPath: "" });
+                            }}>
+                                <ResetIcon />
+                            </span>
+                    }
+                    </div>
+                    <input className="SubScenario__hidden-input"
+                        id="sub-cost-data-file-select"
+                        type="text"
+                        onClick={() => {
+                            dialog.showOpenDialog({
+                                defaultPath: subScenarioEdit.costDataPath ? subScenarioEdit.costDataPath : subScenarioEdit.parentCostDataPath,
+                                filters: [
+                                    { name: 'GeoPackage', extensions: ['.gpkg'] },
+                                    { name: 'All Files', extensions: ['*'] }
+                                ],
+                                properties: ['openFile']
+                            }).then((e) => {
+                                if (!e.canceled) {
+                                    handleChange({ ...subScenarioEdit, costDataPath: e.filePaths[0] });
+                                }
+                            })
+                        }}
+                    />
+                </div>
+
                 <label className="SubScenario_label"
                     htmlFor="submodel">Aliskenaarion kysyntämatriisit otetaan skenaariosta <b>{subScenarioEdit.parentScenarioName}</b></label>
 
@@ -66,7 +103,7 @@ const SubScenario = ({
                         className="SubScenario_btn"
                         disabled={nameIsInValid}
                         readOnly={nameIsInValid}
-                        onClick={(e) => {!nameIsInValid && handleSave()}}
+                        onClick={(e) => { !nameIsInValid && handleSave() }}
                     >
                         <span>Tallenna</span>
                     </button>
@@ -77,7 +114,7 @@ const SubScenario = ({
                         <span>Peruuta</span>
                     </button>
                 </div>
-                
+
             </div>
         </div>
     )

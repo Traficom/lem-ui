@@ -69,7 +69,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             }
           }}
         />
-        {nameError ? <span className="Scenario__name-error">{nameError}</span> : ""}
+        {nameError ? <span className="Scenario-error">{nameError}</span> : ""}
       </div>
 
       {/* Number of first EMME-scenario ID (of 4) - NOTE: EMME-scenario is different from HELMET-scenario (ie. this config) */}
@@ -109,6 +109,33 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             })
           }}
         />
+      </div>
+
+      {/* File path to cost data */}
+      <div className="Scenario__section">
+        <span className="Scenario__pseudo-label">Liikenteen hintadata</span>
+        <label className="Scenario__pseudo-file-select" htmlFor="cost-data-file-select" title={scenario.cost_data_path}>
+          {scenario.cost_data_path ? path.basename(scenario.cost_data_path) : "Valitse.."}
+        </label>
+        <input className="Scenario__hidden-input"
+          id="cost-data-file-select"
+          type="text"
+          onClick={() => {
+            dialog.showOpenDialog({
+              defaultPath: scenario.cost_data_path ? scenario.cost_data_path : projectFolder,
+              filters: [
+                { name: 'GeoPackage', extensions: ['.gpkg'] },
+                { name: 'All Files', extensions: ['*'] }
+              ],
+              properties: ['openFile']
+            }).then((e) => {
+              if (!e.canceled) {
+                updateScenario({ ...scenario, cost_data_path: e.filePaths[0] });
+              }
+            })
+          }}
+        />
+        {!scenario.cost_data_path ? <span className="Scenario-error">{"Liikenteen hintadatan tiedostopolku on pakollinen tieto."}</span> : ""}
       </div>
 
       {/* Choice how to use long distance demand forecast */}
@@ -335,7 +362,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
                       <ResetIcon className="override-reset-icon" />
                     </label>
                   }
-                  <label className={classNames('Settings__pseudo-file-select', 'override-file-select-input', { 'override-is-default': scenario.overriddenProjectSettings.projectFolder ? false : true })} htmlFor="override-emme-project-path" title={'Emme project path'}>
+                  <label className={classNames('Settings__pseudo-file-select', 'override-file-select-input', { 'override-is-default': scenario.overriddenProjectSettings.projectFolder ? false : true })} htmlFor="override-project-folder" title={'Project folder'}>
                     {scenario.overriddenProjectSettings.projectFolder ? scenario.overriddenProjectSettings.projectFolder : inheritedGlobalProjectSettings.projectFolder}
                   </label>
                   <input id="override-project-folder"
