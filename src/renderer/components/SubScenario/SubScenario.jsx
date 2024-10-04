@@ -62,7 +62,7 @@ const SubScenario = ({
                 <div>
                     <span className="SubScenario_label">Liikenteen hintadata</span>
                     <div className="SubScenario_input_with_reset">
-                    <label className="SubScenario_input" htmlFor="sub-cost-data-file-select" title="cost data path file">
+                    <label className="SubScenario_input" htmlFor="sub-cost-data-file-select" title={subScenarioEdit.costDataPath ? subScenarioEdit.costDataPath : "Cost data file"}>
                         {subScenarioEdit.costDataPath ? path.basename(subScenarioEdit.costDataPath) : "Valitse.."}
                     </label>
                     {subScenarioEdit.costDataPath &&
@@ -81,7 +81,7 @@ const SubScenario = ({
                             dialog.showOpenDialog({
                                 defaultPath: subScenarioEdit.costDataPath ? subScenarioEdit.costDataPath : subScenarioEdit.parentCostDataPath,
                                 filters: [
-                                    { name: 'GeoPackage', extensions: ['.gpkg'] },
+                                    { name: 'Json', extensions: ['json'] },
                                     { name: 'All Files', extensions: ['*'] }
                                 ],
                                 properties: ['openFile']

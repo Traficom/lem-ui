@@ -136,7 +136,6 @@ span.Scenario__inline {
 
 .Scenario-error {
     display: table;
-    margin: 0 auto;
     color: #801a00;
     font-size: 0.95em;
     font-style: italic;

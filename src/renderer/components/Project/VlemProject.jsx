@@ -153,8 +153,8 @@ const VlemProject = ({
       id: newId,
       name: newScenarioName,
       first_scenario_id: 1,
-      forecast_data_folder_path: null,
-      cost_data_path: null,
+      forecast_data_path: null,
+      costDataPath: null,
       delete_strategy_files: true,
       separate_emme_scenarios: false,
       save_matrices_in_emme: false,
@@ -252,7 +252,7 @@ const VlemProject = ({
       emmeScenarioNumber: 1,
       parentScenarioName: parentScenario.name,
       costDataPath: "",
-      parentCostDataPath: parentScenario.cost_data_path,
+      parentCostDataPath: parentScenario.costDataPath,
       runStatus: {
         statusIterationsTotal: null,
         statusIterationsCurrent: 0,
@@ -459,7 +459,7 @@ const VlemProject = ({
       const scenarioId = scenario.parentScenarioId? scenario.parentScenarioId : scenario.id;
       const store = configStores.current[scenarioId];
       const iterations = store.get('iterations');
-      if (!store.get('forecast_data_folder_path')) {
+      if (!store.get('forecast_data_path')) {
         alert(`Syöttötietoja ei ole valittu skenaariossa "${scenario.name}"`);
         return;
       }
@@ -467,7 +467,7 @@ const VlemProject = ({
         alert(`Aseta iteraatiot väliltä 1 - 99 skenaariossa "${scenario.name}"`);
         return;
       }
-      if (!store.get('cost_data_path') && !scenario.costDataPath) {
+      if (!store.get('costDataPath') && !scenario.costDataPath) {
         alert(`Liikenteen hintadata-tiedostoa ei ole valittu skenaariossa "${scenario.name}"`);
         return;
       }
@@ -500,7 +500,7 @@ const VlemProject = ({
         const id = subScenario? subScenario.id : scenario.id;
         const first_scenario_id = subScenario? subScenario.emmeScenarioNumber : scenario.first_scenario_id;
         const end_assignment_only = subScenario? true : scenario.end_assignment_only
-        const cost_data_path = subScenario && subScenario.costDataPath? subScenario.costDataPath : scenario.cost_data_path;
+        const costDataPath = subScenario && subScenario.costDataPath? subScenario.costDataPath : scenario.costDataPath;
 
         const emme_project_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.projectFolder, projectFolder);
         const emme_entry_point_file_path = emme_project_path + `\\${projectName}\\${projectName}.emp`
@@ -520,7 +520,7 @@ const VlemProject = ({
           results_data_folder_path: scenario_results_path,
           log_level: 'DEBUG',
           end_assignment_only: end_assignment_only,
-          cost_data_path: cost_data_path,
+          costDataPath: costDataPath,
         }
       })
     );
