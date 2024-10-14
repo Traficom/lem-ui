@@ -309,7 +309,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     ipcRenderer.send(
       'message-from-ui-to-create_emme_project',
       {
-        emme_project_path: settingInHandling.project_folder,
+        project_folder: settingInHandling.project_folder,
         emme_python_path: settingInHandling.emme_python_path,
         helmet_scripts_path: settingInHandling.helmet_scripts_path,
         submodel: submodel,

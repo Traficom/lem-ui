@@ -30,7 +30,7 @@ module.exports = {
           "--cost-data-paths", allRunParameters[0].costDataPath,
           "--long-dist-demand-forecast", longDistDemandForecast,
         ]
-          .concat(["--emme-paths"]).concat(allRunParameters.map(p => p.project_folder))
+          .concat(["--emme-paths"]).concat(allRunParameters.map(p => p.emme_project_path))
           .concat(["--first-scenario-ids"]).concat(allRunParameters.map(p => p.first_scenario_id))
           .concat(["--forecast-data-paths"]).concat(allRunParameters.map(p => p.forecast_data_path))
           .concat(allRunParameters.map(p => p.separate_emme_scenarios).every(Boolean) ? ["--separate-emme-scenarios"] : [])
@@ -75,7 +75,7 @@ module.exports = {
           "--log-format", "JSON",
           "--scenario-name", runParameters.name,
           "--results-path", runParameters.results_data_folder_path,
-          "--emme-path", runParameters.project_folder,
+          "--emme-path", runParameters.emme_project_path,
           "--first-scenario-id", runParameters.first_scenario_id,
           "--baseline-data-path", runParameters.base_data_folder_path,
           "--cost-data-path", runParameters.costDataPath,
