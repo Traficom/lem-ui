@@ -39,7 +39,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
   const [errorInfo, setErrorInfo] = useState(''); // Error info
   const [isCreateEmmeProjectModalOpen, setCreateEmmeProjectModalOpen] = useState(false); // whether create Emme project -dialog is open
 
-  // Global settings store contains selected_settings_id and settings {"id", "project_name", "emme_project_path", "emme_python_path", "helmet_scripts_path", "project_path", "basedata_path", and "resultdata_path"}.
+  // Global settings store contains selected_settings_id and settings
   const globalSettingsStore = useRef(new Store());
 
   function saveNewSetting(newSetting) {
@@ -289,6 +289,10 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
   };
 
   const _createEmmeProject = (submodel, numberOfEmmeScenarios, separateEmmeScenarios) => {
+    if (!fs.existsSync(settingInHandling.project_folder)) {
+      showError('Tarkista projektikansio ' + settingInHandling.project_folder);
+      return;
+    }
     // If create_emme_project.py doesn't exist, alert.
     const createEmmeScript = settingInHandling.helmet_scripts_path + "\\create_emme_project.py"
     if (!fs.existsSync(createEmmeScript)) {
@@ -305,7 +309,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     ipcRenderer.send(
       'message-from-ui-to-create_emme_project',
       {
-        emme_project_path: settingInHandling.project_folder,
+        project_folder: settingInHandling.project_folder,
         emme_python_path: settingInHandling.emme_python_path,
         helmet_scripts_path: settingInHandling.helmet_scripts_path,
         submodel: submodel,

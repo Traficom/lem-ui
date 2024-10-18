@@ -4,6 +4,12 @@ const {ipcRenderer} = require('electron');
 module.exports = {
   createEmmeProjectPythonShell: function (worker, runParameters, onEndCallback) {
 
+    // Make sure project folder is given
+    if (!runParameters.project_folder) {
+      alert("Project folder is not set."); // Should never occur
+      return;
+    }
+
     // Make sure worker isn't overridden (and if so, abort the run)
     if (worker) {
       alert("Worker already in progress."); // Should never occur

@@ -14,7 +14,8 @@ const ScenarioTooltip = ({
   const visibleTooltipProperties = [
     'first_scenario_id',
     'first_matrix_id',
-    'forecast_data_folder_path',
+    'forecast_data_path',
+    'costDataPath',
     'save_matrices_in_emme',
     'end_assignment_only',
     'delete_strategy_files',
@@ -31,7 +32,10 @@ const ScenarioTooltip = ({
   const propertiesUsedFromSubScenario = [
     'id',
     'name',
+    'costDataPath'
   ];
+
+  const replacedTooltipHeadings = {costDataPath: 'cost_data_path'};
 
   const filteredScenarioSettings = _.pickBy(
     scenario,
@@ -48,16 +52,21 @@ const ScenarioTooltip = ({
   const getPropertyForDisplayString = (settingProperty) => {
     const [key, value] = settingProperty
     var valueToShow = value;
-    if (isSubScenarioTooltip && propertiesUsedFromSubScenario.includes(key)) {
+    var keyToShow = key;
+    if (isSubScenarioTooltip && propertiesUsedFromSubScenario.includes(key) && subScenario[key]) {
       valueToShow = subScenario[key];
+    }
+
+    if(replacedTooltipHeadings[key]){
+      keyToShow = replacedTooltipHeadings[key];
     }
 
     if (typeof valueToShow === 'string') {
       const trimmedStringValue = valueToShow.length > 30 ? "..." + valueToShow.substring(valueToShow.length - 30) : valueToShow;
-      return `${key} : ${trimmedStringValue}`
+      return `${keyToShow} : ${trimmedStringValue}`
     }
 
-    return `${key} : ${valueToShow}`
+    return `${keyToShow} : ${valueToShow}`
   };
 
   const getAdditionallSubScenarioProperties = () => {
@@ -75,7 +84,7 @@ const ScenarioTooltip = ({
         marginLeft: "1rem",
         overflow: "hidden",
         fontWeight: "bold",
-      }}>key : {value}</p>
+      }}>{key} : {value}</p>
     )
   }
 
