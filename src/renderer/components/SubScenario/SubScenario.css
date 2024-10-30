@@ -48,7 +48,7 @@
 
 .SubScenario_input {
     display: block;
-    width: 250px;
+    width: 270px;
     height: 35px; 
     padding: 6px 8px;
     margin-top: 4px;
@@ -92,6 +92,11 @@
   margin-top: 15px;
 }
 
+.SubScenario_input_with_reset label{
+    display: inline-block;
+    margin-right: 5px;
+}
+
 .SubScenario_buttons {
     display: inline;
 }
@@ -112,4 +117,17 @@
     background-color: #ffffff;
     background-image: url('../close-large.png');
     background-repeat: no-repeat;
+}
+
+.SubScenario_error {
+    display: table;
+    margin: 0;
+    color: #801a00;
+    font-size: 0.95em;
+    font-style: italic;
+    line-height: 1.5em;
+}
+
+.SubScenario__hidden-input {
+    display: none;
 }
