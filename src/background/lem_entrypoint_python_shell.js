@@ -29,6 +29,7 @@ module.exports = {
           "--scenario-name", allRunParameters[0].name,
           "--long-dist-demand-forecast", longDistDemandForecast,
         ]
+          .concat(allRunParameters[0].end_assignment_only ? ["--end-assignment-only"] : [])
           .concat(["--emme-paths"]).concat(allRunParameters.map(p => p.emme_project_path))
           .concat(["--first-scenario-ids"]).concat(allRunParameters.map(p => p.first_scenario_id))
           .concat(["--forecast-data-paths"]).concat(allRunParameters.map(p => p.forecast_data_folder_path))
