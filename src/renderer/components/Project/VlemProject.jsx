@@ -34,6 +34,8 @@ const VlemProject = ({
   // Scenario-specific settings under currently selected Project
   const configStores = useRef({});
 
+  ipcRenderer.setMaxListeners(20);
+
   const _handleClickScenarioToActive = (scenario) => {
     if(scenarioIDsToRun.includes(scenario.id)) {
       // If scenario exists in scenarios to run, remove it
