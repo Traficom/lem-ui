@@ -1,7 +1,7 @@
 {
   "name": "lem-ui",
-  "productName": "VLEM 0.1",
-  "version": "1.1.6-SNAPSHOT",
+  "productName": "VLEM",
+  "version": "1.0.1",
   "private": true,
   "description": "Lem Model System UI",
   "main": "src/main/index.js",
