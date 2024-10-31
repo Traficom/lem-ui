@@ -24,7 +24,7 @@ const CreateEmmeProject = ({
                 <div className="Submodel_select">
                     <select id="submodel" value={submodel} onChange={e => setSubmodel(e.target.value)}>
                         <option key={"submodel_select"} value={""}>--- valitse ---</option>
-                        {submodels && submodels.map((submodel) =>
+                        {projectSubmodels && projectSubmodels.map((submodel) =>
                             <option key={submodel.id} value={submodel.id}>{submodel.name}</option>)
                         }
                     </select>
