@@ -10,8 +10,8 @@ on:
 
 jobs:
   build:
+    if: ${{ github.ref == 'refs/heads/release' || github.ref == 'refs/heads/main' }}
     runs-on: windows-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
@@ -21,9 +21,12 @@ jobs:
       - run: npm ci
       - run: npm run make
 
-      # Publish package only on push to release branch
+  publish:
+    if: ${{ github.ref == 'refs/heads/release' }}
+    needs: build
+    runs-on: windows-latest
+    steps:
       - name: Publish package
-        if: ${{ github.ref == 'refs/heads/release' && github.event_name == 'push' }}
         run: npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
