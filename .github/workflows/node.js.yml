@@ -17,7 +17,7 @@ jobs:
       - run: npm ci
       - run: npm run make
       - name: Publish package
-        run: npm run publish
         if: ${{ github.ref == 'refs/heads/release' && github.event_name == 'push' }}
+        run: npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
