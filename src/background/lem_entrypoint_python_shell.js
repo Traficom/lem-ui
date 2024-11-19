@@ -89,7 +89,7 @@ module.exports = {
           .concat(runParameters.delete_strategy_files == true | runParameters.delete_strategy_files == null ? ["--del-strat-files"] : [])
           .concat(runParameters.separate_emme_scenarios ? ["--separate-emme-scenarios"] : [])
           .concat(runParameters.save_matrices_in_emme ? ["--save-emme-matrices"] : [])
-          .concat(runParameters.stored_speed_assignment ? ["--stored-speed-assignment"] : [])
+          .concat(runParameters.stored_speed_assignment ? ["--stored-speed-assignment", runParameters.stored_speed_assignment_folders] : [])
           .concat(runParameters.submodel ? ["--submodel", runParameters.submodel] : [])
           .concat(runParameters.freight_matrix_path && runParameters.freight_matrix_path != "" ? ["--freight-matrix-path", runParameters.freight_matrix_path] : [])
       });
