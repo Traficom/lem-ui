@@ -10,6 +10,8 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   const projectFolder = inheritedGlobalProjectSettings.projectFolder;
   const [goodsTransportFreightMatrixSource, setGoodsTransportFreightMatrixSource] = useState("base");
   const [nameError, setNameError] = useState("");
+  const [errorShown, setErrorShown] = useState(false); // whether LemError -dialog is open
+  const [errorInfo, setErrorInfo] = useState(''); // Error info
 
   const hasOverriddenSettings = (scenario) => {
     const overriddenSetting = _.find(scenario.overriddenProjectSettings, (setting) => {
@@ -45,12 +47,26 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment, stored_speed_assignment_folders: [] })
     }
   }
+
+  const showError = (errorInfo) => {
+    setErrorInfo(errorInfo);
+    setErrorShown(true);
+  };
+
+  const closeError = () => {
+    setErrorShown(false);
+    setErrorInfo('');
+  };
  
   function setStoredSpeedAssignmentFolder(index, folder) {
-    const folderName = isSet(folder)? path.basename(folder) : "";
-    let folders = [...scenario.stored_speed_assignment_folders];
-    folders[index] = folderName;
-    updateScenario({...scenario, stored_speed_assignment_folders: folders})
+    const folderName = isSet(folder) ? path.basename(folder) : "";
+    if (folderName.includes(" ")) {
+      showError("Kansion nimessä ei voi olla välilyöntejä")
+    } else {
+      let folders = [...scenario.stored_speed_assignment_folders];
+      folders[index] = folderName;
+      updateScenario({ ...scenario, stored_speed_assignment_folders: folders })
+    }
   }
 
   const basedataPath = scenario.overriddenProjectSettings.basedataPath ? scenario.overriddenProjectSettings.basedataPath : inheritedGlobalProjectSettings.basedataPath;
@@ -283,6 +299,11 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
           />
         </div>
       </div>
+
+      {errorShown && <LemError
+        info={errorInfo}
+        close={closeError}
+      />}
 
       <div className="Scenario__section Scenario__title">
         Lisävalinnat
