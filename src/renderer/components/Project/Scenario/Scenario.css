@@ -201,7 +201,6 @@ span.Scenario__inline {
     height: 2rem;
 }
 
-
 .Submodel_select select{
     width: 240px;
     height: 30px;
@@ -211,4 +210,41 @@ span.Scenario__inline {
     color: var(--dark-grey);
     border-radius: 2px;
     padding-left: 4px;
+}
+
+.flexContainer {
+    display: flex;
+}
+
+.Scenario__stored_speed_assignment_inputs{
+    max-width: 50%;
+    flex: 1;
+}
+
+.stored_speed_assignment_fields {
+    display: flex;
+}
+
+.pseudo_reset {
+    margin-top: 10px;
+    margin-left: 4px;
+}
+
+.Scenario__pseudo-stored_speed_assignment {
+    display: block;
+    width: 90%;
+    padding: 10px 12px;
+    margin-top: 4px;
+    height: 44px;
+    background: #ffffff;
+    border: 1px solid var(--medium-grey);
+    box-sizing: border-box;
+    border-radius: 2px;
+    font-size: 15px;
+    font-weight: 325;
+    cursor: pointer;
+    /* Overflowing file/dir names show as "First part..." */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
