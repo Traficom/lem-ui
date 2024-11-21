@@ -418,17 +418,18 @@ const VlemProject = ({
     let runnableScenarios = [];
     scenarios.forEach(scenario => {
       if (scenarioIDsToRun.includes(scenario.id) && !runnableScenarios.find(s => s.id == scenario.id)) {
-        runnableScenarios.push(scenario);
+        runnableScenarios.push({...scenario, runIndex: scenarioIDsToRun.indexOf(scenario.id)});
       }
       if (scenario.subScenarios && scenario.subScenarios.length > 0) {
         scenario.subScenarios.forEach(subSenario => {
           if (scenarioIDsToRun.includes(subSenario.id) && !runnableScenarios.find(s => s.id == subSenario.id)) {
-            runnableScenarios.push(subSenario);
+            runnableScenarios.push({ ...subSenario, runIndex: scenarioIDsToRun.indexOf(scenario.id) + (1 + scenarioIDsToRun.indexOf(subSenario.id) / 10) });
           }
         })
       }
     });
-    return runnableScenarios;
+    const sortedRunnableScenarios = runnableScenarios.sort((a, b) => a.runIndex - b.runIndex)
+    return sortedRunnableScenarios;
   }
 
   const scenariosToRun = resolveRunnableScenarios(scenarioIDsToRun, scenarios);
