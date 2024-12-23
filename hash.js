@@ -2,7 +2,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 
 console.log("Reading files...");
-const files = fs.readdirSync("out/prod/make/squirrel.windows/x64");
+const files = fs.readdirSync("out/prod/make/squirrel.windows/x64/*.exe");
 console.log("Files found:", files);
 
 const results = files.map(file => {
