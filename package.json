@@ -9,6 +9,7 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "postbuild": "node add-hash.js",
     "publish": "electron-forge publish"
   },
   "keywords": [],
