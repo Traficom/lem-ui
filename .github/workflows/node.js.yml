@@ -26,6 +26,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.result }}
+          upload_url: "https://uploads.github.com/reposTraficom/lem-ui/releases/${{ github.event.release.id }}/assets"
           asset_path: out/prod/make/squirrel.windows/x64/sha256sum.txt
           asset_name: sha256sum.txt
