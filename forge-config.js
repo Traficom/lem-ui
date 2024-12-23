@@ -47,11 +47,12 @@ module.exports = {
             }
         }
     ],
-    "hooks": {
-        "afterMake": async (buildResult) => {
-          console.log('Finished making distributables:', buildResult);
+    hooks: {
+        beforePublish: async (buildResult) => {
+          console.log('Running custom logic before publish:', buildResult);
+          // Add your custom script or logic here:
           const execSync = require('child_process').execSync;
           execSync('node hash.js', { stdio: 'inherit' });
         }
-      }
+    }
 }
