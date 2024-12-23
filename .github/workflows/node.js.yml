@@ -16,6 +16,8 @@ jobs:
           node-version: '16.x'
       - run: npm ci
       - run: npm run make
+      - name: Generate SHA-256 hashes
+        run: node hash.js
       - name: Publish package
         run: npm run publish
         if: ${{ github.ref == 'refs/heads/release' && github.event_name == 'push' }}
