@@ -14,5 +14,5 @@ const results = exeFiles.map(file => {
 
 console.log("Hashes generated:", results);
 
-fs.writeFileSync("out/prod/make/sha256sum.txt", results.join("\n"));
+fs.writeFileSync("out/prod/make/squirrel.windows/x64/sha256sum.txt", results.join("\n"));
 console.log("Hashes saved to sha256sum.txt");

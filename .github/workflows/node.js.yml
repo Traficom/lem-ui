@@ -16,10 +16,10 @@ jobs:
           node-version: '16.x'
       - run: npm ci
       - run: npm run make
-      - name: Generate SHA-256 hashes
-        run: node hash.js
       - name: Publish package
         run: npm run publish
+      - name: Generate SHA-256 hashes
+        run: node hash.js
         if: ${{ github.ref == 'refs/heads/VLE-690_calculate_sha256_from_installer' && github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
