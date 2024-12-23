@@ -10,8 +10,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Get Release ID
-        run: echo "Release ID: ${{ github.event.release.id }}"
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -31,3 +29,4 @@ jobs:
           upload_url: "https://uploads.github.com/reposTraficom/lem-ui/releases/${{ github.event.release.id }}/assets"
           asset_path: out/prod/make/squirrel.windows/x64/sha256sum.txt
           asset_name: sha256sum.txt
+          asset_content_type: text/plain
