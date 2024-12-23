@@ -16,6 +16,7 @@ jobs:
           node-version: '16.x'
       - run: npm ci
       - run: npm run make
+      - run: node add-hash.js
       - name: Publish package
         run: npm run publish
         if: ${{ github.ref == 'refs/heads/VLE-690_calculate_sha256_from_installer' && github.event_name == 'push' }}
