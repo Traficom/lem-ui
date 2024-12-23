@@ -31,7 +31,7 @@ module.exports = {
         {
             name: "@electron-forge/maker-deb",
             config: {}
-        }
+        },
     ],
     publishers: [
         {
@@ -46,5 +46,12 @@ module.exports = {
                 authToken: process.env.GITHUB_TOKEN
             }
         }
-    ]
+    ],
+    "hooks": {
+        "afterMake": async (buildResult) => {
+          console.log('Finished making distributables:', buildResult);
+          const execSync = require('child_process').execSync;
+          execSync('node hash.js', { stdio: 'inherit' });
+        }
+      }
 }
