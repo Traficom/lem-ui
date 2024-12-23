@@ -1,4 +1,5 @@
 const { utils: { fromBuildIdentifier } } = require('@electron-forge/core');
+const packageJson = require('./package.json');
 
 /**
  * Electron Forge config.
@@ -43,16 +44,9 @@ module.exports = {
                 },
                 draft: true,
                 prerelease: false,
-                authToken: process.env.GITHUB_TOKEN
+                authToken: process.env.GITHUB_TOKEN,
+                tagName: packageJson.version,
             }
         }
-    ],
-    hooks: {
-        beforePublish: async (buildResult) => {
-          console.log('Running custom logic before publish:', buildResult);
-          // Add your custom script or logic here:
-          const execSync = require('child_process').execSync;
-          execSync('node hash.js', { stdio: 'inherit' });
-        }
-    }
+    ]
 }

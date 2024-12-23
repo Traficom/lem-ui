@@ -1,3 +1,4 @@
+
 name: Node.js CI
 
 on:
@@ -19,5 +20,14 @@ jobs:
       - name: Publish package
         run: npm run publish
         if: ${{ github.ref == 'refs/heads/VLE-690_calculate_sha256_from_installer' && github.event_name == 'push' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload SHA256 Hash File
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: "https://uploads.github.com/repos/Traficom/lem-ui/releases/1.0.4/assets?name=sha256sum.txt"
+          asset_path: out/prod/make/squirrel.windows/x64/sha256sum.txt
+          asset_name: sha256sum.txt
+          asset_content_type: text/plain
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
