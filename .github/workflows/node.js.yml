@@ -22,10 +22,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SHA256 Hash File
-        uses: actions/upload-artifact@v3
-        with:
-          name: sha256sum
-          path: out/prod/make/squirrel.windows/x64/sha256sum.txt
-        if: ${{ github.ref == 'refs/heads/VLE-690_calculate_sha256_from_installer' && github.event_name == 'push' }}
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: out/prod/make/squirrel.windows/x64/sha256sum.txt
+          asset_name: sha256sum.txt
