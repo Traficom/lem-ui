@@ -2,11 +2,11 @@ const fs = require("fs");
 const crypto = require("crypto");
 
 console.log("Reading files...");
-const files = fs.readdirSync("out/prod/make/");
+const files = fs.readdirSync("out/prod/make/squirrel.windows/x64");
 console.log("Files found:", files);
 
 const results = files.map(file => {
-    const hash = crypto.createHash("sha256").update(fs.readFileSync(`out/prod/make/${file}`)).digest("hex");
+    const hash = crypto.createHash("sha256").update(fs.readFileSync(`out/prod/make/squirrel.windows/x64/${file}`)).digest("hex");
     return `${file}: ${hash}`;
 });
 
