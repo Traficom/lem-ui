@@ -6,7 +6,7 @@ const files = fs.readdirSync("dist");
 console.log("Files found:", files);
 
 const results = files.map(file => {
-    const hash = crypto.createHash("sha256").update(fs.readFileSync(`dist/${file}`)).digest("hex");
+    const hash = crypto.createHash("sha256").update(fs.readFileSync(`out/prod/make/${file}`)).digest("hex");
     return `${file}: ${hash}`;
 });
 
