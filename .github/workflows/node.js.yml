@@ -51,4 +51,4 @@ jobs:
           asset_name: sha256sum.txt
           asset_content_type: text/plain
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ UPLOAD_URL }}
