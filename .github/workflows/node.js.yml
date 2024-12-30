@@ -59,6 +59,6 @@ jobs:
           curl -X POST "$UPLOAD_URL?name=$ASSET_NAME" \
           -H "Authorization: token $GH_TOKEN" \
           -H "Content-Type: text/plain" \
-          -data-binary @"$ASSET_FILE"
+          -d @("$ASSET_FILE")
 
           echo "Asset uploaded successfully!"
