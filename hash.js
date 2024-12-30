@@ -9,7 +9,7 @@ console.log("Exes found:", exeFiles);
 
 const results = exeFiles.map(file => {
     const hash = crypto.createHash("sha256").update(fs.readFileSync(`out/prod/make/squirrel.windows/x64/${file}`)).digest("hex");
-    return `${file}: ${hash}`;
+    return `${file} SHA256: ${hash}`;
 });
 
 console.log("Hashes generated:", results);
