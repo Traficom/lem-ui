@@ -17,7 +17,7 @@ jobs:
           node-version: '16.x'
       - run: npm ci
       - name: Log Tag Name
-        run: echo ${{ github.event.release.tag_name }}
+        run: echo ${{ github.tag_name }}
       - run: npm run make
       - name: Publish package
         run: npm run publish --verbose
