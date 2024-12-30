@@ -14,7 +14,7 @@ jobs:
       - name: Debug output path
         run: echo "OUTPUT PATH:${{options.outputPaths}}"
       - name: Log Upload URL
-        run: echo "Upload URL: ${{ steps.create_release.outputs.upload_url }}"
+        run: echo "Upload URL:${{steps.create_release.outputs.upload_url}}"
       - name: Display the path
         shell: bash
         run: echo $PATH
