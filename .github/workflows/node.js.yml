@@ -49,7 +49,7 @@ jobs:
 
           Write-Host "Matching Release: $RELEASE"
           $RELEASE | Out-File -FilePath release.json
-          $UPLOAD_URL = UPLOAD_URL=$(echo "$RELEASE" | jq -r '.upload_url' | sed 's/{?name,label}//')
+          $UPLOAD_URL = $(echo "$RELEASE" | jq -r '.upload_url' | sed 's/{?name,label}//')
           echo "Upload URL: $UPLOAD_URL"
 
           $ASSET_FILE="./out/prod/make/squirrel.windows/x64/sha256sum.txt"
