@@ -11,8 +11,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Debug upload_url
-        run: echo "Upload URL:${{steps.create_release.outputs.upload_url}}"
+      - name: Debug output path
+        run: echo "OUTPUT PATH:${{options.outputPaths}}"
+      - name: Log Upload URL
+        run: echo "Upload URL: ${{ steps.create_release.outputs.upload_url }}"
+      - name: Display the path
+        shell: bash
+        run: echo $PATH
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -28,7 +33,7 @@ jobs:
       - name: Upload SHA256 Hash File
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: "https://uploads.github.com/repos/Traficom/lem-ui/releases/1.0.4/assets?name=sha256sum.txt"
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: out/prod/make/squirrel.windows/x64/sha256sum.txt
           asset_name: sha256sum.txt
           asset_content_type: text/plain
