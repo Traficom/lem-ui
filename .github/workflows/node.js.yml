@@ -52,8 +52,8 @@ jobs:
           $UPLOAD_URL = UPLOAD_URL=$(echo "$RELEASE" | jq -r '.upload_url' | sed 's/{?name,label}//')
           echo "Upload URL: $UPLOAD_URL"
 
-          ASSET_FILE="./out/prod/make/squirrel.windows/x64/sha256sum.txt"
-          ASSET_NAME="sha256sum.txt"  
+          $ASSET_FILE="./out/prod/make/squirrel.windows/x64/sha256sum.txt"
+          $ASSET_NAME="sha256sum.txt"  
 
           echo "Uploading asset..."
           curl -X POST "$UPLOAD_URL?name=$ASSET_NAME" \
