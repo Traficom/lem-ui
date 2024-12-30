@@ -37,28 +37,33 @@ jobs:
           }
       - name: Upload SHA256 Hash File
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $TAG_NAME = "v1.0.3"
           $RELEASE = gh api repos/Traficom/lem-ui/releases --paginate | jq -r --arg TAG_NAME $TAG_NAME '.[] | select(.tag_name == $TAG_NAME)'
-
-          if ($RELEASE -eq "") {
-            Write-Host "No release found for tag: $TAG_NAME"
-            exit 1
+  
+          if (-not $RELEASE) {
+                Write-Host "No release found for tag: $TAG_NAME"
+                exit 1
           }
 
           Write-Host "Matching Release: $RELEASE"
-          RELEASE | Out-File -FilePath release.json
-          UPLOAD_URL = UPLOAD_URL=$(echo "$RELEASE" | jq -r '.upload_url' | sed 's/{?name,label}//')
-          echo "Upload URL: $UPLOAD_URL"
-
-          $ASSET_FILE="./out/prod/make/squirrel.windows/x64/sha256sum.txt"
-          $ASSET_NAME="sha256sum.txt"  
-
-          echo "Uploading asset..."
-          curl -X POST "$UPLOAD_URL?name=$ASSET_NAME" \
-          -H "Authorization: token $GH_TOKEN" \
-          -H "Content-Type: text/plain" \
-          -d @("$ASSET_FILE")
-
-          echo "Asset uploaded successfully!"
+          $RELEASE | Out-File -FilePath release.json
+    
+          $UPLOAD_URL = ($RELEASE | ConvertFrom-Json).upload_url -replace "{\?name,label}", ""
+          Write-Host "Upload URL: $UPLOAD_URL"
+    
+          $ASSET_FILE = ".\out\prod\make\squirrel.windows\x64\sha256sum.txt"
+          $ASSET_NAME = "sha256sum.txt"
+  
+          if (-not (Test-Path $ASSET_FILE)) {
+                Write-Host "Error: The file does not exist at $ASSET_FILE"
+                exit 1
+          }
+          Write-Host "Uploading asset..."
+          curl -X POST "$UPLOAD_URL?name=$ASSET_NAME" `
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" `
+          -H "Content-Type: text/plain" `
+          --data-binary @"$ASSET_FILE"
+    
+          Write-Host "Asset uploaded successfully!"
