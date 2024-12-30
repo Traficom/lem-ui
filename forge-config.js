@@ -48,5 +48,13 @@ module.exports = {
                 tagName: packageJson.version,
             }
         }
-    ]
+    ],
+    hooks: {
+        afterAllArtifactBuild: async (forgeConfig) => {
+          console.log(`Testing afterAllArtifactBuild hook: ${process.platform}`);
+        },
+        postPackage: async (forgeConfig, options) => {
+            console.info('Testing postPackage, Packages built at:', options.outputPaths);
+        }
+      }
 }
