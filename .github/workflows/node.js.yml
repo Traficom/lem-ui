@@ -46,9 +46,9 @@ jobs:
       - name: Upload SHA256 Hash File
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: ${{ UPLOAD_URL }}
           asset_path: out/prod/make/squirrel.windows/x64/sha256sum.txt
           asset_name: sha256sum.txt
           asset_content_type: text/plain
         env:
-          GITHUB_TOKEN: ${{ UPLOAD_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
