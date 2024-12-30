@@ -20,11 +20,12 @@ jobs:
         run: echo ${{ github.ref }}
       - run: npm run make
       - name: Publish package
-        run: npm run publish --verbose
+        run: npm run publish
         if: ${{ github.ref == 'refs/heads/VLE-690_2_calculate_sha256_from_installer' && github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: node hash.js
+        if: ${{ github.ref == 'refs/heads/VLE-690_2_calculate_sha256_from_installer' && github.event_name == 'push' }}
       - name: Upload SHA256 Hash File
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,3 +60,4 @@ jobs:
           -d @("$ASSET_FILE")
     
           Write-Host "Asset uploaded successfully!"
+        if: ${{ github.ref == 'refs/heads/VLE-690_2_calculate_sha256_from_installer' && github.event_name == 'push' }}
