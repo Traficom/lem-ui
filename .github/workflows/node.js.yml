@@ -39,16 +39,16 @@ jobs:
 
           Write-Host "Matching Release: $RELEASE"
           $RELEASE | Out-File -FilePath release.json
-          $UPLOAD_URL = $RELEASE | jq -r '.upload_url'
-          Write-Host "Upload URL: $UPLOAD_URL"
-          echo "upload_url=$UPLOAD_URL" >> $env:GITHUB_ENV
+          $UPLOAD_URL = UPLOAD_URL=$(echo "$RELEASE" | jq -r '.upload_url' | sed 's/{?name,label}//')
+          echo "Upload URL: $UPLOAD_URL"
 
-      - name: Upload SHA256 Hash File
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ UPLOAD_URL }}
-          asset_path: out/prod/make/squirrel.windows/x64/sha256sum.txt
-          asset_name: sha256sum.txt
-          asset_content_type: text/plain
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ASSET_FILE="out/prod/make/squirrel.windows/x64/sha256sum.txt"
+          ASSET_NAME="sha256sum.txt"  
+
+          echo "Uploading asset..."
+          curl -X POST "$UPLOAD_URL?name=$ASSET_NAME" \
+          -H "Authorization: token $GH_TOKEN" \
+          -H "Content-Type: text/plain" \
+          --data-binary @"$ASSET_FILE"
+
+          echo "Asset uploaded successfully!"
