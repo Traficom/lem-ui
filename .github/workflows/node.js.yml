@@ -25,7 +25,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: node hash.js
-      - name: Fetch Release with `gh` CLI
+      - name: Upload SHA256 Hash File
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -42,7 +42,7 @@ jobs:
           $UPLOAD_URL = UPLOAD_URL=$(echo "$RELEASE" | jq -r '.upload_url' | sed 's/{?name,label}//')
           echo "Upload URL: $UPLOAD_URL"
 
-          ASSET_FILE="out/prod/make/squirrel.windows/x64/sha256sum.txt"
+          ASSET_FILE="./out/prod/make/squirrel.windows/x64/sha256sum.txt"
           ASSET_NAME="sha256sum.txt"  
 
           echo "Uploading asset..."
