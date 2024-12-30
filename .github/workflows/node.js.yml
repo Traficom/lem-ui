@@ -29,15 +29,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          $TAG_NAME = "v1.0.3"
+          $TAG_NAME = "v1.0.5"
           $RELEASE = gh api repos/Traficom/lem-ui/releases --paginate | jq -r --arg TAG_NAME $TAG_NAME '.[] | select(.tag_name == $TAG_NAME)'
   
           if (-not $RELEASE) {
                 Write-Host "No release found for tag: $TAG_NAME"
                 exit 1
           }
-
-          Write-Host "Matching Release: $RELEASE"
+          
           $RELEASE | Out-File -FilePath release.json
     
           $UPLOAD_URL = ($RELEASE | ConvertFrom-Json).upload_url -replace "{\?name,label}", ""
