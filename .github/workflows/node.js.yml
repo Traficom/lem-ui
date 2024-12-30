@@ -45,7 +45,7 @@ jobs:
     
           $ASSET_FILE = ".\out\prod\make\squirrel.windows\x64\sha256sum.txt"
 
-          $FULL_UPLOAD_URL = "$UPLOAD_URL?name=sha256sum.txt"
+          $FULL_UPLOAD_URL = "$UPLOAD_URL" + "?name=sha256sum.txt"
           Write-Host "Full Upload URL: $FULL_UPLOAD_URL"
   
           if (-not (Test-Path $ASSET_FILE)) {
