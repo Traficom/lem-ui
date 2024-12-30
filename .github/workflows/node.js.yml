@@ -11,11 +11,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Log Upload URL
-        run: echo "Upload URL:${{steps.create_release.outputs.upload_url}}"
-      - name: Display the path
-        shell: bash
-        run: echo $PATH
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -31,7 +31,7 @@ jobs:
       - name: Upload SHA256 Hash File
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: out/prod/make/squirrel.windows/x64/sha256sum.txt
           asset_name: sha256sum.txt
           asset_content_type: text/plain
