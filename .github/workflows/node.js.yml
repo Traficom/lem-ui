@@ -26,6 +26,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: node hash.js
       - name: Fetch Release with `gh` CLI
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $TAG_NAME = "v1.0.3"
           $RELEASE = gh api repos/Traficom/lem-ui/releases --paginate | jq -r --arg TAG_NAME $TAG_NAME '.[] | select(.tag_name == $TAG_NAME)'
