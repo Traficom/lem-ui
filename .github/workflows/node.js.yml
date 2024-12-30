@@ -30,8 +30,8 @@ jobs:
            TAG_NAME=v1.0.3
            RELEASE=$(gh api repos/Traficom/lem-ui/releases --paginate | jq -r --arg TAG_NAME "$TAG_NAME" '.[] | select(.tag_name == $TAG_NAME)')
            if [ -z "$RELEASE" ]; then
-           echo "No release found for tag: $TAG_NAME"
-           exit 1
+             echo "No release found for tag: $TAG_NAME"
+             exit 1
            fi
            echo "Matching Release: $RELEASE"
            echo "$RELEASE" > release.json
