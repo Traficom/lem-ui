@@ -21,7 +21,7 @@ jobs:
       - run: npm run make
       - name: Publish package
         run: npm run publish --verbose
-        if: ${{ github.ref == 'refs/heads/VLE-690_calculate_sha256_from_installer' && github.event_name == 'push' }}
+        if: ${{ github.ref == 'refs/heads/VLE-690_2_calculate_sha256_from_installer' && github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: node hash.js
@@ -54,6 +54,6 @@ jobs:
           curl -X POST "$UPLOAD_URL?name=$ASSET_NAME" `
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" `
           -H "Content-Type: text/plain" `
-          -d @"$ASSET_FILE"
+          -d @("$ASSET_FILE")
     
           Write-Host "Asset uploaded successfully!"
