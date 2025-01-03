@@ -1,4 +1,5 @@
 const { utils: { fromBuildIdentifier } } = require('@electron-forge/core');
+const packageJson = require('./package.json');
 
 /**
  * Electron Forge config.
@@ -31,7 +32,7 @@ module.exports = {
         {
             name: "@electron-forge/maker-deb",
             config: {}
-        }
+        },
     ],
     publishers: [
         {
@@ -43,8 +44,17 @@ module.exports = {
                 },
                 draft: true,
                 prerelease: false,
-                authToken: process.env.GITHUB_TOKEN
+                authToken: process.env.GITHUB_TOKEN,
+                tagName: packageJson.version,
             }
         }
-    ]
+    ],
+    hooks: {
+        afterAllArtifactBuild: async (forgeConfig) => {
+          console.log(`Testing afterAllArtifactBuild hook: ${process.platform}`);
+        },
+        postPackage: async (forgeConfig, options) => {
+            console.info('Testing postPackage, Packages built at:', options.outputPaths);
+        }
+      }
 }
