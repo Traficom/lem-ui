@@ -35,29 +35,29 @@ jobs:
                 Write-Host "No release found"
                 exit 1
           }
-          
+
           $RELEASE | Out-File -FilePath release.json
-    
+
           $UPLOAD_URL = ($RELEASE | ConvertFrom-Json).upload_url -replace "{\?name,label}", ""
           Write-Host "Upload URL: $UPLOAD_URL"
-    
+
           $ASSET_FILE_PATH = ".\out\prod\make\squirrel.windows\x64\sha256sum.txt"
 
           $FULL_UPLOAD_URL = "$UPLOAD_URL" + "?name=sha256sum.txt"
           Write-Host "Full Upload URL: $FULL_UPLOAD_URL"
-  
+
           if (-not (Test-Path $ASSET_FILE_PATH)) {
                 Write-Host "Error: The file does not exist at $ASSET_FILE_PATH"
                 exit 1
           }
           $ASSET_FILE = Get-Content -Path $ASSET_FILE_PATH -Raw
           Write-Host "File Contents: $ASSET_FILE"
-          
+
           Write-Host "Uploading asset..."
           curl -X POST "$FULL_UPLOAD_URL" `
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" `
           -H "Content-Type: text/plain" `
           -d @("$ASSET_FILE")
-    
+
           Write-Host "Asset uploaded successfully!"
         if: ${{ github.ref == 'refs/heads/release' && github.event_name == 'push' }}
