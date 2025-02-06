@@ -439,12 +439,8 @@ const VlemProject = ({
   }
 
   function resolveStoredSpeedAssignmentFolders(scenario) {
-    const folders = scenario.stored_speed_assignment_folders;
-    let folderParams = ""
-    if (folders && folders.size != 0) {
-      folderParams = folders.filter(f => isSet(f)).join(' ');
-    }
-    return folderParams.trim();
+    const folders = scenario.stored_speed_assignment_folders.filter(f => isSet(f));
+    return folders;
   }
 
   const _runAllActiveScenarios = (activeScenarioIDs) => {
