@@ -30,6 +30,7 @@ module.exports = {
           "--cost-data-paths", allRunParameters[0].costDataPath,
           "--long-dist-demand-forecast", longDistDemandForecast,
         ]
+          .concat(allRunParameters[0].end_assignment_only ? ["--end-assignment-only"] : [])
           .concat(["--emme-paths"]).concat(allRunParameters.map(p => p.emme_project_path))
           .concat(["--first-scenario-ids"]).concat(allRunParameters.map(p => p.first_scenario_id))
           .concat(["--forecast-data-paths"]).concat(allRunParameters.map(p => p.forecast_data_path))
@@ -88,7 +89,7 @@ module.exports = {
           .concat(runParameters.delete_strategy_files == true | runParameters.delete_strategy_files == null ? ["--del-strat-files"] : [])
           .concat(runParameters.separate_emme_scenarios ? ["--separate-emme-scenarios"] : [])
           .concat(runParameters.save_matrices_in_emme ? ["--save-emme-matrices"] : [])
-          .concat(runParameters.stored_speed_assignment ? ["--stored-speed-assignment"] : [])
+          .concat(runParameters.stored_speed_assignment ? ["--stored-speed-assignment", runParameters.stored_speed_assignment_folders] : [])
           .concat(runParameters.submodel ? ["--submodel", runParameters.submodel] : [])
           .concat(runParameters.freight_matrix_path && runParameters.freight_matrix_path != "" ? ["--freight-matrix-path", runParameters.freight_matrix_path] : [])
       });

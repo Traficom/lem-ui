@@ -2,8 +2,10 @@
 
 ![master](https://github.com/Traficom/lem-ui)
 
-VLEM UI is a desktop user interface for [Model System](https://github.com/Traficom/lem-model-system). 
- If you wish to develop the UI, continue below.
+VLEM UI is a desktop user interface for [Model System](https://github.com/Traficom/lem-model-system).
+The Windows installer is found under [Releases](https://github.com/Traficom/lem-ui/releases).
+
+If you wish to develop the UI, continue below.
 
 ## Development requirements
 
@@ -40,3 +42,43 @@ See also: [Electronforge.io](https://www.electronforge.io/)
 [GitHub](https://github.com/Traficom/lem-ui) is used as the primary tool for version control and `master` branch is the main development line.
 All changes should be made in dedicated feature/bugfix branches, followed by a and a peer-review.
 Then, after all checks have passed, the branch may be merged in `master`.
+
+## Continuous integration
+
+The application is built automatically by [GitHub Actions](https://github.com/HSLdevcom/helmet-ui/actions)
+when changes are pushed in master branch or pull requests are opened.
+
+[Releases](https://github.com/Traficom/lem-ui/releases) are deployed automatically when changes are pushed in the `release` branch,
+which should be updated with `master` only to make new releases.
+
+## Publishing releases
+
+The Electron Forge's [Github publisher](https://www.electronforge.io/config/publishers/github) is
+used to upload files and draft a new release, thus avoiding the need to upload and tag releases
+manually.
+
+The resulting draft must be reviewed, edited and approved in Github to make it publically available
+to everyone. This allows testing the package and making final fixes to it before making it public.
+
+1. Test and bring all the desired changes in the `master` branch.
+1. Remove if there's word `SNAPSHOT` in `version` field of [package.json](./package.json), and
+   update version as per [semver practises](https://semver.org/).
+1. Switch to `release` branch
+1. Merge `master` to `release` and push to remote
+    - `$ git merge master`
+    - `$ git push`
+1. Wait for [GitHub Actions](https://github.com/Traficom/lem-ui/actions) to build the
+   application.
+1. Go to [releases page](https://github.com/HSLdevcom/helmet-ui/releases) page and **Edit** the
+   newly created draft.
+    1. Ensure the release name corresponds to version number
+    1. Write a brief description (new features, changes, fixes etc)
+    1. Check/uncheck the pre-release checkbox as needed.
+    1. Select `release` branch as the target for tagging
+    1. Press **Publish release** when all is good.
+1. Switch back to `master` branch and update the version number matching the release. This can be
+   updated to indicate a [snapshot](http://codethataint.com/blog/what-are-maven-snapshots/) before
+   next release (e.g. `1.3.0-SNAPSHOT`) while said release (`1.3.0`) is in development, if necessary.
+    1. [`package.json#L4`](package.json#L4)
+    1. [`package-lock.json#L3`](package-lock.json#L3)
+       and [`#L9`](package-lock.json#L9)

@@ -26,7 +26,8 @@ const ScenarioTooltip = ({
     'separate_emme_scenarios',
     'long_dist_demand_forecast',
     'stored_speed_assignment',
-    'overriddenProjectSettings'
+    'overriddenProjectSettings',
+    'stored_speed_assignment_folders'
   ];
 
   const propertiesUsedFromSubScenario = [

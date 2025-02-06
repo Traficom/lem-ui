@@ -10,6 +10,8 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   const projectFolder = inheritedGlobalProjectSettings.projectFolder;
   const [goodsTransportFreightMatrixSource, setGoodsTransportFreightMatrixSource] = useState("base");
   const [nameError, setNameError] = useState("");
+  const [errorShown, setErrorShown] = useState(false); // whether LemError -dialog is open
+  const [errorInfo, setErrorInfo] = useState(''); // Error info
 
   const hasOverriddenSettings = (scenario) => {
     const overriddenSetting = _.find(scenario.overriddenProjectSettings, (setting) => {
@@ -19,7 +21,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   }
 
   function isSet(value) {
-    return value && value != null && value != undefined;
+    return value && value != null && value != undefined && value != '';
   }
 
   function longDistDemandForecastIsCalc() {
@@ -31,6 +33,41 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       setGoodsTransportFreightMatrixSource("path")
     }
   }, [scenario.freight_matrix_path]);
+
+  useEffect(() => {
+    if (isSet(scenario.stored_speed_assignment) && !isSet(scenario.stored_speed_assignment_folders)) {
+      updateScenario({...scenario, stored_speed_assignment_folders: []})
+    }
+  }, [scenario.stored_speed_assignment]);
+
+  function setStoredSpeedAssignment(value) {
+    if(value){
+      updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment })
+    }else{
+      updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment, stored_speed_assignment_folders: [] })
+    }
+  }
+
+  const showError = (errorInfo) => {
+    setErrorInfo(errorInfo);
+    setErrorShown(true);
+  };
+
+  const closeError = () => {
+    setErrorShown(false);
+    setErrorInfo('');
+  };
+ 
+  function setStoredSpeedAssignmentFolder(index, folder) {
+    const folderName = isSet(folder) ? path.basename(folder) : "";
+    if (folderName.includes(" ")) {
+      showError("Kansion nimessä ei voi olla välilyöntejä")
+    } else {
+      let folders = [...scenario.stored_speed_assignment_folders];
+      folders[index] = folderName;
+      updateScenario({ ...scenario, stored_speed_assignment_folders: folders })
+    }
+  }
 
   const basedataPath = scenario.overriddenProjectSettings.basedataPath ? scenario.overriddenProjectSettings.basedataPath : inheritedGlobalProjectSettings.basedataPath;
 
@@ -263,11 +300,16 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
         </div>
       </div>
 
+      {errorShown && <LemError
+        info={errorInfo}
+        close={closeError}
+      />}
+
       <div className="Scenario__section Scenario__title">
         Lisävalinnat
       </div>
 
-      {/* Choice whether to use stored speed assignmentassignment */}
+      {/* Choice whether to use stored speed assignment */}
       <div className="Scenario__section">
         <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
           htmlFor="stored_speed_assignment">
@@ -275,12 +317,26 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             type="checkbox"
             checked={scenario.stored_speed_assignment}
             onChange={(e) => {
-              updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment });
+              setStoredSpeedAssignment(!scenario.stored_speed_assignment);
             }}
           />
           <span>Tallennetun nopeuden sijoittelu</span>
         </label>
       </div>
+
+      {/*Stored speed assignment folders scenario.stored_speed_assignment_paths*/}
+      {scenario.stored_speed_assignment && scenario.stored_speed_assignment_folders && (
+        <div className="Scenario__section flexContainer">
+          <div className="Scenario__stored_speed_assignment_inputs">
+            {storedSpeedAssignmentFolderInput(0, scenario.stored_speed_assignment_folders[0])}
+            {storedSpeedAssignmentFolderInput(1, scenario.stored_speed_assignment_folders[1])}
+          </div>
+          <div className="Scenario__stored_speed_assignment_inputs">
+            {storedSpeedAssignmentFolderInput(2, scenario.stored_speed_assignment_folders[2])}
+            {storedSpeedAssignmentFolderInput(3, scenario.stored_speed_assignment_folders[3])}
+          </div>
+        </div>
+      )}
 
       {/* Choice whether to delete strategy files at the end of a model run */}
       <div className="Scenario__section">
@@ -494,4 +550,34 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
     </div>
   )
+
+  function storedSpeedAssignmentFolderInput(index, value) {
+    return (
+      <span className="stored_speed_assignment_fields">
+        <input id={"stored_speed_assignment_input_" + index}
+          className="Scenario__pseudo-stored_speed_assignment Scenario__inline"
+          readOnly={true}
+          type="text"
+          disabled={!scenario.stored_speed_assignment}
+          value={value ? value : ""}
+          placeholder={"..."}
+          onClick={() => {
+            dialog.showOpenDialog({
+              defaultPath: scenario.overriddenProjectSettings.projectFolder ? scenario.overriddenProjectSettings.projectFolder : projectFolder,
+              properties: ['openDirectory']
+            }).then((e) => {
+              if (!e.canceled) {
+                setStoredSpeedAssignmentFolder(index, e.filePaths[0]);
+              }
+            })
+          }}
+        />{value &&
+          <label className="pseudo_reset" onClick={(event) => {
+            event.preventDefault();
+            setStoredSpeedAssignmentFolder(index, "");
+          }}>
+            <ResetIcon className="override-reset-icon" />
+          </label>
+        }</span>);
+  }
 };

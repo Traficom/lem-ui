@@ -1,7 +1,7 @@
 {
   "name": "lem-ui",
-  "productName": "VLEM 0.1",
-  "version": "1.1.6-SNAPSHOT",
+  "productName": "VLEM",
+  "version": "1.0.4",
   "private": true,
   "description": "Lem Model System UI",
   "main": "src/main/index.js",
@@ -21,9 +21,9 @@
   "dependencies": {
     "@electron/remote": "^2.0.8",
     "babel-standalone": "^6.26.0",
-    "chart.js": "^4.3.0",
-    "classnames": "^2.3.2",
-    "dayjs": "^1.11.7",
+    "chart.js": "^4.4.3",
+    "classnames": "^2.5.1",
+    "dayjs": "^1.11.13",
     "decompress": "^4.2.1",
     "del": "^6.1.0",
     "electron-dl": "^3.3.1",
