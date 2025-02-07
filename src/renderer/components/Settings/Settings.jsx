@@ -94,7 +94,7 @@ const Settings = ({
           />
         </div>
         <div className="Settings__dialog-input-group">
-          <span className="Settings__pseudo-label semi_bold">Emme Python v3.7</span>
+          <span className="Settings__pseudo-label semi_bold">Emme Python v311</span>
           <label className="Settings__pseudo-file-select" htmlFor="hidden-input-emme-python-path" title={settings.emme_python_path}>
             {settings.emme_python_path ? path.basename(settings.emme_python_path) : "Valitse.."}
           </label>
