@@ -59,12 +59,12 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   };
  
   function setStoredSpeedAssignmentFolder(index, folder) {
-    const folderName = isSet(folder) ? path.basename(folder) : "";
-    if (folderName.includes(" ")) {
+    const folderRef = isSet(folder) ? folder : "";
+    if (folderRef.includes(" ")) {
       showError("Kansion nimessä ei voi olla välilyöntejä")
     } else {
       let folders = [...scenario.stored_speed_assignment_folders];
-      folders[index] = folderName;
+      folders[index] = folderRef;
       updateScenario({ ...scenario, stored_speed_assignment_folders: folders })
     }
   }

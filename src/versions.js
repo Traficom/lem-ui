@@ -1,4 +1,4 @@
 module.exports = {
-    emme_system: '4.5.0',
-    emme_python: '3.7',
+    emme_system: '24.00.00',
+    emme_python: '311',
 };
