@@ -126,11 +126,12 @@ const Runtime = ({
         <div className="Runtime__scenarios-heading">Ladatut skenaariot</div>
         <div className="Runtime__scenarios">
           {/* Create table of all scenarios "<Button-To-Add-As-Runnable> <Button-To-Open-Configuration>" */}
-          <table className="Runtime__scenario_table" key="scenario_table">
+          <table className="Runtime__scenario_table" key="scenario_table" cellSpacing="0">
             <thead>
               <tr>
                 <th scope="col"></th>
                 <th scope="col">NIMI</th>
+                <th scope="col">TYYPPI</th>
                 <th scope="col">LASKETTU</th>
                 <th scope="col" colSpan="2">TULOS</th>
                 <th scope="col"></th>
@@ -173,9 +174,16 @@ const Runtime = ({
           <button
             className="Runtime__add-new-scenario-btn"
             disabled={runningScenarioID}
-            onClick={e => handleClickNewScenario()}
+            onClick={e => handleClickNewScenario(SCENARIO_TYPES.PASSENGER_TRANSPORT)}
           >
-            <span className="Runtime__add-icon">Uusi VLEM-skenaario</span>
+            <span className="Runtime__add-icon">Uusi henkilöliikenteen skenaario</span>
+          </button>
+          <button
+            className="Runtime__add-new-scenario-btn"
+            disabled={runningScenarioID}
+            onClick={e => handleClickNewScenario(SCENARIO_TYPES.GOODS_TRANSPORT)}
+          >
+            <span className="Runtime__add-icon">Uusi tavaraliikenteen skenaario</span>
           </button>
         </div>
       </div>

@@ -47,7 +47,7 @@ const ScenarioTableRow = ({
 
   return (
     <Fragment>
-    <tr id="my-tooltip-anchor" key={"tooltip_wrapper_" + scenarioData.id}
+    <tr id="my-tooltip-anchor" className="Runtime__scenario" key={"tooltip_wrapper_" + scenarioData.id}
       data-tooltip-id="scenario-tooltip"
       data-tooltip-html={renderToStaticMarkup(tooltipContent(scenarioData))}
       data-tooltip-delay-show={150}
@@ -74,6 +74,15 @@ const ScenarioTableRow = ({
             {scenarioData.name
               ? scenarioData.name
               : `Unnamed project (${scenarioData.id})`}
+          </span>
+        </div>
+      </td>
+      <td>
+        <div>
+          <span className="Runtime__scenario-type">
+            {scenarioData.scenarioType && scenarioData.scenarioType == SCENARIO_TYPES.GOODS_TRANSPORT
+              ? "Tavaraliikenne"
+              : "Henkilöliikenne"}
           </span>
         </div>
       </td>
