@@ -20,6 +20,7 @@ const ScenarioTooltip = ({
     'end_assignment_only',
     'delete_strategy_files',
     'id',
+    'scenarioType',
     'name',
     'submodel',
     'iterations',

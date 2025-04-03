@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import path from "path";
 import { searchEMMEPython } from './search_emme_pythonpath';
 import versions from '../versions';

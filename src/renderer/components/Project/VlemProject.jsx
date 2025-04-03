@@ -50,10 +50,11 @@ const VlemProject = ({
     }
   }
 
-  const _handleClickNewScenario = () => {
+  const _handleClickNewScenario = (scenarioType) => {
+    const scenarioTypeText = scenarioType == SCENARIO_TYPES.PASSENGER_TRANSPORT ? "henkilöliikenteen" : "tavaraliikenteen";
     const promptCreation = (previousError) => {
       vex.dialog.prompt({
-        message: (previousError ? previousError : "") + "Anna uuden skenaarion nimike:",
+        message: (previousError ? previousError : "") + "Anna nimike uudelle " + scenarioTypeText + " skenaariolle:",
         placeholder: '',
         callback: (inputScenarioName) => {
           let error = "";
@@ -72,7 +73,7 @@ const VlemProject = ({
           if (error) {
             promptCreation(error);
           } else {
-            _createScenario(inputScenarioName);
+            _createScenario(inputScenarioName, scenarioType);
           }
         }
       });
@@ -148,11 +149,12 @@ const VlemProject = ({
     }
   }
 
-  const _createScenario = (newScenarioName) => {
+  const _createScenario = (newScenarioName, scenarioType) => {
     // Generate new (unique) ID for new scenario
     const newId = uuidv4();
     const newScenario = {
       id: newId,
+      scenarioType: scenarioType,
       name: newScenarioName,
       first_scenario_id: 1,
       forecast_data_path: null,

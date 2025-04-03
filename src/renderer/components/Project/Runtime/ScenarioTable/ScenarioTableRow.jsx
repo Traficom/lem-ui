@@ -47,7 +47,7 @@ const ScenarioTableRow = ({
 
   return (
     <Fragment>
-    <tr id="my-tooltip-anchor" key={"tooltip_wrapper_" + scenarioData.id}
+    <tr id="my-tooltip-anchor" className="Runtime__scenario" key={"tooltip_wrapper_" + scenarioData.id}
       data-tooltip-id="scenario-tooltip"
       data-tooltip-html={renderToStaticMarkup(tooltipContent(scenarioData))}
       data-tooltip-delay-show={150}
@@ -77,6 +77,15 @@ const ScenarioTableRow = ({
           </span>
         </div>
       </td>
+      <td>
+        <div>
+          <span className="Runtime__scenario-type">
+            {scenarioData.scenarioType && scenarioData.scenarioType == SCENARIO_TYPES.GOODS_TRANSPORT
+              ? "Tavaraliikenne"
+              : "Henkilöliikenne"}
+          </span>
+        </div>
+      </td>
       <td className="Table_space_after">{resultsExist && scenarioData.last_run && <span className="Runtime__scenario-name">
         {scenarioData.last_run}
       </span>} </td>
@@ -89,13 +98,16 @@ const ScenarioTableRow = ({
           NÄYTÄ
         </div>}
       </td>
+
       <td className="Table_space_after">
+      {scenarioData.scenarioType != SCENARIO_TYPES.GOODS_TRANSPORT &&
         <div
           className={"Runtime__scenario-sub_scenario"}
           onClick={e => handleClickCreateSubScenario(scenarioData.id)}
         >
           <span><Plus />Luo aliskenaario</span>
         </div>
+      }
       </td>
       <td>
         <div
