@@ -98,13 +98,16 @@ const ScenarioTableRow = ({
           NÄYTÄ
         </div>}
       </td>
+
       <td className="Table_space_after">
+      {scenarioData.scenarioType != SCENARIO_TYPES.GOODS_TRANSPORT &&
         <div
           className={"Runtime__scenario-sub_scenario"}
           onClick={e => handleClickCreateSubScenario(scenarioData.id)}
         >
           <span><Plus />Luo aliskenaario</span>
         </div>
+      }
       </td>
       <td>
         <div

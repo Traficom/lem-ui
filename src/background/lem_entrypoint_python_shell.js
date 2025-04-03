@@ -139,7 +139,6 @@ module.exports = {
           "--forecast-data-path", runParameters.forecast_data_path,
           "--first-matrix-id", (runParameters.first_matrix_id == null ? "100" : runParameters.first_matrix_id),
           "--iterations", 0,
-          "--long-dist-demand-forecast", "base"
         ]
           .concat(runParameters.delete_strategy_files == true | runParameters.delete_strategy_files == null ? ["--del-strat-files"] : [])
           .concat(runParameters.submodel ? ["--submodel", runParameters.submodel] : [])
