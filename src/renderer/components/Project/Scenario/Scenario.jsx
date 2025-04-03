@@ -12,6 +12,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   const [nameError, setNameError] = useState("");
   const [errorShown, setErrorShown] = useState(false); // whether LemError -dialog is open
   const [errorInfo, setErrorInfo] = useState(''); // Error info
+  const showPassengerTransportFields = !scenario.scenarioType || scenario.scenarioType ==  SCENARIO_TYPES.PASSENGER_TRANSPORT;
 
   const hasOverriddenSettings = (scenario) => {
     const overriddenSetting = _.find(scenario.overriddenProjectSettings, (setting) => {
@@ -181,7 +182,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
 
       {/* Choice how to use long distance demand forecast */}
-      <div className="Scenario__section Scenario_radio_select_section">
+      { showPassengerTransportFields && <div className="Scenario__section Scenario_radio_select_section">
         <h4 className="Scenario_radio_label">Pitkien matkojen kysyntäennuste</h4>
         <div>
           <input type="radio" value="base" name="long_dist_demand_forecast"
@@ -218,12 +219,13 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             }}
           />
         </div>
-      </div>
+      </div>}
 
-      <div className="Scenario__section">
+      {showPassengerTransportFields && <div className="Scenario__section">
         {/* Number of iterations to run */}
         <label className="Scenario__pseudo-label"
           htmlFor="iterations">Iteraatioiden enimm&auml;ism&auml;&auml;r&auml;</label>
+
         <input id="iterations"
           className="Scenario__number Scenario__inline Scenario__pseudo-file-select"
           type="number"
@@ -249,7 +251,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
           />
           <span>Aja vain loppusijoittelu</span>
         </label>
-      </div>
+      </div>}
 
       {/* Sub model selection */}
       <label className="Scenario__pseudo-label"
@@ -264,7 +266,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
 
       {/* Choice for goods transport freight matrix path */}
-      <div className="Scenario__section Scenario_radio_select_section">
+      { showPassengerTransportFields && <div className="Scenario__section Scenario_radio_select_section">
         <h4 className="Scenario_radio_label">Tavaraliikenteen kysyntäennuste</h4>
         <div>
           <input type="radio" value="base" name="freight_matrix_path"
@@ -298,7 +300,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             }}
           />
         </div>
-      </div>
+      </div>}
 
       {errorShown && <LemError
         info={errorInfo}
@@ -310,7 +312,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
 
       {/* Choice whether to use stored speed assignment */}
-      <div className="Scenario__section">
+      { showPassengerTransportFields && <div className="Scenario__section">
         <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
           htmlFor="stored_speed_assignment">
           <input id="stored_speed_assignment"
@@ -322,10 +324,10 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
           />
           <span>Tallennetun nopeuden sijoittelu</span>
         </label>
-      </div>
+      </div>}
 
       {/*Stored speed assignment folders scenario.stored_speed_assignment_paths*/}
-      {scenario.stored_speed_assignment && scenario.stored_speed_assignment_folders && (
+      {showPassengerTransportFields && scenario.stored_speed_assignment && scenario.stored_speed_assignment_folders && (
         <div className="Scenario__section flexContainer">
           <div className="Scenario__stored_speed_assignment_inputs">
             {storedSpeedAssignmentFolderInput(0, scenario.stored_speed_assignment_folders[0])}
@@ -355,7 +357,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
 
       {/* Choice whether to save matrices in Emme */}
-      <div className="Scenario__section">
+      { showPassengerTransportFields &&<div className="Scenario__section">
         <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
           htmlFor="separate-emme-scenarios">
           <input id="separate-emme-scenarios"
@@ -368,11 +370,11 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
           />
           <span>Tallenna ajanjaksot erillisiin Emme-skenaarioihin {parseInt(scenario.first_scenario_id) + 1}&ndash;{parseInt(scenario.first_scenario_id) + 4}</span>
         </label>
-      </div>
+      </div>}
 
       {/* Choice whether to save matrices in Emme */}
       <div className="Scenario__section">
-        <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
+      { showPassengerTransportFields && <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
           htmlFor="save-matrices-in-emme">
           <input id="save-matrices-in-emme"
             type="checkbox"
@@ -383,10 +385,10 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             }}
           />
           <span>Tallenna ajanjaksojen matriisit Emme-projektin Database-kansioon</span>
-        </label>
+        </label>}
 
         {/* Number of first matrix ID */}
-        <div className="Scenario__section Scenario__section--indentation">
+        { showPassengerTransportFields && <div className="Scenario__section Scenario__section--indentation">
           <label className="Scenario__pseudo-label"
             style={{ color: scenario.save_matrices_in_emme == false ? "#666666" : "inherit" }}
             htmlFor="first-matrix-id">Matriisit tallennetaan numeroille</label>
@@ -405,7 +407,8 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
           />
           <span style={{ color: !scenario.save_matrices_in_emme ? "#666666" : "inherit" }}
             className=" Scenario__inline">&ndash;{parseInt(scenario.first_matrix_id == null ? 100 : scenario.first_matrix_id) + 299}</span>
-        </div>
+        </div>}
+
         <hr className="override-setting-divider" />
         <div>
           <h4 className="inline-element">Skenaariokohtaiset yliajot</h4> <div onClick={() => setShowOverrides(!showOverrides)} className="override-dropdown-icon inline-block-element"> {showOverrides ? <ArrowUp /> : <ArrowDown />} </div>

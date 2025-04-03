@@ -40,17 +40,40 @@
     overflow-y: auto;
 }
 
-.Runtime__scenario {
-    display: flex;
-    align-items: center;
-    margin-bottom: 18px;
-    flex-direction: row;
+tr.Runtime__scenario td {
+    padding-top: 5px;
+}
+
+td {
+    padding-bottom: 3px;
+}
+
+tr.Runtime__sub_scenario td {
+    padding-top: 0px;
+}
+
+tr.Runtime__scenario:nth-child(1n):not(:first-of-type) td:nth-child(1n):not(:first-of-type) {
+    border-top: 1px dashed var(--light-grey) !important;
 }
 
 .Runtime__scenario-name {
     display: inline-block;
     min-width: 150px;
     padding-right: 15px !important;
+    overflow: hidden;
+}
+
+.Runtime__scenario-type {
+    display: inline-block;
+    min-width: 60px;
+    padding-right: 20px !important;
+    overflow: hidden;
+}
+
+.Runtime__sub_scenario-type {
+    display: inline-block;
+    min-width: 60px;
+    padding-right: 20px !important;
     overflow: hidden;
 }
 
@@ -107,10 +130,12 @@
 }
 
 .Runtime__scenarios-footer {
+    display: flex;
     padding-top: 22px;
 }
 
 .Runtime__add-new-scenario-btn {
+    margin-right: 10px;
     background: var(--turqoise-dark);
     border-color: var(--turqoise-dark);
     color: #ffffff;
@@ -160,6 +185,7 @@
     color: #000000;
     font-weight: bold;
 }
+
 
 .Runtime__scenario_table th {
     text-align: left;
