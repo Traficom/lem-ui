@@ -12,8 +12,6 @@ module.exports = {
       return;
     }
 
-    let longDistDemandForecast = getLongDistDemandForecast(allRunParameters[0].long_dist_demand_forecast,  allRunParameters[0].long_dist_demand_forecast_path);
-
     // Start model-system's lem_validate_inputfiles.py in shell with EMME's python interpreter
     worker = new ps.PythonShell(
       `${allRunParameters[0].helmet_scripts_path}/lem_validate_inputfiles.py`,
@@ -27,16 +25,18 @@ module.exports = {
           "--baseline-data-path", allRunParameters[0].base_data_folder_path,
           "--results-path", allRunParameters[0].results_data_folder_path,
           "--scenario-name", allRunParameters[0].name,
-          "--long-dist-demand-forecast", longDistDemandForecast,
         ]
           .concat(allRunParameters[0].end_assignment_only ? ["--end-assignment-only"] : [])
           .concat(["--emme-paths"]).concat(allRunParameters.map(p => p.emme_project_path))
+          .concat(["--long-dist-demand-forecast"]).concat(allRunParameters.map(p => getLongDistDemandForecast(p.long_dist_demand_forecast,  p.long_dist_demand_forecast_path)))
           .concat(["--cost-data-paths"]).concat(allRunParameters.map(p => p.costDataPath))
           .concat(["--first-scenario-ids"]).concat(allRunParameters.map(p => p.first_scenario_id))
           .concat(["--forecast-data-paths"]).concat(allRunParameters.map(p => p.forecast_data_path))
           .concat(allRunParameters.map(p => p.separate_emme_scenarios).every(Boolean) ? ["--separate-emme-scenarios"] : [])
+          .concat(["--freight-matrix-paths"]).concat(allRunParameters.map(p => p.freight_matrix_path ? p.freight_matrix_path: 'none'))
           .concat(["--submodel"]).concat(allRunParameters.map(p => p.submodel))
       });
+
     // Attach runtime handlers (stdout/stderr, process errors)
     worker.on('message', (event) => ipcRenderer.send('loggable-event-from-worker', {...event, time: new Date()}));
     worker.on('stderr', (event) => ipcRenderer.send('loggable-event-from-worker', {...event, time: new Date()}));
