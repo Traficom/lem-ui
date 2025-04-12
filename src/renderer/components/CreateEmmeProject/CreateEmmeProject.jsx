@@ -5,7 +5,7 @@ const CreateEmmeProject = ({
     handleCancel,
 }) => {
     const [submodel, setSubmodel] = useState('');
-    const [numberOfEmmeScenarios, setNumberOfEmmeScenarios] = useState('0');
+    const [numberOfEmmeScenarios, setNumberOfEmmeScenarios] = useState(1);
     const [separateEmmeScenarios, setSeparateEmmeScenarios] = useState(false);
     return (
         <div className="CreateEmmeProject">
@@ -35,8 +35,8 @@ const CreateEmmeProject = ({
                 <input id="project_name"
                     className="CreateEmmeProject_input"
                     type="number"
-                    min="0"
-                    value={numberOfEmmeScenarios || ""}
+                    min={1}
+                    value={numberOfEmmeScenarios || 1}
                     onChange={(e) => {
                         setNumberOfEmmeScenarios(e.target.value)
                     }}

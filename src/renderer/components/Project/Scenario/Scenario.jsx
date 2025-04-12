@@ -205,6 +205,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             type="text"
             disabled={scenario.long_dist_demand_forecast != "path"}
             readOnly={true}
+            title={scenario.long_dist_demand_forecast_path}
             value={scenario.long_dist_demand_forecast_path}
             placeholder={scenario.long_dist_demand_forecast == "path" ? scenario.long_dist_demand_forecast_path : "..."}
             onClick={() => {
@@ -284,6 +285,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
           <input id="freight_matrix_path_input"
             className="Scenario__pseudo-file-select Scenario__inline"
             type="text"
+            title={scenario.freight_matrix_path}
             disabled={goodsTransportFreightMatrixSource != "path"}
             readOnly={true}
             value={scenario.freight_matrix_path}
@@ -564,6 +566,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
           disabled={!scenario.stored_speed_assignment}
           value={value ? value : ""}
           placeholder={"..."}
+          title={value}
           onClick={() => {
             dialog.showOpenDialog({
               defaultPath: scenario.overriddenProjectSettings.projectFolder ? scenario.overriddenProjectSettings.projectFolder : projectFolder,
