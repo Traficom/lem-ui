@@ -24,8 +24,7 @@ module.exports = {
           "--log-format", "JSON",
           "--baseline-data-path", allRunParameters[0].base_data_folder_path,
           "--results-path", allRunParameters[0].results_data_folder_path,
-          "--scenario-name", allRunParameters[0].name,
-        ]
+        ].concat(["--scenario-name"]).concat(allRunParameters.map(p => p.name))
           .concat(allRunParameters[0].end_assignment_only ? ["--end-assignment-only"] : [])
           .concat(["--emme-paths"]).concat(allRunParameters.map(p => p.emme_project_path))
           .concat(["--long-dist-demand-forecast"]).concat(allRunParameters.map(p => getLongDistDemandForecast(p.long_dist_demand_forecast,  p.long_dist_demand_forecast_path)))
