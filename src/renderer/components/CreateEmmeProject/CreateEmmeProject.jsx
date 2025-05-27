@@ -61,7 +61,7 @@ const CreateEmmeProject = ({
                         className="CreateEmmeProject_btn"
                         onClick={e => createProject(submodel, numberOfEmmeScenarios, separateEmmeScenarios)}
                     >
-                        <span>Luo projekti</span>
+                        <span>Luo pankki</span>
                     </button>
                     <button
                         className="CreateEmmeProject_btn"
