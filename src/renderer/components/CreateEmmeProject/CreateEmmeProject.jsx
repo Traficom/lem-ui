@@ -16,7 +16,7 @@ const CreateEmmeProject = ({
 
                 <div className="CreateEmmeProject_dialog-controls" onClick={(e) => handleCancel()}></div>
 
-                <div className="CreateEmmeProject_dialog-heading">Luo Emme-projekti</div>
+                <div className="CreateEmmeProject_dialog-heading">Luo Emme-pankki</div>
 
                 {/* Sub model selection */}
                 <label className="CreateEmmeProject_label"
