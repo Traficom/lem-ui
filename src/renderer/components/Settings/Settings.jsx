@@ -132,10 +132,10 @@ const Settings = ({
           </button>
         </div>
         <div className="Settings__dialog-input-group">
-          <span className="Settings__pseudo-label semi_bold">vlem model system</span>
+          <span className="Settings__pseudo-label semi_bold">valma model system</span>
           {isDownloadingHelmetScripts ?
             <span className="Settings__pseudo-file-select bg_plus">
-              Downloading model-system {dlHelmetScriptsVersion === 'master' ? 'latest' : dlHelmetScriptsVersion}. . .
+              Downloading model-system {dlHelmetScriptsVersion === 'main' ? 'latest' : dlHelmetScriptsVersion}. . .
             </span>
             :
             <label className="Settings__pseudo-file-select bg_plus" htmlFor="hidden-input-helmet-scripts-path" title={settings.helmet_scripts_path}>
