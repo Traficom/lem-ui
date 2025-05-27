@@ -1,4 +1,4 @@
-# VLEM UI
+# VALMA UI
 
 ![main](https://github.com/Traficom/lem-ui)
 
