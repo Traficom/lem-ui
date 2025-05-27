@@ -1,9 +1,9 @@
 {
   "name": "lem-ui",
-  "productName": "VLEM",
+  "productName": "VALMA",
   "version": "1.0.8",
   "private": true,
-  "description": "Lem Model System UI",
+  "description": "VALMA Model System UI",
   "main": "src/main/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -12,7 +12,7 @@
     "publish": "electron-forge publish"
   },
   "keywords": [],
-  "author": "HSLdevcom",
+  "author": "Traficom",
   "license": "EUPL-1.2",
   "config": {
     "forge": "./forge-config.js"
