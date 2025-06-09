@@ -39,10 +39,9 @@
           ipcRenderer.send('message-from-worker-scenario-complete', {completed: completedRunParams, next: nextRunParams});
           // Run next scenario in queue
           queuedRunParams = queuedRunParams.slice(1);
-          sendLoggableEvent(`Running scenario "${nextRunParams.name}"`);
-          worker = runLemEntrypointPythonShell(worker, nextRunParams, () => onScenarioComplete(nextRunParams));
-          worker = initialRunParams.scenarioType && initialRunParams.scenarioType == 'goods_transport' ?
-          runFreightLemEntrypointPythonShell(worker, initialRunParams, () => onScenarioComplete(nextRunParams)) :
+          sendLoggableEvent(`Running scenario "${nextRunParams.name}. Scenario type: "${nextRunParams.scenarioType}"`);
+          worker = nextRunParams.scenarioType && nextRunParams.scenarioType == 'goods_transport' ?
+          runFreightLemEntrypointPythonShell(worker, nextRunParams, () => onScenarioComplete(nextRunParams)) :
               runLemEntrypointPythonShell(worker, nextRunParams, () => onScenarioComplete(nextRunParams));
         } else {
           // Notify UI that all scenarios completed
@@ -62,7 +61,7 @@
             worker = null; // Reset worker reference for entrypoint
             const initialRunParams = args[0];
             queuedRunParams = args.slice(1);
-            sendLoggableEvent(`Running scenario "${initialRunParams.name}"`);
+            sendLoggableEvent(`Running scenario "${initialRunParams.name}. Scenario type: "${initialRunParams.scenarioType}"`);
             worker = initialRunParams.scenarioType && initialRunParams.scenarioType == 'goods_transport' ?
             runFreightLemEntrypointPythonShell(worker, initialRunParams, () => onScenarioComplete(initialRunParams)):
               runLemEntrypointPythonShell(worker, initialRunParams, () => onScenarioComplete(initialRunParams));
