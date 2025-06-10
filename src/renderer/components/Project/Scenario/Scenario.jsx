@@ -30,6 +30,13 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   }
 
   useEffect(() => {
+    if(!showPassengerTransportFields){
+      // For goods transport, lets set submodel to koko_suomi
+      updateScenario({...scenario, submodel: "koko_suomi"})
+    }
+  }, [showPassengerTransportFields]);
+
+  useEffect(() => {
     if (isSet(scenario.freight_matrix_path)) {
       setGoodsTransportFreightMatrixSource("path")
     }
@@ -258,7 +265,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       <label className="Scenario__pseudo-label"
         htmlFor="submodel">Osamalli</label>
       <div className="Submodel_select">
-        <select id="submodel" disabled={longDistDemandForecastIsCalc()} value={scenario.submodel} onChange={e => updateScenario({ ...scenario, submodel: e.target.value })}>
+        <select id="submodel" disabled={showPassengerTransportFields == false || longDistDemandForecastIsCalc() } value={scenario.submodel} onChange={e => updateScenario({ ...scenario, submodel: e.target.value })}>
           <option key={"submodel_select"} value={""}>--- valitse ---</option>
           {submodels && submodels.map((submodel) =>
             <option key={submodel.id} value={submodel.id}>{submodel.name}</option>)
