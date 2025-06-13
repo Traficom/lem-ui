@@ -16,7 +16,7 @@ const CreateEmmeProject = ({
 
                 <div className="CreateEmmeProject_dialog-controls" onClick={(e) => handleCancel()}></div>
 
-                <div className="CreateEmmeProject_dialog-heading">Luo Emme-projekti</div>
+                <div className="CreateEmmeProject_dialog-heading">Luo Emme-pankki</div>
 
                 {/* Sub model selection */}
                 <label className="CreateEmmeProject_label"
@@ -61,7 +61,7 @@ const CreateEmmeProject = ({
                         className="CreateEmmeProject_btn"
                         onClick={e => createProject(submodel, numberOfEmmeScenarios, separateEmmeScenarios)}
                     >
-                        <span>Luo projekti</span>
+                        <span>Luo pankki</span>
                     </button>
                     <button
                         className="CreateEmmeProject_btn"

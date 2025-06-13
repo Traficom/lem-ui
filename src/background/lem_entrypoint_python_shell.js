@@ -14,7 +14,7 @@ module.exports = {
 
     // Start model-system's lem_validate_inputfiles.py in shell with EMME's python interpreter
     worker = new ps.PythonShell(
-      `${allRunParameters[0].helmet_scripts_path}/lem_validate_inputfiles.py`,
+      `${allRunParameters[0].helmet_scripts_path}/validate_inputfiles.py`,
       {
         mode: 'json',
         pythonPath: allRunParameters[0].emme_python_path,
@@ -65,7 +65,7 @@ module.exports = {
     let longDistDemandForecast = getLongDistDemandForecast(runParameters.long_dist_demand_forecast,  runParameters.long_dist_demand_forecast_path);
     // Start lem-model-system's lem.py in shell with EMME's python interpreter
     worker = new ps.PythonShell(
-      `${runParameters.helmet_scripts_path}/lem.py`,
+      `${runParameters.helmet_scripts_path}/valma_travel.py`,
       {
         mode: 'json',
         pythonPath: runParameters.emme_python_path,
@@ -121,7 +121,7 @@ module.exports = {
 
     // Start lem-model-system's lem.py in shell with EMME's python interpreter
     worker = new ps.PythonShell(
-      `${runParameters.helmet_scripts_path}/freight_lem.py`,
+      `${runParameters.helmet_scripts_path}/valma_freight.py`,
       {
         mode: 'json',
         pythonPath: runParameters.emme_python_path,

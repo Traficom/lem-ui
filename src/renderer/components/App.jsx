@@ -543,7 +543,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
 
       {/* UI title bar, app-version, etc. */}
       <div className="App__header">
-        <span className="App__header-title">VLEM</span>
+        <span className="App__header-title">VALMA</span>
         &nbsp;
         <a className="header-documentation-link" target="_blank" onClick={() => shell.openExternal("https://hsldevcom.github.io/helmet-docs/")}></a>
       </div>

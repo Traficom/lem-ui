@@ -1,8 +1,8 @@
-# VLEM UI
+# VALMA UI
 
-![master](https://github.com/Traficom/lem-ui)
+![main](https://github.com/Traficom/lem-ui)
 
-VLEM UI is a desktop user interface for [Model System](https://github.com/Traficom/lem-model-system).
+VALMA UI is a desktop user interface for VALMA [model system](https://github.com/Traficom/lem-model-system).
 The Windows installer is found under [Releases](https://github.com/Traficom/lem-ui/releases).
 
 If you wish to develop the UI, continue below.
@@ -14,8 +14,8 @@ and [Electron API](https://www.electronjs.org/docs/api) available within app)_, 
 
 - Git client
 - Node.js LTS & NPM
-- EMME 4.x.x _(Windows-only)_
-- _[optionally]_ [model-system](https://swd.int.traficom.fi/stash/projects/VLE/repos/model-system) _(otherwise downloaded and auto-installed by the UI)_
+- EMME 24.x.x _(Windows-only)_
+- _[optionally]_ [model-system](https://github.com/Traficom/lem-model-system) _(otherwise downloaded and auto-installed by the UI)_
 
 On Mac and Linux, [Wine](https://www.winehq.org/) and [Mono](https://www.mono-project.com/) are also required to make the app for Windows.
 
@@ -39,9 +39,9 @@ See also: [Electronforge.io](https://www.electronforge.io/)
 
 ## Version control
 
-[GitHub](https://github.com/Traficom/lem-ui) is used as the primary tool for version control and `master` branch is the main development line.
-All changes should be made in dedicated feature/bugfix branches, followed by a and a peer-review.
-Then, after all checks have passed, the branch may be merged in `master`.
+[GitHub](https://github.com/Traficom/lem-ui) is used as the primary tool for version control and `main` branch is the main development line.
+All changes should be made in dedicated feature/bugfix branches, followed by a peer-review.
+Then, after all checks have passed, the branch may be merged in `main`.
 
 ## Continuous integration
 
