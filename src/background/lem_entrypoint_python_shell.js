@@ -136,6 +136,7 @@ module.exports = {
           "--baseline-data-path", runParameters.base_data_folder_path,
           "--cost-data-path", runParameters.costDataPath,
           "--forecast-data-path", runParameters.forecast_data_path,
+          "--trade-demand-data-path", runParameters.tradeDemandDataPath,
           "--first-matrix-id", (runParameters.first_matrix_id == null ? "100" : runParameters.first_matrix_id),
           "--iterations", 0,
         ]

@@ -10,26 +10,33 @@ const ScenarioTooltip = ({
 }) => {
   const isSubScenarioTooltip = subScenario != undefined && subScenario.id;
   const tooltipId = isSubScenarioTooltip ? subScenario.id : scenario.id;
+  const isFreightScenario = scenario.scenarioType ==  SCENARIO_TYPES.GOODS_TRANSPORT
 
+  const tooltipTypeSpecificProperties = isFreightScenario ?
+  ['tradeDemandDataPath']:
+  ['iterations',
+   'end_assignment_only',
+   'save_matrices_in_emme',
+   'separate_emme_scenarios',
+   'stored_speed_assignment',
+   'stored_speed_assignment_folders',
+   'first_matrix_id',
+   'first_scenario_id',
+   'long_dist_demand_forecast',
+  ];
   const visibleTooltipProperties = [
-    'first_scenario_id',
-    'first_matrix_id',
     'forecast_data_path',
     'costDataPath',
-    'save_matrices_in_emme',
-    'end_assignment_only',
     'delete_strategy_files',
     'id',
     'scenarioType',
     'name',
     'submodel',
-    'iterations',
-    'separate_emme_scenarios',
-    'long_dist_demand_forecast',
-    'stored_speed_assignment',
     'overriddenProjectSettings',
-    'stored_speed_assignment_folders'
-  ];
+    'freight_matrix_path',
+  ].concat(tooltipTypeSpecificProperties);
+
+  
 
   const propertiesUsedFromSubScenario = [
     'id',
@@ -37,7 +44,7 @@ const ScenarioTooltip = ({
     'costDataPath'
   ];
 
-  const replacedTooltipHeadings = {costDataPath: 'cost_data_path'};
+  const replacedTooltipHeadings = {costDataPath: 'cost_data_path', tradeDemandDataPath: 'trade-demand-data-path'};
 
   const filteredScenarioSettings = _.pickBy(
     scenario,
@@ -104,6 +111,7 @@ const ScenarioTooltip = ({
                       marginLeft: "1rem",
                       overflow: "hidden",
                       fontWeight: "bold",
+                      lineHeight: "95%"
                     }}
                   >
                     {getPropertyForDisplayString(overrideSetting)}
