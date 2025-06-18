@@ -12,7 +12,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   const [nameError, setNameError] = useState("");
   const [errorShown, setErrorShown] = useState(false); // whether LemError -dialog is open
   const [errorInfo, setErrorInfo] = useState(''); // Error info
-  const showPassengerTransportFields = !scenario.scenarioType || scenario.scenarioType ==  SCENARIO_TYPES.PASSENGER_TRANSPORT;
+  const isPassengerTransportScenario = !scenario.scenarioType || scenario.scenarioType ==  SCENARIO_TYPES.PASSENGER_TRANSPORT;
 
   const hasOverriddenSettings = (scenario) => {
     const overriddenSetting = _.find(scenario.overriddenProjectSettings, (setting) => {
@@ -30,11 +30,11 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   }
 
   useEffect(() => {
-    if(!showPassengerTransportFields){
+    if(!isPassengerTransportScenario){
       // For goods transport, lets set submodel to koko_suomi
       updateScenario({...scenario, submodel: "koko_suomi"})
     }
-  }, [showPassengerTransportFields]);
+  }, [isPassengerTransportScenario]);
 
   useEffect(() => {
     if (isSet(scenario.freight_matrix_path)) {
@@ -188,8 +188,35 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
         {!scenario.costDataPath ? <span className="Scenario-error">{"Liikenteen hintadata on pakollinen tieto."}</span> : ""}
       </div>
 
+       {/* Import and export data */}
+      { !isPassengerTransportScenario && <div className="Scenario__section">
+        <span className="Scenario__pseudo-label">Vienti- ja tuontidata</span>
+        <label className="Scenario__pseudo-file-select" htmlFor="import-and-export-data-file-select" title={scenario.tradeDemandDataPath}>
+          {scenario.tradeDemandDataPath ? path.basename(scenario.tradeDemandDataPath) : "Valitse.."}
+        </label>
+        <input className="Scenario__hidden-input"
+          id="import-and-export-data-file-select"
+          type="text"
+          onClick={() => {
+            dialog.showOpenDialog({
+              defaultPath: scenario.tradeDemandDataPath ? scenario.tradeDemandDataPath : projectFolder,
+              filters: [
+                { name: 'OMX', extensions: ['omx'] },
+                { name: 'All Files', extensions: ['*'] }
+              ],
+              properties: ['openFile']
+            }).then((e) => {
+              if (!e.canceled) {
+                updateScenario({ ...scenario, tradeDemandDataPath: e.filePaths[0] });
+              }
+            })
+          }}
+        />
+        {!scenario.tradeDemandDataPath ? <span className="Scenario-error">{"Vienti- ja tuontidata on pakollinen tieto."}</span> : ""}
+      </div>}
+
       {/* Choice how to use long distance demand forecast */}
-      { showPassengerTransportFields && <div className="Scenario__section Scenario_radio_select_section">
+      { isPassengerTransportScenario && <div className="Scenario__section Scenario_radio_select_section">
         <h4 className="Scenario_radio_label">Pitkien matkojen kysyntäennuste</h4>
         <div>
           <input type="radio" value="base" name="long_dist_demand_forecast"
@@ -229,7 +256,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
         </div>
       </div>}
 
-      {showPassengerTransportFields && <div className="Scenario__section">
+      {isPassengerTransportScenario && <div className="Scenario__section">
         {/* Number of iterations to run */}
         <label className="Scenario__pseudo-label"
           htmlFor="iterations">Iteraatioiden enimm&auml;ism&auml;&auml;r&auml;</label>
@@ -265,7 +292,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       <label className="Scenario__pseudo-label"
         htmlFor="submodel">Osamalli</label>
       <div className="Submodel_select">
-        <select id="submodel" disabled={showPassengerTransportFields == false || longDistDemandForecastIsCalc() } value={scenario.submodel} onChange={e => updateScenario({ ...scenario, submodel: e.target.value })}>
+        <select id="submodel" disabled={isPassengerTransportScenario == false || longDistDemandForecastIsCalc() } value={scenario.submodel} onChange={e => updateScenario({ ...scenario, submodel: e.target.value })}>
           <option key={"submodel_select"} value={""}>--- valitse ---</option>
           {submodels && submodels.map((submodel) =>
             <option key={submodel.id} value={submodel.id}>{submodel.name}</option>)
@@ -274,7 +301,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
 
       {/* Choice for goods transport freight matrix path */}
-      { showPassengerTransportFields && <div className="Scenario__section Scenario_radio_select_section">
+      { isPassengerTransportScenario && <div className="Scenario__section Scenario_radio_select_section">
         <h4 className="Scenario_radio_label">Tavaraliikenteen kysyntäennuste</h4>
         <div>
           <input type="radio" value="base" name="freight_matrix_path"
@@ -321,7 +348,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
 
       {/* Choice whether to use stored speed assignment */}
-      { showPassengerTransportFields && <div className="Scenario__section">
+      { isPassengerTransportScenario && <div className="Scenario__section">
         <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
           htmlFor="stored_speed_assignment">
           <input id="stored_speed_assignment"
@@ -336,7 +363,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>}
 
       {/*Stored speed assignment folders scenario.stored_speed_assignment_paths*/}
-      {showPassengerTransportFields && scenario.stored_speed_assignment && scenario.stored_speed_assignment_folders && (
+      {isPassengerTransportScenario && scenario.stored_speed_assignment && scenario.stored_speed_assignment_folders && (
         <div className="Scenario__section flexContainer">
           <div className="Scenario__stored_speed_assignment_inputs">
             {storedSpeedAssignmentFolderInput(0, scenario.stored_speed_assignment_folders[0])}
@@ -366,7 +393,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
 
       {/* Choice whether to save matrices in Emme */}
-      { showPassengerTransportFields &&<div className="Scenario__section">
+      { isPassengerTransportScenario &&<div className="Scenario__section">
         <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
           htmlFor="separate-emme-scenarios">
           <input id="separate-emme-scenarios"
@@ -383,7 +410,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
 
       {/* Choice whether to save matrices in Emme */}
       <div className="Scenario__section">
-      { showPassengerTransportFields && <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
+      { isPassengerTransportScenario && <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
           htmlFor="save-matrices-in-emme">
           <input id="save-matrices-in-emme"
             type="checkbox"
@@ -397,7 +424,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
         </label>}
 
         {/* Number of first matrix ID */}
-        { showPassengerTransportFields && <div className="Scenario__section Scenario__section--indentation">
+        { isPassengerTransportScenario && <div className="Scenario__section Scenario__section--indentation">
           <label className="Scenario__pseudo-label"
             style={{ color: scenario.save_matrices_in_emme == false ? "#666666" : "inherit" }}
             htmlFor="first-matrix-id">Matriisit tallennetaan numeroille</label>

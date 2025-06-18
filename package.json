@@ -1,7 +1,7 @@
 {
-  "name": "lem-ui",
+  "name": "valma-ui",
   "productName": "VALMA",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "private": true,
   "description": "VALMA Model System UI",
   "main": "src/main/index.js",
