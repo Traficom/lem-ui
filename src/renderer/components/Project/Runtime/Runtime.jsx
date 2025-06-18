@@ -97,13 +97,13 @@ const Runtime = ({
       <div className="Runtime__helmet-project-controls">
         <div className="Runtime__heading">Projektin alustaminen</div>
         <p className="Runtime__project-path">
-          Helmet-skenaarioiden tallennuspolku: {projectFolder}
+          Valma-skenaarioiden tallennuspolku: {projectFolder}
         </p>
         <button
             className="Runtime__button Table_space_after"
             onClick={() => addNewSetting()}
           >
-            <span>Luo uusi VLEM projekti</span>
+            <span>Luo uusi VALMA-projekti</span>
           </button>
 
         <div className="Runtime__buttons">
@@ -118,7 +118,7 @@ const Runtime = ({
             className="Runtime__button"
             onClick={e => openCreateEmmeProject()}
             disabled={runningScenarioID}
-          >Luo Emme-projekti
+          >Luo Emmepankki
           </button>
         </div>
       </div>
