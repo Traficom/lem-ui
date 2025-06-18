@@ -5,7 +5,7 @@
     <title>Hidden process-running window</title>
     <script type="text/javascript">
       const {ipcRenderer} = require('electron');
-      const {createEmmeProjectPythonShell} = require('./create_emme_project_python_shell');
+      const {createEmmeProjectPythonShell} = require('./create_project_python_shell');
 
       const sendLoggableEvent = (message) => {
         ipcRenderer.send('loggable-ui-event-from-worker', {
@@ -19,16 +19,16 @@
       const onComplete = (error) => {
         worker = null; // Reset worker reference for new/next runs
         // Send to log "finished"
-        sendLoggableEvent(`Finished creating Emmebank`);
+        sendLoggableEvent(`Finished creating Emme-project`);
         // Notify UI that all processing complete for now
-        ipcRenderer.send('message-from-worker-creating-emme-project-completed', {
+        ipcRenderer.send('message-from-worker-creating-project-completed', {
           error: error
         });
       };
 
-      ipcRenderer.on('create-emme-project', (event, args) => {
+      ipcRenderer.on('create-project', (event, args) => {
         sendLoggableEvent(
-          `Creating Emmebank`
+          `Creating Emme-project`
         );
         worker = createEmmeProjectPythonShell(worker, args, (error) => onComplete(error));
       });

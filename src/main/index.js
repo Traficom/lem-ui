@@ -139,14 +139,24 @@ ipcMain.on('loggable-ui-event-from-worker', (event, args) => {
   mainWindow.webContents.send('loggable-event', args);
 });
 
-// Relay message to run create emme project
+// Relay message to run create emme bank
 ipcMain.on('message-from-ui-to-create_emme_project', (event, args) => {
   createEmmeProjectWorkerWindow.webContents.send('create-emme-project', args);
 });
 
-// Relay message emme project created
+// Relay message emme bank created
 ipcMain.on('message-from-worker-creating-emme-project-completed', (event, args) => {
   mainWindow.webContents.send('creating-emme-project-completed', args.error);
+});
+
+// Relay message to run create emme project
+ipcMain.on('message-from-ui-to-create-project', (event, args) => {
+  createEmmeProjectWorkerWindow.webContents.send('create-project', args);
+});
+
+// Relay message emme project created
+ipcMain.on('message-from-worker-creating-project-completed', (event, args) => {
+  mainWindow.webContents.send('creating-project-completed', args.error);
 });
 
 
