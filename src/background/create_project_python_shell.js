@@ -3,7 +3,6 @@ const {ipcRenderer} = require('electron');
 
 module.exports = {
   createProjectPythonShell: function (worker, runParameters, onEndCallback) {
-
     // Make sure project folder is given
     if (!runParameters.project_folder) {
       alert("Project folder is not set."); // Should never occur

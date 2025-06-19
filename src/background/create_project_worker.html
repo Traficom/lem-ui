@@ -5,7 +5,7 @@
     <title>Hidden process-running window</title>
     <script type="text/javascript">
       const {ipcRenderer} = require('electron');
-      const {createEmmeProjectPythonShell} = require('./create_project_python_shell');
+      const {createProjectPythonShell} = require('./create_project_python_shell');
 
       const sendLoggableEvent = (message) => {
         ipcRenderer.send('loggable-ui-event-from-worker', {
@@ -30,7 +30,7 @@
         sendLoggableEvent(
           `Creating Emme-project`
         );
-        worker = createEmmeProjectPythonShell(worker, args, (error) => onComplete(error));
+        worker = createProjectPythonShell(worker, args, (error) => onComplete(error));
       });
     </script>
 </head>

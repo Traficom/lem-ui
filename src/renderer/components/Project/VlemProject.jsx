@@ -11,7 +11,7 @@ const { ipcRenderer } = require('electron');
 
 const VlemProject = ({
   projectName, projectFolder, emmePythonPath, helmetScriptsPath, basedataPath,
-  signalProjectRunning, settingsId, openCreateEmmeProject, addNewSetting
+  signalProjectRunning, settingsId, openCreateEmmeBank, addNewSetting
 }) => {
   // VLEM Project -specific settings
   const [scenarios, setScenarios] = useState([]); // Scenarios under currently selected Project
@@ -503,7 +503,7 @@ const VlemProject = ({
 
     /**
      *  projectName, projectFolder, emmePythonPath, helmetScriptsPath, basedataPath, resultsPath,
-        signalProjectRunning, settingsId, openCreateEmmeProject, addNewSetting
+        signalProjectRunning, settingsId, openCreateEmmeBank, addNewSetting
      */
     ipcRenderer.send(
       'message-from-ui-to-run-scenarios',
@@ -715,7 +715,7 @@ const VlemProject = ({
           logArgs={logArgs}
           duplicateScenario={duplicateScenario}
           handleClickCreateSubScenario={handleClickCreateSubScenario}
-          openCreateEmmeProject={openCreateEmmeProject}
+          openCreateEmmeBank={openCreateEmmeBank}
           addNewSetting={addNewSetting}
           duplicateSubScenario={duplicateSubScenario}
           deleteSubScenario={deleteSubScenario}

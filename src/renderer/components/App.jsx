@@ -37,7 +37,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
   const [loadingInfo, setLoadingInfo] = useState(''); // Loading info
   const [errorShown, setErrorShown] = useState(false); // whether LemError -dialog is open
   const [errorInfo, setErrorInfo] = useState(''); // Error info
-  const [isCreateEmmeProjectModalOpen, setCreateEmmeProjectModalOpen] = useState(false); // whether create Emme project -dialog is open
+  const [isCreateEmmeBankModalOpen, setCreateEmmeBankModalOpen] = useState(false); // whether create Emme project -dialog is open
 
   // Global settings store contains selected_settings_id and settings
   const globalSettingsStore = useRef(new Store());
@@ -64,7 +64,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
   }
 
   function openSettings(){
-    setCreateEmmeProjectModalOpen(false);
+    setCreateEmmeBankModalOpen(false);
     setDownloadingHelmetScripts(false);
     setSettingsOpen(true);
   }
@@ -75,6 +75,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     } else {
       saveSettingChanges({ ...settingInHandling });
     }
+    _createProject();
     setSettingsOpen(false);
   }
 
@@ -241,7 +242,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     setLoadingInfo('asennus on kesken...');
   }
 
-  function setCreatingEmmeProjectInProgress() {
+  function setCreatingEmmeBankInProgress() {
     setLoading(true);
     setLoadingHeading('Luodaan Emme-projektia');
     setLoadingInfo('projektin luominen on kesken...');
@@ -279,16 +280,16 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
   };
 
 
-  const _closeCreateEmmeProject = () => {
-    setCreateEmmeProjectModalOpen(false);
+  const _closeCreateEmmeBank = () => {
+    setCreateEmmeBankModalOpen(false);
     closeError();
   };
 
-  const _openCreateEmmeProject = () => {
-    setCreateEmmeProjectModalOpen(true);
+  const _openCreateEmmeBank = () => {
+    setCreateEmmeBankModalOpen(true);
   };
 
-  const _createEmmeProject = (submodel, numberOfEmmeScenarios, separateEmmeScenarios) => {
+  const _createEmmeBank = (submodel, numberOfEmmeScenarios, separateEmmeScenarios) => {
     if (!fs.existsSync(settingInHandling.project_folder)) {
       showError('Tarkista projektikansio ' + settingInHandling.project_folder);
       return;
@@ -304,10 +305,10 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
       showError('Pythonia ei löydy polusta ' + settingInHandling.emme_python_path);
       return;
     }
-    setCreatingEmmeProjectInProgress();
+    setCreatingEmmeBankInProgress();
 
     ipcRenderer.send(
-      'message-from-ui-to-create_emme_project',
+      'message-from-ui-to-create-emme-bank',
       {
         project_folder: settingInHandling.project_folder,
         emme_python_path: settingInHandling.emme_python_path,
@@ -320,8 +321,20 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
       }
     );
 
-    setCreateEmmeProjectModalOpen(false);
+    setCreateEmmeBankModalOpen(false);
   };
+
+  const _createProject = () => {
+    ipcRenderer.send(
+      'message-from-ui-to-create-project',
+      {
+        project_folder: settingInHandling.project_folder,
+        emme_python_path: settingInHandling.emme_python_path,
+        helmet_scripts_path: settingInHandling.helmet_scripts_path,
+        project_name: settingInHandling.project_name,
+      }
+    );
+  }
 
   const _promptModelSystemDownload = () => {
     fetch('https://api.github.com/repos/Traficom/lem-model-system/tags')
@@ -401,7 +414,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     setDownloadingHelmetScripts(false);
   };
 
-  const onCreatingEmmeProjectReady = (event, error) => {
+  const onCreatingEmmeBankReady = (event, error) => {
     if (error && error.length > 0) {
       setLoadingInfo("VIRHE ajettaessa python scriptiä create_emme_project.py\n" + error);
     } else {
@@ -442,7 +455,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
     const settingsAreDefined = existingSettings && existingSettings.length > 0 && existingSelectedSettingId;
     // Attach Electron IPC event listeners (to worker => UI events)
     ipcRenderer.on('download-ready', onDownloadReady);
-    ipcRenderer.on('creating-emme-project-completed', onCreatingEmmeProjectReady);
+    ipcRenderer.on('creating-emme-bank-completed', onCreatingEmmeBankReady);
 
     // Search for EMME's Python if not set in global store (default win path is %APPDATA%, should remain there [hidden from user])
     if (!settingsAreDefined) {
@@ -534,10 +547,10 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
         </div>
       }
 
-      <div className="App__CreateEmmeProject" style={{ display: isCreateEmmeProjectModalOpen ? "block" : "none" }}>
-        <CreateEmmeProject
-          createProject={_createEmmeProject}
-          handleCancel={_closeCreateEmmeProject}
+      <div className="App__CreateEmmeBank" style={{ display: isCreateEmmeBankModalOpen ? "block" : "none" }}>
+        <CreateEmmeBank
+          createProject={_createEmmeBank}
+          handleCancel={_closeCreateEmmeBank}
         />
       </div>
 
@@ -557,7 +570,7 @@ const App = ({ VLEMVersion, versions, searchEMMEPython }) => {
           basedataPath={settingInHandling.basedata_path}
           signalProjectRunning={setProjectRunning}
           settingsId={settingInHandling.id}
-          openCreateEmmeProject={_openCreateEmmeProject}
+          openCreateEmmeBank={_openCreateEmmeBank}
           addNewSetting={addNewSetting}
         />
       </div>

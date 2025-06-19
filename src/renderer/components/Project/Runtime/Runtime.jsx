@@ -6,7 +6,7 @@ const Runtime = ({
   setOpenScenarioID,
   reloadScenarios,
   handleClickScenarioToActive, handleClickNewScenario,
-  handleClickStartStop, logArgs, duplicateScenario, handleClickCreateSubScenario, openCreateEmmeProject, addNewSetting,
+  handleClickStartStop, logArgs, duplicateScenario, handleClickCreateSubScenario, openCreateEmmeBank, addNewSetting,
   duplicateSubScenario, modifySubScenario, deleteSubScenario, activeScenarios
 }) => {
 
@@ -116,7 +116,7 @@ const Runtime = ({
           </button>
           <button
             className="Runtime__button"
-            onClick={e => openCreateEmmeProject()}
+            onClick={e => openCreateEmmeBank()}
             disabled={runningScenarioID}
           >Luo Emmepankki
           </button>

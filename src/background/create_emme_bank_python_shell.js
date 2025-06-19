@@ -2,7 +2,7 @@ const ps = require('python-shell');
 const {ipcRenderer} = require('electron');
 
 module.exports = {
-  createEmmeProjectPythonShell: function (worker, runParameters, onEndCallback) {
+  createEmmeBankPythonShell: function (worker, runParameters, onEndCallback) {
 
     // Make sure project folder is given
     if (!runParameters.project_folder) {

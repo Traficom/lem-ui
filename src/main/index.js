@@ -17,7 +17,7 @@ require('@electron/remote/main').initialize();
 if (require('electron-squirrel-startup')) {app.quit();}
 
 // Keep a global reference of certain objects, so they won't be garbage collected. (This is Electron-app best practise)
-let mainWindow, entrypointWorkerWindow, cbaWorkerWindow, createEmmeProjectWorkerWindow;
+let mainWindow, entrypointWorkerWindow, cbaWorkerWindow, createEmmeBankWorkerWindow, createProjectWorkerWindow;
 
 async function createUI() {
   // Render main window including UI (index.html linking to all UI components)
@@ -62,10 +62,16 @@ async function createCbaScriptWorker() {
   await cbaWorkerWindow.loadFile('src/background/cba_script_worker.html');
 }
 
-async function createEmmeProjectWorker() {
+async function createEmmeBankWorker() {
   // Create hidden window for background process #3 (Electron best practise, alternative is web workers with limited API)
-  createEmmeProjectWorkerWindow = new BrowserWindow({webPreferences: {nodeIntegration: true, contextIsolation: false, enableRemoteModule: true}, show: false});
-  await createEmmeProjectWorkerWindow.loadFile('src/background/create_emme_project_worker.html');
+  createEmmeBankWorkerWindow = new BrowserWindow({webPreferences: {nodeIntegration: true, contextIsolation: false, enableRemoteModule: true}, show: false});
+  await createEmmeBankWorkerWindow.loadFile('src/background/create_emme_bank_worker.html');
+}
+
+async function createProjectWorker() {
+  // Create hidden window for background process #3 (Electron best practise, alternative is web workers with limited API)
+  createProjectWorkerWindow = new BrowserWindow({webPreferences: {nodeIntegration: true, contextIsolation: false, enableRemoteModule: true}, show: false});
+  await createProjectWorkerWindow.loadFile('src/background/create_project_worker.html');
 }
 
 
@@ -74,7 +80,8 @@ app.on('ready', async () => {
   await createUI();
   await createEntrypointWorker();
   await createCbaScriptWorker();
-  await createEmmeProjectWorker();
+  await createEmmeBankWorker();
+  await createProjectWorker();
 });
 
 ipcMain.on('message-from-ui-to-download-model-scripts', (event, args) => {
@@ -140,18 +147,18 @@ ipcMain.on('loggable-ui-event-from-worker', (event, args) => {
 });
 
 // Relay message to run create emme bank
-ipcMain.on('message-from-ui-to-create_emme_project', (event, args) => {
-  createEmmeProjectWorkerWindow.webContents.send('create-emme-project', args);
+ipcMain.on('message-from-ui-to-create-emme-bank', (event, args) => {
+  createEmmeBankWorkerWindow.webContents.send('create-emme-bank', args);
 });
 
 // Relay message emme bank created
-ipcMain.on('message-from-worker-creating-emme-project-completed', (event, args) => {
-  mainWindow.webContents.send('creating-emme-project-completed', args.error);
+ipcMain.on('message-from-worker-creating-emme-bank-completed', (event, args) => {
+  mainWindow.webContents.send('creating-emme-bank-completed', args.error);
 });
 
 // Relay message to run create emme project
 ipcMain.on('message-from-ui-to-create-project', (event, args) => {
-  createEmmeProjectWorkerWindow.webContents.send('create-project', args);
+  createProjectWorkerWindow.webContents.send('create-project', args);
 });
 
 // Relay message emme project created
