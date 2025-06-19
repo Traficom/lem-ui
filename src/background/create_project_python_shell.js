@@ -2,8 +2,7 @@ const ps = require('python-shell');
 const {ipcRenderer} = require('electron');
 
 module.exports = {
-  createEmmeProjectPythonShell: function (worker, runParameters, onEndCallback) {
-
+  createProjectPythonShell: function (worker, runParameters, onEndCallback) {
     // Make sure project folder is given
     if (!runParameters.project_folder) {
       alert("Project folder is not set."); // Should never occur
@@ -15,22 +14,18 @@ module.exports = {
       alert("Worker already in progress."); // Should never occur
       return;
     }
-    const createEmmeScript = runParameters.helmet_scripts_path + "\\create_emmebank.py"
+    const createProjectScript = runParameters.helmet_scripts_path + "\\create_emme_project.py"
     // Start create_emmebank.py
     worker = new ps.PythonShell(
-      createEmmeScript,
+      createProjectScript,
       {
         mode: 'json',
         pythonPath: runParameters.emme_python_path,
         pythonOptions: ['-u'], // unbuffered
         args: [
-          "--log-level", runParameters.log_level || 'DEBUG',
-          "--log-format", "JSON",
           "--emme-path", runParameters.project_folder || '',
-          "--submodel", runParameters.submodel || '',
-          "--number-of-emme-scenarios", runParameters.number_of_emme_scenarios || '',
           "--project-name", runParameters.project_name || ''
-        ].concat(runParameters.separate_emme_scenarios ? ["--separate-emme-scenarios"] : [])
+        ]
       });
     worker.on('message', (event) => ipcRenderer.send('loggable-event-from-worker', {...event, time: new Date()}));
     worker.on('stderr', (event) => ipcRenderer.send('loggable-event-from-worker', {...event, time: new Date()}));

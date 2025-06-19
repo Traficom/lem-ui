@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CreateEmmeProject = ({
+const CreateEmmeBank = ({
     createProject,
     handleCancel,
 }) => {
@@ -8,18 +8,18 @@ const CreateEmmeProject = ({
     const [numberOfEmmeScenarios, setNumberOfEmmeScenarios] = useState(1);
     const [separateEmmeScenarios, setSeparateEmmeScenarios] = useState(false);
     return (
-        <div className="CreateEmmeProject">
+        <div className="CreateEmmeBank">
 
-            <div className="CreateEmmeProject_overlay" onClick={(e) => handleCancel()}>{/* Dark background overlay */}</div>
+            <div className="CreateEmmeBank_overlay" onClick={(e) => handleCancel()}>{/* Dark background overlay */}</div>
 
-            <div className="CreateEmmeProject_dialog">
+            <div className="CreateEmmeBank_dialog">
 
-                <div className="CreateEmmeProject_dialog-controls" onClick={(e) => handleCancel()}></div>
+                <div className="CreateEmmeBank_dialog-controls" onClick={(e) => handleCancel()}></div>
 
-                <div className="CreateEmmeProject_dialog-heading">Luo Emme-pankki</div>
+                <div className="CreateEmmeBank_dialog-heading">Luo Emme-pankki</div>
 
                 {/* Sub model selection */}
-                <label className="CreateEmmeProject_label"
+                <label className="CreateEmmeBank_label"
                     htmlFor="submodel">Osamalli</label>
                 <div className="Submodel_select">
                     <select id="submodel" value={submodel} onChange={e => setSubmodel(e.target.value)}>
@@ -30,10 +30,10 @@ const CreateEmmeProject = ({
                     </select>
                 </div>
                 {/* Amount of scenerios */}
-                <label className="CreateEmmeProject_label"
+                <label className="CreateEmmeBank_label"
                     htmlFor="submodel">Skenaarioiden lukumäärä</label>
                 <input id="project_name"
-                    className="CreateEmmeProject_input"
+                    className="CreateEmmeBank_input"
                     type="number"
                     min={1}
                     value={numberOfEmmeScenarios || 1}
@@ -43,28 +43,28 @@ const CreateEmmeProject = ({
                 />
 
                 {/* Save to separate emme scenarios */}
-                <div className='CreateEmmeProject_checkbox_container'>
+                <div className='CreateEmmeBank_checkbox_container'>
                     <input id="separate-emme-scenarios"
-                        className='CreateEmmeProject_checkbox'
+                        className='CreateEmmeBank_checkbox'
                         type="checkbox"
                         checked={separateEmmeScenarios}
                         onChange={(e) => {
                             setSeparateEmmeScenarios(!separateEmmeScenarios);
                         }}
                     />
-                    <label className="CreateEmmeProject_checkbox_label"
+                    <label className="CreateEmmeBank_checkbox_label"
                         htmlFor="separate-emme-scenarios">Tallenna ajanjaksot erillisiin Emme-skenaarioihin</label>
                 </div>
 
-                <div className="CreateEmmeProject_buttons">
+                <div className="CreateEmmeBank_buttons">
                     <button
-                        className="CreateEmmeProject_btn"
+                        className="CreateEmmeBank_btn"
                         onClick={e => createProject(submodel, numberOfEmmeScenarios, separateEmmeScenarios)}
                     >
                         <span>Luo pankki</span>
                     </button>
                     <button
-                        className="CreateEmmeProject_btn"
+                        className="CreateEmmeBank_btn"
                         onClick={(e) => handleCancel()}
                     >
                         <span>Peruuta</span>
