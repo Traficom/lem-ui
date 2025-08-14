@@ -43,8 +43,8 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   }, [scenario.freight_matrix_path]);
 
   useEffect(() => {
-    if (isSet(scenario.stored_speed_assignment) && !isSet(scenario.stored_speed_assignment_inputs)) {
-      updateScenario({...scenario, stored_speed_assignment_inputs: []})
+    if (isSet(scenario.stored_speed_assignment) && !isSet(scenario.storedSpeedAssignmentInputs)) {
+      updateScenario({...scenario, storedSpeedAssignmentInputs: []})
     }
   }, [scenario.stored_speed_assignment]);
 
@@ -52,7 +52,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
     if(value){
       updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment })
     }else{
-      updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment, stored_speed_assignment_inputs: [] })
+      updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment, storedSpeedAssignmentInputs: [] })
     }
   }
 
@@ -69,9 +69,9 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   function setStoredSpeedAssignmentInput(index, input) {
     const firstScenarioIdIsSet = isSet(input) && isSet(input.firstScenarioId) && input.firstScenarioId != 0;
     const newInput = firstScenarioIdIsSet? input : null;
-    let inputs = [...scenario.stored_speed_assignment_inputs];
+    let inputs = [...scenario.storedSpeedAssignmentInputs];
     inputs[index] = newInput;
-    updateScenario({ ...scenario, stored_speed_assignment_inputs: inputs })
+    updateScenario({ ...scenario, storedSpeedAssignmentInputs: inputs })
   }
 
   const basedataPath = scenario.overriddenProjectSettings.basedataPath ? scenario.overriddenProjectSettings.basedataPath : inheritedGlobalProjectSettings.basedataPath;
@@ -359,14 +359,14 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
         </label>
       </div>}
 
-      {/*Stored speed assignment folders scenario.stored_speed_assignment_inputs*/}
-      {isPassengerTransportScenario && scenario.stored_speed_assignment && scenario.stored_speed_assignment_inputs && (
+      {/*Stored speed assignment folders scenario.storedSpeedAssignmentInputs*/}
+      {isPassengerTransportScenario && scenario.stored_speed_assignment && scenario.storedSpeedAssignmentInputs && (
         <div className="Scenario__section flexContainer space_after">
           <div>
-            {storedSpeedAssignmentInput(0, "ita_suomi", scenario.stored_speed_assignment_inputs[0])}
-            {storedSpeedAssignmentInput(1, "lounais_suomi", scenario.stored_speed_assignment_inputs[1])}
-            {storedSpeedAssignmentInput(2, "pohjois_suomi", scenario.stored_speed_assignment_inputs[2])}
-            {storedSpeedAssignmentInput(3, "uusimaa", scenario.stored_speed_assignment_inputs[3])}
+            {storedSpeedAssignmentInput(0, "ita_suomi", scenario.storedSpeedAssignmentInputs[0])}
+            {storedSpeedAssignmentInput(1, "lounais_suomi", scenario.storedSpeedAssignmentInputs[1])}
+            {storedSpeedAssignmentInput(2, "pohjois_suomi", scenario.storedSpeedAssignmentInputs[2])}
+            {storedSpeedAssignmentInput(3, "uusimaa", scenario.storedSpeedAssignmentInputs[3])}
           </div>
         </div>
       )}
