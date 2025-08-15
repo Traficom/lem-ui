@@ -43,8 +43,8 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   }, [scenario.freight_matrix_path]);
 
   useEffect(() => {
-    if (isSet(scenario.stored_speed_assignment) && !isSet(scenario.stored_speed_assignment_folders)) {
-      updateScenario({...scenario, stored_speed_assignment_folders: []})
+    if (isSet(scenario.stored_speed_assignment) && !isSet(scenario.storedSpeedAssignmentInputs)) {
+      updateScenario({...scenario, storedSpeedAssignmentInputs: []})
     }
   }, [scenario.stored_speed_assignment]);
 
@@ -52,7 +52,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
     if(value){
       updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment })
     }else{
-      updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment, stored_speed_assignment_folders: [] })
+      updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment, storedSpeedAssignmentInputs: [] })
     }
   }
 
@@ -66,15 +66,12 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
     setErrorInfo('');
   };
  
-  function setStoredSpeedAssignmentFolder(index, folder) {
-    const folderRef = isSet(folder) ? folder : "";
-    if (folderRef.includes(" ")) {
-      showError("Kansion nimessä ei voi olla välilyöntejä")
-    } else {
-      let folders = [...scenario.stored_speed_assignment_folders];
-      folders[index] = folderRef;
-      updateScenario({ ...scenario, stored_speed_assignment_folders: folders })
-    }
+  function setStoredSpeedAssignmentInput(index, input) {
+    const firstScenarioIdIsSet = isSet(input) && isSet(input.firstScenarioId) && input.firstScenarioId != 0;
+    const newInput = firstScenarioIdIsSet? input : null;
+    let inputs = [...scenario.storedSpeedAssignmentInputs];
+    inputs[index] = newInput;
+    updateScenario({ ...scenario, storedSpeedAssignmentInputs: inputs })
   }
 
   const basedataPath = scenario.overriddenProjectSettings.basedataPath ? scenario.overriddenProjectSettings.basedataPath : inheritedGlobalProjectSettings.basedataPath;
@@ -362,16 +359,14 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
         </label>
       </div>}
 
-      {/*Stored speed assignment folders scenario.stored_speed_assignment_paths*/}
-      {isPassengerTransportScenario && scenario.stored_speed_assignment && scenario.stored_speed_assignment_folders && (
-        <div className="Scenario__section flexContainer">
-          <div className="Scenario__stored_speed_assignment_inputs">
-            {storedSpeedAssignmentFolderInput(0, scenario.stored_speed_assignment_folders[0])}
-            {storedSpeedAssignmentFolderInput(1, scenario.stored_speed_assignment_folders[1])}
-          </div>
-          <div className="Scenario__stored_speed_assignment_inputs">
-            {storedSpeedAssignmentFolderInput(2, scenario.stored_speed_assignment_folders[2])}
-            {storedSpeedAssignmentFolderInput(3, scenario.stored_speed_assignment_folders[3])}
+      {/*Stored speed assignment folders scenario.storedSpeedAssignmentInputs*/}
+      {isPassengerTransportScenario && scenario.stored_speed_assignment && scenario.storedSpeedAssignmentInputs && (
+        <div className="Scenario__section flexContainer space_after">
+          <div>
+            {storedSpeedAssignmentInput(0, "ita_suomi", scenario.storedSpeedAssignmentInputs[0])}
+            {storedSpeedAssignmentInput(1, "lounais_suomi", scenario.storedSpeedAssignmentInputs[1])}
+            {storedSpeedAssignmentInput(2, "pohjois_suomi", scenario.storedSpeedAssignmentInputs[2])}
+            {storedSpeedAssignmentInput(3, "uusimaa", scenario.storedSpeedAssignmentInputs[3])}
           </div>
         </div>
       )}
@@ -590,34 +585,27 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
     </div>
   )
 
-  function storedSpeedAssignmentFolderInput(index, value) {
+  function storedSpeedAssignmentInput(index, submodel, input) {
+    const firstScenarioIdIsSet = input && input.firstScenarioId && input.firstScenarioId != 0;
     return (
       <span className="stored_speed_assignment_fields">
+        <label className='stored_speed_assignment_labels'>
+           {submodels.filter(model => model.id == submodel)[0].name}, Emme skenaario
+        </label>
+
         <input id={"stored_speed_assignment_input_" + index}
-          className="Scenario__pseudo-stored_speed_assignment Scenario__inline"
-          readOnly={true}
-          type="text"
+          className="stored_speed_assignment_id_input Scenario__inline"
+          type="number"
+          min="0"
+          max="999"
+          step="1"
           disabled={!scenario.stored_speed_assignment}
-          value={value ? value : ""}
-          placeholder={"..."}
-          title={value}
-          onClick={() => {
-            dialog.showOpenDialog({
-              defaultPath: scenario.overriddenProjectSettings.projectFolder ? scenario.overriddenProjectSettings.projectFolder : projectFolder,
-              properties: ['openDirectory']
-            }).then((e) => {
-              if (!e.canceled) {
-                setStoredSpeedAssignmentFolder(index, e.filePaths[0]);
-              }
-            })
+          value={firstScenarioIdIsSet? input.firstScenarioId : ''}
+          placeholder={""}
+          onChange={(e) => {
+            const newValue = e.target.value;
+              setStoredSpeedAssignmentInput( index, {submodel, 'firstScenarioId': newValue});
           }}
-        />{value &&
-          <label className="pseudo_reset" onClick={(event) => {
-            event.preventDefault();
-            setStoredSpeedAssignmentFolder(index, "");
-          }}>
-            <ResetIcon className="override-reset-icon" />
-          </label>
-        }</span>);
+        /></span>);
   }
 };

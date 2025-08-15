@@ -419,19 +419,41 @@ const VlemProject = ({
 
     let runnableScenarios = [];
     scenarios.forEach(scenario => {
+
       if (scenarioIDsToRun.includes(scenario.id) && !runnableScenarios.find(s => s.id == scenario.id)) {
-        runnableScenarios.push({...scenario, runIndex: scenarioIDsToRun.indexOf(scenario.id)});
+        const scenarioRunIndex = scenarioIDsToRun.indexOf(scenario.id) + 1;
+        runnableScenarios.push({...scenario, runIndex: scenarioRunIndex + 0.001});
+
+        if (scenario.storedSpeedAssignmentInputs && scenario.storedSpeedAssignmentInputs.length > 0) {
+          const validStoredSpeedAssignmentInputs = scenario.storedSpeedAssignmentInputs.filter(Boolean);
+          if(validStoredSpeedAssignmentInputs.length > 0 ) {
+            validStoredSpeedAssignmentInputs.map((storedSpeedAssignment, index) => {
+               runnableScenarios.push(createRunnableStoredSpeedAssignment(scenario, storedSpeedAssignment, scenarioRunIndex, index));
+            });
+          }
+        }
       }
+
       if (scenario.subScenarios && scenario.subScenarios.length > 0) {
         scenario.subScenarios.forEach(subSenario => {
           if (scenarioIDsToRun.includes(subSenario.id) && !runnableScenarios.find(s => s.id == subSenario.id)) {
-            runnableScenarios.push({ ...subSenario, runIndex: scenarioIDsToRun.indexOf(scenario.id) + (1 + scenarioIDsToRun.indexOf(subSenario.id) / 10) });
+            const scenarioRunIndexForSubScenario = scenarioIDsToRun.includes(scenario.id) ? scenarioIDsToRun.indexOf(scenario.id) + 1 : scenarioIDsToRun.indexOf(subSenario.id) + 1;
+            runnableScenarios.push({ ...subSenario, runIndex: scenarioRunIndexForSubScenario + ((scenarioIDsToRun.indexOf(subSenario.id) + 1) / 100) });
           }
         })
       }
     });
-    const sortedRunnableScenarios = runnableScenarios.sort((a, b) => a.runIndex - b.runIndex)
+    const sortedRunnableScenarios = runnableScenarios.sort((a, b) => a.runIndex - b.runIndex);
     return sortedRunnableScenarios;
+  }
+
+  function createRunnableStoredSpeedAssignment(scenario, storedSpeedAssignmentInput, scenarioIndex, ssaIndex){
+    return { ...scenario, 
+      id: STORED_SPEED_ASSIGNMENT_PREFIX + ssaIndex +"_" + scenario.id,
+      runIndex: scenarioIndex + ((1 + ssaIndex) / 10000),
+      first_scenario_id: storedSpeedAssignmentInput.firstScenarioId, 
+      submodel: storedSpeedAssignmentInput.submodel,
+      stored_speed_assignment: false}
   }
 
   const scenariosToRun = resolveRunnableScenarios(scenarioIDsToRun, scenarios);
@@ -443,6 +465,16 @@ const VlemProject = ({
   function resolveStoredSpeedAssignmentFolders(scenario) {
     const folders = scenario.stored_speed_assignment_folders.filter(f => isSet(f));
     return folders;
+  }
+
+  function resolveScenarioId(scenario){
+    if(scenario.parentScenarioId){
+      return scenario.parentScenarioId; 
+    }
+    if(scenario.id.includes(STORED_SPEED_ASSIGNMENT_PREFIX)){
+      return scenario.id.split("_").pop();
+    }
+    return scenario.id;
   }
 
   const _runAllActiveScenarios = (activeScenarioIDs) => {
@@ -471,7 +503,7 @@ const VlemProject = ({
 
     // For each active scenario, check required scenario-specific parameters are set
     for (let scenario of scenariosToRun) {
-      const scenarioId = scenario.parentScenarioId ? scenario.parentScenarioId : scenario.id;
+      const scenarioId = resolveScenarioId(scenario);
       const store = configStores.current[scenarioId];
       const iterations = store.get('iterations');
       if (!store.get('forecast_data_path')) {
@@ -493,7 +525,7 @@ const VlemProject = ({
     setLogContents([
       {
         level: "UI-event",
-        message: `Initializing run of scenarios: ${scenariosToRun.map((s) => s.name).join(', ')}`
+        message: `Initializing run of scenarios: ${scenariosToRun.filter(s => !s.id.includes(STORED_SPEED_ASSIGNMENT_PREFIX)).map(s => s.name).join(", ")}`
       }
     ]);
     setLogOpened(true); // Keep log open even after run finishes (or is cancelled)
@@ -512,7 +544,7 @@ const VlemProject = ({
         // when running subScenario --scenario-name ja --first-scenario-id and scenario-id will be used from it
         const subScenario = s.parentScenarioId ? s : undefined;
         const name = subScenario ? subScenario.name : scenario.name;
-        const id = subScenario ? subScenario.id : scenario.id;
+        const id = subScenario ? subScenario.id : resolveScenarioId(scenario);
         const first_scenario_id = subScenario ? subScenario.emmeScenarioNumber : scenario.first_scenario_id;
         const end_assignment_only = subScenario ? true : scenario.end_assignment_only
         const costDataPath = subScenario && subScenario.costDataPath ? subScenario.costDataPath : scenario.costDataPath;
