@@ -34,6 +34,7 @@ module.exports = {
           .concat(allRunParameters.map(p => p.separate_emme_scenarios).every(Boolean) ? ["--separate-emme-scenarios"] : [])
           .concat(["--freight-matrix-paths"]).concat(allRunParameters.map(p => p.freight_matrix_path ? p.freight_matrix_path: 'none'))
           .concat(["--submodel"]).concat(allRunParameters.map(p => p.submodel))
+          .concat(["--model-types"]).concat(allRunParameters.map(p => p.scenarioType))
       });
 
     // Attach runtime handlers (stdout/stderr, process errors)
@@ -63,7 +64,7 @@ module.exports = {
     }
 
     let longDistDemandForecast = getLongDistDemandForecast(runParameters.long_dist_demand_forecast,  runParameters.long_dist_demand_forecast_path);
-    // Start lem-model-system's lem.py in shell with EMME's python interpreter
+    // Start lem-model-system's valma_travel.py in shell with EMME's python interpreter
     worker = new ps.PythonShell(
       `${runParameters.helmet_scripts_path}/valma_travel.py`,
       {
@@ -119,7 +120,7 @@ module.exports = {
       return;
     }
 
-    // Start lem-model-system's lem.py in shell with EMME's python interpreter
+    // Start lem-model-system's valma_freight.py in shell with EMME's python interpreter
     worker = new ps.PythonShell(
       `${runParameters.helmet_scripts_path}/valma_freight.py`,
       {
@@ -133,15 +134,12 @@ module.exports = {
           "--results-path", runParameters.results_data_folder_path,
           "--emme-path", runParameters.emme_project_path,
           "--first-scenario-id", runParameters.first_scenario_id,
-          "--baseline-data-path", runParameters.base_data_folder_path,
           "--cost-data-path", runParameters.costDataPath,
           "--forecast-data-path", runParameters.forecast_data_path,
           "--trade-demand-data-path", runParameters.tradeDemandDataPath,
           "--first-matrix-id", (runParameters.first_matrix_id == null ? "100" : runParameters.first_matrix_id),
-          "--iterations", 0,
         ]
           .concat(runParameters.delete_strategy_files == true | runParameters.delete_strategy_files == null ? ["--del-strat-files"] : [])
-          .concat(runParameters.submodel ? ["--submodel", runParameters.submodel] : [])
       });
 
     // Attach runtime handlers (stdout/stderr, process errors)

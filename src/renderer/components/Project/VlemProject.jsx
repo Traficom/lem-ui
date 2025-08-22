@@ -40,7 +40,7 @@ const VlemProject = ({
     if (scenarioIDsToRun.includes(scenario.id)) {
       // If scenario exists in scenarios to run, remove it
       let newScenarioIds = scenarioIDsToRun.filter((id) => id !== scenario.id);
-      if (scenario.subScenarios && (!scenario.run_success || scenario.run_success == false) && !scenario.last_run) {
+      if (scenario.subScenarios && (!scenario.run_success || scenario.run_success == false || scenario.last_run == "")) {
         scenario.subScenarios.forEach(subScenario => newScenarioIds = newScenarioIds.filter((id) => id !== subScenario.id));
       }
       setScenarioIDsToRun(newScenarioIds);
@@ -240,6 +240,7 @@ const VlemProject = ({
     //Change ID and rename the scenario to avoid conflicts.
     duplicatedScenario.id = uuidv4();
     duplicatedScenario.name += `(${duplicatedScenario.id.split('-')[0]})`;
+    duplicatedScenario.subScenarios = [];
     const tempScenarios = scenarios.concat(duplicatedScenario);
     setScenarios(tempScenarios);
     resolveScenarioNames(tempScenarios);
@@ -412,7 +413,6 @@ const VlemProject = ({
   }
 
   function resolveRunnableScenarios(scenarioIDsToRun, scenarios) {
-
     if (!scenarioIDsToRun || scenarioIDsToRun.length == 0 || !scenarios || scenarios.length == 0) {
       return [];
     }
@@ -443,6 +443,7 @@ const VlemProject = ({
         })
       }
     });
+
     const sortedRunnableScenarios = runnableScenarios.sort((a, b) => a.runIndex - b.runIndex);
     return sortedRunnableScenarios;
   }
