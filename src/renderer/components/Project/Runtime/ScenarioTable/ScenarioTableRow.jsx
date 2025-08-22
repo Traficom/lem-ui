@@ -152,7 +152,7 @@ const ScenarioTableRow = ({
           duplicateSubScenario={duplicateSubScenario}
           deleteSubScenario={deleteSubScenario}
           modifySubScenario={modifySubScenario}
-          parentScenarioIsRunOrSelectedForRunning={(resultsExist && scenarioLogExists && scenarioData.run_success) || scenarioIDsToRun.includes(scenarioData.id)}
+          parentScenarioIsRunOrSelectedForRunning={(resultsExist && scenarioLogExists && (scenarioData.run_success == true && scenarioData.last_run != "")) || scenarioIDsToRun.includes(scenarioData.id)}
           parentScenarioResultsPath={scenarioProjectFolder}/>
       ))}
     </Fragment>
