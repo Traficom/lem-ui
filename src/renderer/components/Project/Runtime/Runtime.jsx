@@ -176,7 +176,14 @@ const Runtime = ({
             disabled={runningScenarioID}
             onClick={e => handleClickNewScenario(SCENARIO_TYPES.PASSENGER_TRANSPORT)}
           >
-            <span className="Runtime__add-icon">Uusi henkilöliikenteen skenaario</span>
+            <span className="Runtime__add-icon">Uusi lyhyiden matkojen skenaario</span>
+          </button>
+              <button
+            className="Runtime__add-new-scenario-btn"
+            disabled={runningScenarioID}
+            onClick={e => handleClickNewScenario(SCENARIO_TYPES.LONG_DISTANCE)}
+          >
+            <span className="Runtime__add-icon">Uusi pitkien matkojen skenaario</span>
           </button>
           <button
             className="Runtime__add-new-scenario-btn"

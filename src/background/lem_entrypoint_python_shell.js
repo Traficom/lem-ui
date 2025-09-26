@@ -27,7 +27,7 @@ module.exports = {
         ].concat(["--scenario-name"]).concat(allRunParameters.map(p => p.name))
           .concat(allRunParameters[0].end_assignment_only ? ["--end-assignment-only"] : [])
           .concat(["--emme-paths"]).concat(allRunParameters.map(p => p.emme_project_path))
-          .concat(["--long-dist-demand-forecast"]).concat(allRunParameters.map(p => getLongDistDemandForecast(p.long_dist_demand_forecast,  p.long_dist_demand_forecast_path)))
+          .concat(["--long-dist-demand-forecast"]).concat(allRunParameters.map(p => getLongDistDemandForecast(p.scenarioType, p.long_dist_demand_forecast,  p.long_dist_demand_forecast_path)))
           .concat(["--cost-data-paths"]).concat(allRunParameters.map(p => p.costDataPath))
           .concat(["--first-scenario-ids"]).concat(allRunParameters.map(p => p.first_scenario_id))
           .concat(["--forecast-data-paths"]).concat(allRunParameters.map(p => p.forecast_data_path))
@@ -63,7 +63,7 @@ module.exports = {
       return;
     }
 
-    let longDistDemandForecast = getLongDistDemandForecast(runParameters.long_dist_demand_forecast,  runParameters.long_dist_demand_forecast_path);
+    let longDistDemandForecast = getLongDistDemandForecast(runParameters.scenarioType, runParameters.long_dist_demand_forecast,  runParameters.long_dist_demand_forecast_path);
     // Start lem-model-system's valma_travel.py in shell with EMME's python interpreter
     worker = new ps.PythonShell(
       `${runParameters.helmet_scripts_path}/valma_travel.py`,

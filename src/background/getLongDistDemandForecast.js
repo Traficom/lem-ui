@@ -1,7 +1,11 @@
 function getLongDistDemandForecast(
+  scenarioType,
   long_dist_demand_forecast,
   long_dist_demand_forecast_path
 ) {
+  if(scenarioType == "long_distance"){
+    return "calc"
+  }
   let longDistDemandForecast = "base";
   if (long_dist_demand_forecast && long_dist_demand_forecast.length > 0) {
     if (long_dist_demand_forecast == "path") {

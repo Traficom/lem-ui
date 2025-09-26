@@ -14,6 +14,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   const [errorInfo, setErrorInfo] = useState(''); // Error info
   const isPassengerTransportScenario = !scenario.scenarioType || scenario.scenarioType ==  SCENARIO_TYPES.PASSENGER_TRANSPORT;
 
+
   const hasOverriddenSettings = (scenario) => {
     const overriddenSetting = _.find(scenario.overriddenProjectSettings, (setting) => {
       return setting;
@@ -31,7 +32,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
 
   useEffect(() => {
     if(!isPassengerTransportScenario){
-      // For goods transport, lets set submodel to koko_suomi
+      // For goods transport and long distance, lets set submodel to koko_suomi
       updateScenario({...scenario, submodel: "koko_suomi"})
     }
   }, [isPassengerTransportScenario]);
@@ -221,11 +222,6 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             onChange={(e) => {
               updateScenario({ ...scenario, long_dist_demand_forecast: e.target.value, long_dist_demand_forecast_path: "" });
             }} /> Ota projektin lähtödatasta<br />
-          <input type="radio" value="calc" name="long_dist_demand_forecast"
-            checked={scenario.long_dist_demand_forecast == "calc"}
-            onChange={(e) => {
-              updateScenario({ ...scenario, long_dist_demand_forecast: longDistDemandForecastCalc, long_dist_demand_forecast_path: "", submodel: "koko_suomi", iterations: 1 });
-            }} /> Laske<br />
           <input type="radio" value="path" name="long_dist_demand_forecast"
             checked={scenario.long_dist_demand_forecast == "path"}
             onChange={(e) => {
@@ -289,7 +285,8 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       <label className="Scenario__pseudo-label"
         htmlFor="submodel">Osamalli</label>
       <div className="Submodel_select">
-        <select id="submodel" disabled={isPassengerTransportScenario == false || longDistDemandForecastIsCalc() } value={scenario.submodel} onChange={e => updateScenario({ ...scenario, submodel: e.target.value })}>
+        <select id="submodel" disabled={isPassengerTransportScenario == false || longDistDemandForecastIsCalc() }
+        value={scenario.submodel} onChange={e => updateScenario({ ...scenario, submodel: e.target.value })}>
           <option key={"submodel_select"} value={""}>--- valitse ---</option>
           {submodels && submodels.map((submodel) =>
             <option key={submodel.id} value={submodel.id}>{submodel.name}</option>)
@@ -388,7 +385,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
 
       {/* Choice whether to save matrices in Emme */}
-      { isPassengerTransportScenario &&<div className="Scenario__section">
+      { isPassengerTransportScenario && <div className="Scenario__section">
         <label className="Scenario__pseudo-label Scenario__pseudo-label--inline"
           htmlFor="separate-emme-scenarios">
           <input id="separate-emme-scenarios"

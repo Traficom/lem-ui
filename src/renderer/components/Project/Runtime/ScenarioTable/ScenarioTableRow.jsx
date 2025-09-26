@@ -80,9 +80,18 @@ const ScenarioTableRow = ({
       <td>
         <div>
           <span className="Runtime__scenario-type">
-            {scenarioData.scenarioType && scenarioData.scenarioType == SCENARIO_TYPES.GOODS_TRANSPORT
-              ? "Tavaraliikenne"
-              : "Henkilöliikenne"}
+            {(() => {
+              switch (scenarioData.scenarioType) {
+                case SCENARIO_TYPES.GOODS_TRANSPORT:
+                  return "Tavaraliikenne";
+                case SCENARIO_TYPES.PASSENGER_TRANSPORT:
+                  return "Henkilöliikenne";
+                case SCENARIO_TYPES.LONG_DISTANCE:
+                  return "Pitkät matkat";
+                default:
+                  return "Henkilöliikenne";
+              }
+            })()}
           </span>
         </div>
       </td>

@@ -152,6 +152,7 @@ const VlemProject = ({
   const _createScenario = (newScenarioName, scenarioType) => {
     // Generate new (unique) ID for new scenario
     const newId = uuidv4();
+    const isLongDistanceScenario = scenarioType ==  SCENARIO_TYPES.LONG_DISTANCE;
     const newScenario = {
       id: newId,
       scenarioType: scenarioType,
@@ -165,7 +166,7 @@ const VlemProject = ({
       first_matrix_id: 100,
       long_dist_demand_forecast: "base",
       end_assignment_only: false,
-      iterations: 15,
+      iterations: isLongDistanceScenario? 1 : 15,
       last_run: null,
       subScenarios: [],
       overriddenProjectSettings: {
@@ -479,7 +480,6 @@ const VlemProject = ({
   }
 
   const _runAllActiveScenarios = (activeScenarioIDs) => {
-
     // Check required global parameters are set
     if (!projectName) {
       alert("Projektia ei ole valittu.");
@@ -533,7 +533,6 @@ const VlemProject = ({
     setRunningScenarioID(activeScenarioIDs[0]); // Disable controls
     setRunningScenarioIDsQueued(activeScenarioIDs.slice(1));
     signalProjectRunning(true); // Let App-component know too
-
     /**
      *  projectName, projectFolder, emmePythonPath, helmetScriptsPath, basedataPath, resultsPath,
         signalProjectRunning, settingsId, openCreateEmmeBank, addNewSetting
