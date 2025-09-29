@@ -35,14 +35,14 @@ const SubScenarioRow = ({
       }
     }
     return (
-      <tr id="my-tooltip-anchor" className="Runtime__sub_scenario" key={"tooltip_wrapper_" + subScenario.id}
+      <tr id="my-sub-tooltip-anchor" className="Runtime__sub_scenario" key={"tooltip_wrapper_" + subScenario.id}
         data-tooltip-id="scenario-tooltip"
         data-tooltip-html={renderToStaticMarkup(tooltipContent(scenarioData, subScenario))}
         data-tooltip-delay-show={150}
         data-tooltip-hidden={openScenarioID !== null}>
         <td>
-          <Tooltip anchorSelect="#my-tooltip-anchor" key={"tooltip_" + subScenario.id} place={"bottom"} id="scenario-tooltip"
-            style={{ borderRadius: "1rem", maxWidth: "40rem", backgroundColor: "#e3e3e3", color: "#000000" }} />
+          <Tooltip anchorSelect="#my-sub-tooltip-anchor" key={"tooltip_" + subScenario.id} place={"bottom"} id="scenario-tooltip"
+           style={{ borderRadius: "1rem", maxWidth: "40rem", backgroundColor: "#e3e3e3", color: "#000000", zIndex: 9999, fontSize: "11px", lineHeight: "80%"}} />
           <input
             className={
               "Runtime__scenario-activate-checkbox" +

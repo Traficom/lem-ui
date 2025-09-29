@@ -10,20 +10,32 @@ const ScenarioTooltip = ({
 }) => {
   const isSubScenarioTooltip = subScenario != undefined && subScenario.id;
   const tooltipId = isSubScenarioTooltip ? subScenario.id : scenario.id;
-  const isFreightScenario = scenario.scenarioType ==  SCENARIO_TYPES.GOODS_TRANSPORT
 
-  const tooltipTypeSpecificProperties = isFreightScenario ?
-  ['tradeDemandDataPath']:
-  ['iterations',
-   'end_assignment_only',
-   'save_matrices_in_emme',
-   'separate_emme_scenarios',
-   'stored_speed_assignment',
-   'stored_speed_assignment_folders',
-   'first_matrix_id',
-   'first_scenario_id',
-   'long_dist_demand_forecast',
-  ];
+     let tooltipTypeSpecificProperties;
+      switch (scenario.scenarioType) {
+            case SCENARIO_TYPES.GOODS_TRANSPORT: tooltipTypeSpecificProperties =
+            ['tradeDemandDataPath'];
+            case SCENARIO_TYPES.PASSENGER_TRANSPORT: tooltipTypeSpecificProperties =
+            ['iterations',
+              'end_assignment_only',
+              'save_matrices_in_emme',
+              'separate_emme_scenarios',
+              'stored_speed_assignment',
+              'first_matrix_id',
+              'first_scenario_id',
+              'long_dist_demand_forecast',
+              'tradeDemandDataPath'
+              ];
+            case SCENARIO_TYPES.LONG_DISTANCE: tooltipTypeSpecificProperties =
+            ['iterations',
+              'end_assignment_only',
+              'save_matrices_in_emme',
+              'separate_emme_scenarios',
+              'stored_speed_assignment',
+              'first_matrix_id',
+              'first_scenario_id',
+              ];
+      };
   const visibleTooltipProperties = [
     'forecast_data_path',
     'costDataPath',
@@ -33,7 +45,6 @@ const ScenarioTooltip = ({
     'name',
     'submodel',
     'overriddenProjectSettings',
-    'freight_matrix_path',
   ].concat(tooltipTypeSpecificProperties);
 
   
