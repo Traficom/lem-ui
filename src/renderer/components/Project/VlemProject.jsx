@@ -460,15 +460,6 @@ const VlemProject = ({
 
   const scenariosToRun = resolveRunnableScenarios(scenarioIDsToRun, scenarios);
 
-  function isSet(value) {
-    return value && value != null && value != undefined && value != '';
-  }
-
-  function resolveStoredSpeedAssignmentFolders(scenario) {
-    const folders = scenario.stored_speed_assignment_folders.filter(f => isSet(f));
-    return folders;
-  }
-
   function resolveScenarioId(scenario){
     if(scenario.parentScenarioId){
       return scenario.parentScenarioId; 
@@ -554,7 +545,6 @@ const VlemProject = ({
         const scenario_results_path = determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.projectFolder, projectFolder);
         // when running subScenario, base data path is parents result path
         const scenario_base_data_path = subScenario ? scenario_results_path + `\\${scenario.name}\\` : determinePath(scenario.overriddenProjectSettings, scenario.overriddenProjectSettings.basedataPath, basedataPath);
-        const stored_speed_assignment_folders = scenario.stored_speed_assignment ? resolveStoredSpeedAssignmentFolders(scenario) : "";
 
         // Run parameters per each run (enrich with global settings' paths to EMME python & VLEM model system
         return {
@@ -570,7 +560,6 @@ const VlemProject = ({
           log_level: 'DEBUG',
           end_assignment_only: end_assignment_only,
           costDataPath: costDataPath,
-          stored_speed_assignment_folders: stored_speed_assignment_folders,
         }
       })
     );

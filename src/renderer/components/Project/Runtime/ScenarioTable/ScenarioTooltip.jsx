@@ -10,20 +10,34 @@ const ScenarioTooltip = ({
 }) => {
   const isSubScenarioTooltip = subScenario != undefined && subScenario.id;
   const tooltipId = isSubScenarioTooltip ? subScenario.id : scenario.id;
-  const isFreightScenario = scenario.scenarioType ==  SCENARIO_TYPES.GOODS_TRANSPORT
 
-  const tooltipTypeSpecificProperties = isFreightScenario ?
-  ['tradeDemandDataPath']:
-  ['iterations',
-   'end_assignment_only',
-   'save_matrices_in_emme',
-   'separate_emme_scenarios',
-   'stored_speed_assignment',
-   'stored_speed_assignment_folders',
-   'first_matrix_id',
-   'first_scenario_id',
-   'long_dist_demand_forecast',
-  ];
+     let tooltipTypeSpecificProperties;
+      switch (scenario.scenarioType) {
+            case SCENARIO_TYPES.GOODS_TRANSPORT: tooltipTypeSpecificProperties =
+            ['tradeDemandDataPath'];
+            break;
+            case SCENARIO_TYPES.PASSENGER_TRANSPORT: tooltipTypeSpecificProperties =
+            ['iterations',
+              'end_assignment_only',
+              'save_matrices_in_emme',
+              'separate_emme_scenarios',
+              'first_matrix_id',
+              'first_scenario_id',
+              'tradeDemandDataPath',
+              'freight_matrix_path'
+            ].concat(scenario.long_dist_demand_forecast_path ? ['long_dist_demand_forecast_path'] : ['long_dist_demand_forecast'])
+            .concat(!scenario.stored_speed_assignment ? ['stored_speed_assignment'] : ['storedSpeedAssignmentInputs']);
+            break;
+            case SCENARIO_TYPES.LONG_DISTANCE: tooltipTypeSpecificProperties =
+            ['iterations',
+              'end_assignment_only',
+              'save_matrices_in_emme',
+              'separate_emme_scenarios',
+              'first_matrix_id',
+              'first_scenario_id',
+            ];
+            break;
+      };
   const visibleTooltipProperties = [
     'forecast_data_path',
     'costDataPath',
@@ -33,10 +47,7 @@ const ScenarioTooltip = ({
     'name',
     'submodel',
     'overriddenProjectSettings',
-    'freight_matrix_path',
   ].concat(tooltipTypeSpecificProperties);
-
-  
 
   const propertiesUsedFromSubScenario = [
     'id',
@@ -44,7 +55,7 @@ const ScenarioTooltip = ({
     'costDataPath'
   ];
 
-  const replacedTooltipHeadings = {costDataPath: 'cost_data_path', tradeDemandDataPath: 'trade-demand-data-path'};
+  const replacedTooltipHeadings = {costDataPath: 'cost_data_path', tradeDemandDataPath: 'trade-demand-data-path', 'storedSpeedAssignmentInputs': 'stored_speed_assignments'};
 
   const filteredScenarioSettings = _.pickBy(
     scenario,
@@ -68,6 +79,11 @@ const ScenarioTooltip = ({
 
     if(replacedTooltipHeadings[key]){
       keyToShow = replacedTooltipHeadings[key];
+    }
+
+    if(key == 'storedSpeedAssignmentInputs'){
+      const storedSpeedAssignments = value.filter(Boolean).map((input) => " " + input.submodel + "(" + input.firstScenarioId + ")");
+      return `${keyToShow} : ${storedSpeedAssignments}`
     }
 
     if (typeof valueToShow === 'string') {

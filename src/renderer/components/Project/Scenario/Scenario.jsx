@@ -13,6 +13,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   const [errorShown, setErrorShown] = useState(false); // whether LemError -dialog is open
   const [errorInfo, setErrorInfo] = useState(''); // Error info
   const isPassengerTransportScenario = !scenario.scenarioType || scenario.scenarioType ==  SCENARIO_TYPES.PASSENGER_TRANSPORT;
+  const isFreightScenario = scenario.scenarioType ==  SCENARIO_TYPES.GOODS_TRANSPORT;
 
 
   const hasOverriddenSettings = (scenario) => {
@@ -50,11 +51,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
   }, [scenario.stored_speed_assignment]);
 
   function setStoredSpeedAssignment(value) {
-    if(value){
-      updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment })
-    }else{
-      updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment, storedSpeedAssignmentInputs: [] })
-    }
+     updateScenario({ ...scenario, stored_speed_assignment: !scenario.stored_speed_assignment, storedSpeedAssignmentInputs: [] })
   }
 
   const showError = (errorInfo) => {
@@ -187,7 +184,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
       </div>
 
        {/* Import and export data */}
-      { !isPassengerTransportScenario && <div className="Scenario__section">
+      { isFreightScenario && <div className="Scenario__section">
         <span className="Scenario__pseudo-label">Vienti- ja tuontidata</span>
         <label className="Scenario__pseudo-file-select" htmlFor="import-and-export-data-file-select" title={scenario.tradeDemandDataPath}>
           {scenario.tradeDemandDataPath ? path.basename(scenario.tradeDemandDataPath) : "Valitse.."}
@@ -233,7 +230,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             disabled={scenario.long_dist_demand_forecast != "path"}
             readOnly={true}
             title={scenario.long_dist_demand_forecast_path}
-            value={scenario.long_dist_demand_forecast_path}
+            value={scenario.long_dist_demand_forecast_path || ""}
             placeholder={scenario.long_dist_demand_forecast == "path" ? scenario.long_dist_demand_forecast_path : "..."}
             onClick={() => {
               dialog.showOpenDialog({
@@ -316,7 +313,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             title={scenario.freight_matrix_path}
             disabled={goodsTransportFreightMatrixSource != "path"}
             readOnly={true}
-            value={scenario.freight_matrix_path}
+            value={scenario.freight_matrix_path || ""}
             placeholder={goodsTransportFreightMatrixSource == "path" ? scenario.freight_matrix_path : "..."}
             onClick={() => {
               dialog.showOpenDialog({
@@ -356,7 +353,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
         </label>
       </div>}
 
-      {/*Stored speed assignment folders scenario.storedSpeedAssignmentInputs*/}
+      {/*Stored speed assignment inputs*/}
       {isPassengerTransportScenario && scenario.stored_speed_assignment && scenario.storedSpeedAssignmentInputs && (
         <div className="Scenario__section flexContainer space_after">
           <div>
