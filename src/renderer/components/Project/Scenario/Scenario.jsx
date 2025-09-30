@@ -313,7 +313,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
             title={scenario.freight_matrix_path}
             disabled={goodsTransportFreightMatrixSource != "path"}
             readOnly={true}
-            value={scenario.freight_matrix_path}
+            value={scenario.freight_matrix_path || ""}
             placeholder={goodsTransportFreightMatrixSource == "path" ? scenario.freight_matrix_path : "..."}
             onClick={() => {
               dialog.showOpenDialog({
@@ -353,7 +353,7 @@ const Scenario = ({ scenario, updateScenario, closeScenario, existingOtherNames,
         </label>
       </div>}
 
-      {/*Stored speed assignment folders scenario.storedSpeedAssignmentInputs*/}
+      {/*Stored speed assignment inputs*/}
       {isPassengerTransportScenario && scenario.stored_speed_assignment && scenario.storedSpeedAssignmentInputs && (
         <div className="Scenario__section flexContainer space_after">
           <div>

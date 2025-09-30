@@ -53,7 +53,7 @@ const ScenarioTableRow = ({
       data-tooltip-delay-show={150}
       data-tooltip-hidden={openScenarioID !== null}>
       <td>
-        <Tooltip anchorSelect="#my-tooltip-anchor" key={"tooltip_" + scenarioData.id} place={"bottom"} id="scenario-tooltip" 
+        <Tooltip anchorSelect="#my-tooltip-anchor" key={"tooltip_" + scenarioData.id} place={"bottom"} offset={-20} id="scenario-tooltip"
         style={{ borderRadius: "1rem", maxWidth: "40rem", backgroundColor: "#e3e3e3", color: "#000000", zIndex: 9999, fontSize: "11px", lineHeight: "80%"}} />
         <input
           className={
